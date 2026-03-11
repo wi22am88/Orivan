@@ -68,9 +68,31 @@ html,body{
   border-bottom:1px solid var(--border);
   backdrop-filter:blur(10px);
 }
-.status-bar img{
-  height:34px;width:auto;
-  filter:drop-shadow(0 0 8px rgba(0,212,255,0.35));
+.header-logo{
+  display:flex;align-items:center;gap:10px;
+}
+.header-logo-icon{
+  flex-shrink:0;
+  filter:drop-shadow(0 0 8px rgba(0,212,255,0.4));
+}
+.header-logo-text{
+  display:flex;flex-direction:column;gap:2px;
+}
+.header-logo-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:.85rem;font-weight:700;
+  background:linear-gradient(135deg,#00d4ff,#7c3aed);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;
+  text-shadow:none;
+}
+.header-logo-en{
+  font-family:'Orbitron',sans-serif;
+  font-size:.42rem;font-weight:700;
+  color:#7c3aed;
+  letter-spacing:2.5px;
+  opacity:.8;
+  white-space:nowrap;
 }
 .status-indicators{display:flex;gap:20px;align-items:center;}
 .status-dot{
@@ -425,7 +447,42 @@ html,body{
 
 <!-- Status bar -->
 <header class="status-bar">
-  <img src="logo-header.svg" alt="البوابة التعليمية الذكية" height="44" style="display:block;">
+  <div class="header-logo">
+    <div class="header-logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 46" width="44" height="44">
+        <defs>
+          <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#7c3aed"/>
+          </linearGradient>
+          <filter id="hgc" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="hib" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" style="stop-color:#0d1f3c"/><stop offset="100%" style="stop-color:#060f1e"/>
+          </radialGradient>
+        </defs>
+        <g transform="translate(23,23)">
+          <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none" stroke="url(#hg1)" stroke-width="1.2" opacity="0.5"/>
+          <polygon points="0,-14 12,-7 12,7 0,14 -12,7 -12,-7" fill="url(#hib)" stroke="url(#hg1)" stroke-width="1.5" filter="url(#hgc)"/>
+          <ellipse cx="0" cy="0" rx="8" ry="3.2" fill="none" stroke="#00d4ff" stroke-width="1.1" opacity="0.95" filter="url(#hgc)"/>
+          <ellipse cx="0" cy="0" rx="8" ry="3.2" fill="none" stroke="#7c3aed" stroke-width="1.1" opacity="0.9" transform="rotate(60)"/>
+          <ellipse cx="0" cy="0" rx="8" ry="3.2" fill="none" stroke="#00d4ff" stroke-width="1.1" opacity="0.5" transform="rotate(120)"/>
+          <circle cx="0" cy="0" r="2.8" fill="#00d4ff" filter="url(#hgc)"/>
+          <circle cx="0"   cy="-20" r="1.4" fill="#00d4ff" opacity="0.9"/>
+          <circle cx="17"  cy="-10" r="1.4" fill="#7c3aed" opacity="0.9"/>
+          <circle cx="17"  cy="10"  r="1.4" fill="#f59e0b" opacity="0.9"/>
+          <circle cx="0"   cy="20"  r="1.4" fill="#10b981" opacity="0.9"/>
+          <circle cx="-17" cy="10"  r="1.4" fill="#00d4ff" opacity="0.9"/>
+          <circle cx="-17" cy="-10" r="1.4" fill="#7c3aed" opacity="0.9"/>
+        </g>
+      </svg>
+    </div>
+    <div class="header-logo-text">
+      <span class="header-logo-ar">البوابة التعليمية الذكية</span>
+      <span class="header-logo-en">SMART LEARNING GATEWAY</span>
+    </div>
+  </div>
   <div class="status-indicators">
     <div class="status-dot"><div class="dot green"></div>متصل</div>
     <div class="status-dot"><div class="dot blue"></div>٤ مسارات نشطة</div>
