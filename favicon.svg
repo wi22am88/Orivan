@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="gCP" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"   stop-color="#0a1a35"/>
+      <stop offset="70%"  stop-color="#050d20"/>
+      <stop offset="100%" stop-color="#020817"/>
+    </radialGradient>
+    <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="40%"  stop-color="#00d4ff" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow-sm" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-md" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-lg" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="iconClip">
+      <rect width="512" height="512" rx="115" ry="115"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#iconClip)">
+    <rect width="512" height="512" fill="url(#bgGrad)"/>
+
+    <!-- Grid -->
+    <g opacity="0.045" stroke="#00d4ff" stroke-width="1">
+      <line x1="0" y1="128" x2="512" y2="128"/>
+      <line x1="0" y1="256" x2="512" y2="256"/>
+      <line x1="0" y1="384" x2="512" y2="384"/>
+      <line x1="128" y1="0" x2="128" y2="512"/>
+      <line x1="256" y1="0" x2="256" y2="512"/>
+      <line x1="384" y1="0" x2="384" y2="512"/>
+    </g>
+
+    <!-- Outer glow aura -->
+    <circle cx="256" cy="256" r="190" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.08" filter="url(#glow-lg)"/>
+
+    <!-- Hex rings -->
+    <polygon points="256,66 418,161 418,351 256,446 94,351 94,161"
+      fill="none" stroke="url(#gCP)" stroke-width="1.5" stroke-dasharray="12 6" opacity="0.35"/>
+    <polygon points="256,96 398,177 398,335 256,416 114,335 114,177"
+      fill="rgba(5,15,35,0.92)" stroke="url(#gCP)" stroke-width="2.5" filter="url(#glow-sm)"/>
+
+    <!-- Connector lines -->
+    <line x1="256" y1="66"  x2="256" y2="96"  stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+    <line x1="418" y1="161" x2="398" y2="177"  stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+    <line x1="418" y1="351" x2="398" y2="335"  stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+    <line x1="256" y1="446" x2="256" y2="416"  stroke="#10b981" stroke-width="1" opacity="0.5"/>
+    <line x1="94"  y1="351" x2="114" y2="335"  stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+    <line x1="94"  y1="161" x2="114" y2="177"  stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+
+    <!-- Node dots -->
+    <circle cx="256" cy="66"  r="6" fill="#00d4ff" filter="url(#glow-sm)"/>
+    <circle cx="418" cy="161" r="6" fill="#7c3aed" filter="url(#glow-sm)"/>
+    <circle cx="418" cy="351" r="6" fill="#f59e0b" filter="url(#glow-sm)"/>
+    <circle cx="256" cy="446" r="6" fill="#10b981" filter="url(#glow-sm)"/>
+    <circle cx="94"  cy="351" r="6" fill="#00d4ff" filter="url(#glow-sm)"/>
+    <circle cx="94"  cy="161" r="6" fill="#7c3aed" filter="url(#glow-sm)"/>
+
+    <!-- Orbital rings -->
+    <ellipse cx="256" cy="256" rx="105" ry="38"
+      fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.85" filter="url(#glow-sm)"/>
+    <ellipse cx="256" cy="256" rx="105" ry="38"
+      fill="none" stroke="#7c3aed" stroke-width="2"
+      transform="rotate(60,256,256)" opacity="0.85" filter="url(#glow-sm)"/>
+    <ellipse cx="256" cy="256" rx="105" ry="38"
+      fill="none" stroke="#10b981" stroke-width="1.5"
+      transform="rotate(120,256,256)" opacity="0.6"/>
+
+    <!-- Orbit dots -->
+    <circle cx="361" cy="256" r="5" fill="#00d4ff" filter="url(#glow-md)"/>
+    <circle cx="203" cy="218" r="5" fill="#7c3aed" filter="url(#glow-md)"/>
+    <circle cx="309" cy="294" r="4" fill="#10b981" filter="url(#glow-sm)"/>
+
+    <!-- Pulse rings -->
+    <circle cx="256" cy="256" r="65" fill="none" stroke="url(#gCP)" stroke-width="1.5" opacity="0.4"/>
+    <circle cx="256" cy="256" r="50" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+
+    <!-- Core halo -->
+    <circle cx="256" cy="256" r="55" fill="url(#coreGrad)" opacity="0.18" filter="url(#glow-lg)"/>
+
+    <!-- Subject symbols -->
+    <text x="256" y="174" text-anchor="middle" font-family="serif" font-size="22" fill="#00d4ff" opacity="0.55">⚛</text>
+    <text x="340" y="264" text-anchor="middle" font-family="serif" font-size="20" fill="#7c3aed" opacity="0.55">∑</text>
+    <text x="256" y="350" text-anchor="middle" font-family="serif" font-size="20" fill="#10b981" opacity="0.55">⚗</text>
+    <text x="172" y="264" text-anchor="middle" font-family="monospace" font-size="20" fill="#f59e0b" opacity="0.55">&lt;/&gt;</text>
+
+    <!-- Core dot -->
+    <circle cx="256" cy="256" r="12" fill="#00d4ff" filter="url(#glow-lg)"/>
+    <circle cx="256" cy="256" r="6"  fill="white" opacity="0.9"/>
+
+    <!-- Corner brackets -->
+    <polyline points="30,55 30,30 55,30"   fill="none" stroke="#00d4ff" stroke-width="3" filter="url(#glow-sm)"/>
+    <polyline points="482,55 482,30 457,30" fill="none" stroke="#7c3aed" stroke-width="3" filter="url(#glow-sm)"/>
+    <polyline points="30,457 30,482 55,482"  fill="none" stroke="#10b981" stroke-width="3"/>
+    <polyline points="482,457 482,482 457,482" fill="none" stroke="#f59e0b" stroke-width="3"/>
+
+    <!-- AI label -->
+    <text x="256" y="490" font-family="'Courier New',monospace" font-size="18" font-weight="bold"
+      text-anchor="middle" fill="url(#gCP)" letter-spacing="8" opacity="0.5">AI·EDU</text>
+  </g>
+</svg>
