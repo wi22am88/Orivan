@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020817">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="البوابة الذكية">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <title>البوابة التعليمية الذكية</title>
@@ -486,6 +492,191 @@ html,body{
   letter-spacing:3px;
 }
 
+
+/* ══════════════════ PWA INSTALL BANNER ══════════════════ */
+#pwa-banner{
+  position:fixed;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%) translateY(120px);
+  z-index:9999;
+  width:min(480px, calc(100vw - 32px));
+  background:rgba(5,12,28,0.92);
+  border:1px solid rgba(0,212,255,0.25);
+  border-radius:20px;
+  padding:20px 22px;
+  backdrop-filter:blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(0,212,255,0.08),
+    0 8px 40px rgba(0,0,0,0.6),
+    0 0 60px rgba(0,212,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: transform 0.5s cubic-bezier(0.175,0.885,0.32,1.275),
+              opacity 0.5s ease;
+  opacity:0;
+  direction:rtl;
+}
+#pwa-banner.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+#pwa-banner.hide{
+  transform:translateX(-50%) translateY(140px);
+  opacity:0;
+}
+
+/* Top line accent */
+#pwa-banner::before{
+  content:'';
+  position:absolute;
+  top:0;left:20px;right:20px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5),rgba(124,58,237,0.5),transparent);
+  border-radius:1px;
+}
+
+.pwa-inner{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.pwa-icon{
+  flex-shrink:0;
+  width:54px;height:54px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0a1a35,#060f1e);
+  border:1.5px solid rgba(0,212,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 20px rgba(0,212,255,0.15);
+  position:relative;
+  overflow:hidden;
+}
+.pwa-icon::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,0.08),transparent);
+}
+.pwa-icon svg{
+  width:32px;height:32px;
+  position:relative;z-index:1;
+}
+
+.pwa-content{
+  flex:1;
+  min-width:0;
+}
+.pwa-title{
+  font-family:'Tajawal',sans-serif;
+  font-size:.95rem;font-weight:700;
+  background:linear-gradient(135deg,#fff 40%,var(--c1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pwa-desc{
+  font-size:.72rem;
+  color:#64748b;
+  font-family:'Tajawal',sans-serif;
+  line-height:1.5;
+}
+.pwa-desc span{
+  color:var(--c1);
+  opacity:.8;
+}
+
+.pwa-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.pwa-btn-install{
+  font-family:'Orbitron',sans-serif;
+  font-size:.6rem;font-weight:700;
+  letter-spacing:1.5px;
+  padding:9px 18px;
+  border-radius:10px;
+  border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:#fff;
+  white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,212,255,0.25);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.pwa-btn-install:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 28px rgba(0,212,255,0.4);
+}
+.pwa-btn-install:active{transform:translateY(0);}
+
+.pwa-btn-dismiss{
+  font-family:'Orbitron',sans-serif;
+  font-size:.55rem;
+  letter-spacing:1px;
+  padding:7px 12px;
+  border-radius:8px;
+  border:1px solid rgba(100,116,139,0.25);
+  background:transparent;
+  color:#475569;
+  cursor:pointer;
+  transition:border-color .2s, color .2s;
+  text-align:center;
+}
+.pwa-btn-dismiss:hover{
+  border-color:rgba(100,116,139,0.5);
+  color:#64748b;
+}
+
+/* Status dots row */
+.pwa-status{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,0.04);
+}
+.pwa-stat{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Orbitron',sans-serif;
+  font-size:.5rem;letter-spacing:1.5px;
+  color:#334155;
+}
+.pwa-stat-dot{
+  width:5px;height:5px;border-radius:50%;
+  animation:pulse 2s ease-in-out infinite;
+}
+.pwa-stat-dot.c{background:var(--c1);box-shadow:0 0 6px var(--c1);}
+.pwa-stat-dot.p{background:var(--c2);box-shadow:0 0 6px var(--c2);animation-delay:.4s;}
+.pwa-stat-dot.g{background:var(--c4);box-shadow:0 0 6px var(--c4);animation-delay:.8s;}
+
+.pwa-close{
+  position:absolute;
+  top:12px;left:14px;
+  width:22px;height:22px;
+  border-radius:50%;
+  border:1px solid rgba(100,116,139,0.2);
+  background:transparent;
+  color:#475569;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;
+  transition:border-color .2s, color .2s, background .2s;
+  line-height:1;
+}
+.pwa-close:hover{
+  border-color:rgba(239,68,68,0.4);
+  color:#ef4444;
+  background:rgba(239,68,68,0.08);
+}
+
+@media(max-width:480px){
+  #pwa-banner{bottom:16px;}
+  .pwa-title{font-size:.85rem;}
+  .pwa-actions{flex-direction:row;}
+}
+
 </style>
 </head>
 <body>
@@ -781,6 +972,103 @@ document.querySelectorAll('.card').forEach(card=>{
     card.style.transform='';
   });
 });
+
+
+// ── PWA Install Banner ────────────────────────────
+let deferredPrompt = null;
+const banner  = document.getElementById('pwa-banner');
+const btnInst = document.getElementById('pwa-install');
+const btnDism = document.getElementById('pwa-dismiss');
+const btnClose= document.getElementById('pwa-close');
+
+function showBanner(){
+  if(sessionStorage.getItem('pwa-dismissed')) return;
+  setTimeout(()=>{ banner.classList.add('show'); }, 1800);
+}
+function hideBanner(){
+  banner.classList.remove('show');
+  banner.classList.add('hide');
+  sessionStorage.setItem('pwa-dismissed','1');
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showBanner();
+});
+
+// Fallback: show banner even if beforeinstallprompt doesn't fire (iOS / already installed check)
+window.addEventListener('load', () => {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  if(!isStandalone && !sessionStorage.getItem('pwa-dismissed')){
+    showBanner();
+  }
+});
+
+btnInst.addEventListener('click', async () => {
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+  hideBanner();
+});
+
+btnDism.addEventListener('click', hideBanner);
+btnClose.addEventListener('click', hideBanner);
+
+
+// ── Service Worker ────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(()=>{});
+  });
+}
+
 </script>
+
+<!-- ══ PWA INSTALL BANNER ══ -->
+<div id="pwa-banner" role="dialog" aria-label="تثبيت التطبيق">
+  <button class="pwa-close" id="pwa-close" aria-label="إغلاق">✕</button>
+  <div class="pwa-inner">
+    <div class="pwa-icon">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pig" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00d4ff"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+          <filter id="pif" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="512" height="512" fill="#060f1e" rx="80"/>
+        <polygon points="256,96 398,177 398,335 256,416 114,335 114,177"
+          fill="none" stroke="url(#pig)" stroke-width="18" filter="url(#pif)"/>
+        <ellipse cx="256" cy="256" rx="105" ry="38" fill="none" stroke="#00d4ff" stroke-width="14" opacity="0.9" filter="url(#pif)"/>
+        <ellipse cx="256" cy="256" rx="105" ry="38" fill="none" stroke="#7c3aed" stroke-width="14" transform="rotate(60,256,256)" opacity="0.9" filter="url(#pif)"/>
+        <circle cx="256" cy="256" r="36" fill="#00d4ff" filter="url(#pif)"/>
+        <circle cx="256" cy="256" r="18" fill="white" opacity="0.95"/>
+      </svg>
+    </div>
+    <div class="pwa-content">
+      <div class="pwa-title">البوابة التعليمية الذكية</div>
+      <div class="pwa-desc">ثبّت التطبيق للوصول <span>بدون إنترنت</span> · بشكل أسرع</div>
+    </div>
+    <div class="pwa-actions">
+      <button class="pwa-btn-install" id="pwa-install">تثبيت</button>
+      <button class="pwa-btn-dismiss" id="pwa-dismiss">لاحقاً</button>
+    </div>
+  </div>
+  <div class="pwa-status">
+    <div class="pwa-stat"><div class="pwa-stat-dot c"></div>PWA READY</div>
+    <div class="pwa-stat"><div class="pwa-stat-dot p"></div>OFFLINE MODE</div>
+    <div class="pwa-stat"><div class="pwa-stat-dot g"></div>FAST LOAD</div>
+  </div>
+</div>
+
 </body>
 </html>
