@@ -443,19 +443,32 @@ function evaluate(){
   }
 }
 function gateEval(type, iv){
-  // iv = array of input values (0 or 1)
-  if(iv.length===0) return null;
+  // iv = array of resolved input values (0 or 1), length = number of connected wires
+  if(iv.length===0) return null;  // no inputs connected = no output
+
   switch(type){
-    case'AND':     return iv.every(v=>v===1)?1:0;
-    case'OR':      return iv.some(v=>v===1)?1:0;
-    case'NOT':     return iv[0]===1?0:1;           // uses first input, ignores rest
-    case'NAND':    return iv.every(v=>v===1)?0:1;
-    case'NOR':     return iv.some(v=>v===1)?0:1;
-    case'XOR':     return iv.reduce((a,b)=>a^b,0); // multi-input XOR = odd parity
-    case'XNOR':    return iv.reduce((a,b)=>a^b,0)===0?1:0;
-    case'LAMP':    return iv.some(v=>v===1)?1:0;   // lights up if ANY input is 1
-    case'JUNCTION':return iv.some(v=>v===1)?1:0;   // pass-through (OR logic for multi-in)
-    default:       return null;
+    // AND / NAND: require at least 2 inputs; all must be 1 for AND to fire
+    case'AND':  return iv.length<2 ? null : (iv.every(v=>v===1)?1:0);
+    case'NAND': return iv.length<2 ? null : (iv.every(v=>v===1)?0:1);
+
+    // OR / NOR: require at least 2 inputs; fires if any is 1
+    case'OR':   return iv.length<2 ? null : (iv.some(v=>v===1)?1:0);
+    case'NOR':  return iv.length<2 ? null : (iv.some(v=>v===1)?0:1);
+
+    // NOT: exactly 1 input — inverts it; extra inputs ignored
+    case'NOT':  return iv[0]===1?0:1;
+
+    // XOR / XNOR: require at least 2 inputs; odd-parity logic
+    case'XOR':  return iv.length<2 ? null : (iv.reduce((a,b)=>a^b,0));
+    case'XNOR': return iv.length<2 ? null : (iv.reduce((a,b)=>a^b,0)===0?1:0);
+
+    // LAMP: lights up if ANY connected input is 1 (1 input is fine)
+    case'LAMP':    return iv.some(v=>v===1)?1:0;
+
+    // JUNCTION: pass-through — outputs 1 if any input is 1
+    case'JUNCTION':return iv.some(v=>v===1)?1:0;
+
+    default: return null;
   }
 }
 
