@@ -200,7 +200,7 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
       <div class="input-group" style="margin-bottom:20px;">
         <label>نوع المسألة</label>
         <select class="input-select" id="subtype-1d" onchange="onSubtypeChange()">
-          <option value="1d_upward"> الحركة إلى العمودية</option>
+          <option value="1d_upward"> الحركة العمودية</option>
           <option value="1d_horizontal"> الحركة الأفقية</option>
         </select>
       </div>
@@ -441,7 +441,7 @@ function stepsSection(steps) {
 ══════════════════════════════════════════ */
 function solve1D(sub) {
 
-  /* ── الحركة إلى الأعلى (قذف رأسي) ── */
+  /* ── الحركة العمودية── */
   if (sub === '1d_upward') {
     const v0   = getVal('v0');
     const t0   = getVal('t0')   ?? 0;
