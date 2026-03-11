@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مختبر البوابات المنطقية</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Share+Tech+Mono&display=swap');
+  :root {
+    --bg:#0a0e1a; --panel:#0f1526; --panel2:#141b30; --border:#1e2d50;
+    --accent:#00d4ff; --green:#00ff88; --red:#ff3d6b; --yellow:#ffd700;
+    --purple:#7b2fff; --text:#c8d8f0; --dim:#4a6080;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; touch-action:none; }
+  body { font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; }
+
+  /* HEADER */
+  header {
+    background:var(--panel); border-bottom:1px solid var(--border);
+    padding:0 12px; height:48px; display:flex; align-items:center;
+    justify-content:space-between; flex-shrink:0; z-index:100;
+  }
+  .logo { font-size:15px; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:8px; }
+  .logo-icon { font-size:20px; }
+  .logo-text { display:none; }
+  @media(min-width:480px){ .logo-text { display:inline; } }
+  .header-actions { display:flex; gap:7px; }
+  .btn {
+    background:transparent; border:1px solid var(--border); color:var(--text);
+    padding:5px 11px; border-radius:6px; cursor:pointer;
+    font-family:'Cairo',sans-serif; font-size:12px; transition:all .2s;
+  }
+  .btn:hover,.btn:active { border-color:var(--accent); color:var(--accent); background:rgba(0,212,255,.08); }
+  .btn.danger:hover,.btn.danger:active { border-color:var(--red); color:var(--red); background:rgba(255,61,107,.08); }
+
+  /* LAYOUT */
+  .workspace { display:flex; flex:1; overflow:hidden; position:relative; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width:66px; background:var(--panel); border-left:1px solid var(--border);
+    overflow-y:auto; overflow-x:hidden; flex-shrink:0;
+    padding:7px 5px; display:flex; flex-direction:column; gap:4px;
+    scrollbar-width:none;
+    touch-action:pan-y;
+  }
+  .sidebar::-webkit-scrollbar { display:none; }
+  @media(min-width:580px){
+    .sidebar { width:168px; padding:10px 8px; gap:5px; }
+  }
+  .sidebar-section {
+    font-size:9px; font-weight:700; color:var(--dim);
+    text-transform:uppercase; letter-spacing:1.5px;
+    padding:6px 2px 2px; border-top:1px solid var(--border); margin-top:2px;
+    display:none;
+  }
+  @media(min-width:580px){ .sidebar-section { display:block; } }
+  .sidebar-section:first-child { border-top:none; margin-top:0; }
+
+  .gate-item {
+    display:flex; align-items:center; gap:7px;
+    padding:8px 5px; background:var(--panel2); border:1px solid var(--border);
+    border-radius:8px; cursor:grab; transition:border-color .18s,background .18s;
+    user-select:none; -webkit-user-select:none; position:relative; overflow:hidden;
+    justify-content:center;
+    touch-action:none;  /* allow pointer capture to work on touch */
+  }
+  @media(min-width:580px){ .gate-item { justify-content:flex-start; padding:8px 9px; } }
+  .gate-item:hover,.gate-item:active { border-color:var(--accent); background:rgba(0,212,255,.07); }
+  .gate-symbol { width:34px; height:26px; flex-shrink:0; }
+  .gate-info { display:none; }
+  @media(min-width:580px){ .gate-info { display:block; } }
+  .gate-name { font-size:12px; font-weight:600; }
+  .gate-sub { font-size:10px; color:var(--dim); }
+
+  /* CANVAS */
+  .canvas-wrap {
+    flex:1; position:relative; overflow:hidden; touch-action:none;
+    background:
+      radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.04) 0%,transparent 60%),
+      radial-gradient(ellipse at 80% 80%,rgba(123,47,255,.04) 0%,transparent 60%),
+      var(--bg);
+  }
+  #mainCanvas { position:absolute; top:0; left:0; touch-action:none; display:block; }
+
+  /* STATUS BAR */
+  .statusbar {
+    background:var(--panel); border-top:1px solid var(--border);
+    height:26px; display:flex; align-items:center; padding:0 12px;
+    gap:14px; font-size:10px; color:var(--dim); flex-shrink:0;
+    font-family:'Share Tech Mono',monospace; overflow:hidden;
+  }
+  .s-item { display:flex; align-items:center; gap:4px; white-space:nowrap; }
+  .s-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .s-hint { display:none; margin-right:auto; color:var(--dim); }
+  @media(min-width:650px){ .s-hint { display:block; } }
+
+  /* CONTEXT MENU */
+  #ctxMenu {
+    position:fixed; background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:6px; z-index:500; display:none;
+    min-width:155px; box-shadow:0 10px 40px rgba(0,0,0,.6);
+  }
+  .ctx-item {
+    padding:10px 14px; border-radius:6px; cursor:pointer; font-size:13px;
+    transition:background .15s; display:flex; align-items:center; gap:9px;
+  }
+  .ctx-item:hover { background:rgba(0,212,255,.12); color:var(--accent); }
+  .ctx-item.del:hover { background:rgba(255,61,107,.12); color:var(--red); }
+  .ctx-sep { height:1px; background:var(--border); margin:4px 0; }
+
+  /* LONG PRESS RING */
+  #lpRing {
+    position:fixed; pointer-events:none; z-index:200;
+    width:50px; height:50px; border-radius:50%;
+    border:2px solid var(--accent);
+    opacity:0; transform:translate(-50%,-50%) scale(1.5);
+    transition:transform .9s cubic-bezier(.2,1,.3,1), opacity .15s;
+  }
+  #lpRing.show { opacity:.6; transform:translate(-50%,-50%) scale(1); }
+
+  /* DRAG GHOST */
+  #dragGhost {
+    position:fixed; z-index:9999; pointer-events:none; display:none;
+    align-items:center; gap:9px;
+    background:rgba(10,14,26,.96); border:2px solid var(--accent);
+    border-radius:10px; padding:8px 14px 8px 10px;
+    transform:translate(-50%,-62%);
+    box-shadow:0 0 20px rgba(0,212,255,.4), 0 6px 28px rgba(0,0,0,.8);
+  }
+  #dragGhost .dg-name { font-size:13px; font-weight:700; font-family:'Share Tech Mono',monospace; }
+  #dragGhost .dg-sub  { font-size:10px; color:var(--dim); }
+  /* drop-zone pulse on canvas */
+  .canvas-wrap.dz-active { outline: 2px solid rgba(0,212,255,.5); outline-offset:-2px; }
+  /* sidebar item while dragging */
+  .gate-item.is-dragging { opacity:.3; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-icon">⬡</span>
+    <span class="logo-text">مختبر البوابات المنطقية</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="runSim()">▶ تشغيل</button>
+    <button class="btn danger" onclick="clearAll()">✕ مسح</button>
+  </div>
+</header>
+
+<div class="workspace">
+  <div class="sidebar" id="sidebar">
+
+    <div class="sidebar-section">مدخلات</div>
+    <div class="gate-item" data-type="INPUT">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <rect x="3" y="5" width="20" height="16" rx="3" fill="none" stroke="#00ff88" stroke-width="1.5"/>
+        <line x1="23" y1="13" x2="31" y2="13" stroke="#00ff88" stroke-width="1.5"/>
+        <text x="13" y="17" text-anchor="middle" fill="#00ff88" font-size="8" font-family="monospace">IN</text>
+      </svg>
+      <div class="gate-info"><div class="gate-name">مدخل</div><div class="gate-sub">0 / 1</div></div>
+    </div>
+
+    <div class="sidebar-section">أساسية</div>
+    <div class="gate-item" data-type="AND">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M4 3 H17 Q29 3 29 13 Q29 23 17 23 H4 Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="4" y2="8" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="4" y2="18" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="29" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">AND</div><div class="gate-sub">و المنطقية</div></div>
+    </div>
+    <div class="gate-item" data-type="OR">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M4 3 Q10 3 22 13 Q10 23 4 23 Q9 13 4 3Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <path d="M4 3 Q14 3 27 13 Q14 23 4 23" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="7" y2="8" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="7" y2="18" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="27" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">OR</div><div class="gate-sub">أو المنطقية</div></div>
+    </div>
+    <div class="gate-item" data-type="NOT">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M3 3 L26 13 L3 23 Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="28.5" cy="13" r="2.5" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="13" x2="3" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="31" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">NOT</div><div class="gate-sub">عاكس</div></div>
+    </div>
+
+    <div class="sidebar-section">مركبة</div>
+    <div class="gate-item" data-type="NAND">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M4 3 H15 Q26 3 26 13 Q26 23 15 23 H4 Z" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <circle cx="28.5" cy="13" r="2.5" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="4" y2="8" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="4" y2="18" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="31" y1="13" x2="34" y2="13" stroke="#7b2fff" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">NAND</div><div class="gate-sub">عكس AND</div></div>
+    </div>
+    <div class="gate-item" data-type="NOR">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M4 3 Q10 3 21 13 Q10 23 4 23 Q9 13 4 3Z" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <path d="M4 3 Q14 3 24 13 Q14 23 4 23" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <circle cx="26.5" cy="13" r="2.5" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="7" y2="8" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="7" y2="18" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="29" y1="13" x2="34" y2="13" stroke="#7b2fff" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">NOR</div><div class="gate-sub">عكس OR</div></div>
+    </div>
+    <div class="gate-item" data-type="XOR">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M6 3 Q12 3 23 13 Q12 23 6 23 Q11 13 6 3Z" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <path d="M6 3 Q16 3 27 13 Q16 23 6 23" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <path d="M2 3 Q6 13 2 23" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="8" y2="8" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="8" y2="18" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="27" y1="13" x2="34" y2="13" stroke="#ffd700" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">XOR</div><div class="gate-sub">أو حصري</div></div>
+    </div>
+    <div class="gate-item" data-type="XNOR">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <path d="M6 3 Q12 3 21 13 Q12 23 6 23 Q11 13 6 3Z" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <path d="M6 3 Q16 3 24 13 Q16 23 6 23" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <path d="M2 3 Q6 13 2 23" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="26.5" cy="13" r="2.5" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="0" y1="8" x2="8" y2="8" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="0" y1="18" x2="8" y2="18" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="29" y1="13" x2="34" y2="13" stroke="#ffd700" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">XNOR</div><div class="gate-sub">عكس XOR</div></div>
+    </div>
+
+    <div class="sidebar-section">مخرجات</div>
+    <div class="gate-item" data-type="LAMP">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <circle cx="17" cy="13" r="9" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+        <path d="M13 9 Q17 5 21 9 Q21 15 17 17 Q13 15 13 9Z" fill="none" stroke="#ffd700" stroke-width="1"/>
+        <line x1="14" y1="17" x2="14" y2="21" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="20" y1="17" x2="20" y2="21" stroke="#ffd700" stroke-width="1.5"/>
+        <line x1="8" y1="13" x2="0" y2="13" stroke="#ffd700" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">مصباح</div><div class="gate-sub">مخرج مرئي</div></div>
+    </div>
+
+  </div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div class="s-item"><span class="s-dot"></span>جاهز</div>
+  <div class="s-item" id="sNodes">0 عنصر</div>
+  <div class="s-item" id="sWires">0 سلك</div>
+  <div class="s-item" id="sMode">عادي</div>
+  <div class="s-hint">اضغط IN للتبديل • اسحب منفذاً للتوصيل • اضغط مطوّلاً (1 ث) للتحريك العنصر • اسحب الفراغ للتنقل</div>
+  <div style="display:flex;gap:5px;margin-right:auto;flex-shrink:0;">
+    <button onclick="zoomAt(canvas.width/2,canvas.height/2,1.25);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تكبير">＋</button>
+    <button onclick="zoomAt(canvas.width/2,canvas.height/2,0.8);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تصغير">－</button>
+    <button onclick="vx=0;vy=0;vz=1;render()" style="background:transparent;border:1px solid #1e2d50;color:#00d4ff;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:11px;" title="إعادة ضبط">⊙</button>
+  </div>
+</div>
+
+<div id="ctxMenu">
+  <div class="ctx-item" id="ctxToggleBtn" onclick="ctxToggle()">⇄ تبديل القيمة</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item del" onclick="ctxDelete()">✕ حذف</div>
+</div>
+<div id="lpRing"></div>
+<div id="dragGhost">
+  <svg id="dgSvg" width="34" height="26" viewBox="0 0 34 26" style="flex-shrink:0"></svg>
+  <div><div class="dg-name" id="dgName"></div><div class="dg-sub" id="dgSub"></div></div>
+</div>
+
+<script>/* v1773198617 */
+// ═══════════════════════════════════════════
+//  SIMULATOR ENGINE
+// ═══════════════════════════════════════════
+const canvas = document.getElementById('mainCanvas');
+const C      = canvas.getContext('2d');
+const wrap   = document.getElementById('canvasWrap');
+const lpRing = document.getElementById('lpRing');
+// drag ghost elements
+const dragGhost = document.getElementById('dragGhost');
+const dgSvg     = document.getElementById('dgSvg');
+const dgName    = document.getElementById('dgName');
+const dgSub     = document.getElementById('dgSub');
+
+// gate display metadata
+const GATE_META = {
+  INPUT:{ name:'مدخل',   sub:'0 / 1',      color:'#00ff88' },
+  AND:  { name:'AND',    sub:'و المنطقية',  color:'#00d4ff' },
+  OR:   { name:'OR',     sub:'أو المنطقية', color:'#00d4ff' },
+  NOT:  { name:'NOT',    sub:'عاكس',        color:'#00d4ff' },
+  NAND: { name:'NAND',   sub:'عكس AND',     color:'#7b2fff' },
+  NOR:  { name:'NOR',    sub:'عكس OR',      color:'#7b2fff' },
+  XOR:  { name:'XOR',    sub:'أو حصري',     color:'#ffd700' },
+  XNOR: { name:'XNOR',  sub:'عكس XOR',     color:'#ffd700' },
+  LAMP: { name:'مصباح', sub:'مخرج مرئي',   color:'#ffd700' },
+};
+
+let nodes=[], wires=[], nextId=1;
+let mouseX=0, mouseY=0, ctxTarget=null;
+
+// ── Interaction state (declared here to avoid TDZ in render) ──
+let IM = 'IDLE';
+let lpTimer=null, lpNode=null, lpActive=false;
+let pressX=0,pressY=0,pressSX=0,pressSY=0;
+let dragNode=null, dragOX=0, dragOY=0;
+let panning=false, panSX=0,panSY=0,panVX=0,panVY=0;
+let wiringFrom=null;
+let selectedNodes = new Set();
+const LP_MS=900;
+
+// ── Viewport (pan + zoom) ──────────────────
+let vx=0, vy=0, vz=1;          // pan offset, zoom scale
+let pinchDist=null;             // for touch pinch
+const ZOOM_MIN=0.2, ZOOM_MAX=4;
+
+function toWorld(sx,sy){ return{x:(sx-vx)/vz, y:(sy-vy)/vz}; }
+function applyVP(){ C.setTransform(vz,0,0,vz,vx,vy); }
+function resetVP(){ C.setTransform(1,0,0,1,0,0); }
+function zoomAt(sx,sy,factor){
+  const nz=Math.max(ZOOM_MIN,Math.min(ZOOM_MAX,vz*factor));
+  vx=sx-(sx-vx)*(nz/vz); vy=sy-(sy-vy)*(nz/vz); vz=nz;
+}
+
+// Long-press
+
+const DEFS = {
+  INPUT:{ color:'#00ff88', ins:0, outs:1, w:74, h:52 },
+  AND:  { color:'#00d4ff', ins:2, outs:1, w:84, h:64 },
+  OR:   { color:'#00d4ff', ins:2, outs:1, w:84, h:64 },
+  NOT:  { color:'#00d4ff', ins:1, outs:1, w:74, h:52 },
+  NAND: { color:'#7b2fff', ins:2, outs:1, w:84, h:64 },
+  NOR:  { color:'#7b2fff', ins:2, outs:1, w:84, h:64 },
+  XOR:  { color:'#ffd700', ins:2, outs:1, w:84, h:64 },
+  XNOR: { color:'#ffd700', ins:2, outs:1, w:84, h:64 },
+  LAMP: { color:'#ffd700', ins:1, outs:0, w:74, h:64 },
+};
+
+// ── Resize ─────────────────────────────────
+function resize(){
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  render();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── Helpers ────────────────────────────────
+function mkNode(type,x,y){
+  const d=DEFS[type];
+  return{id:nextId++,type,x,y,w:d.w,h:d.h,
+         value:type==='INPUT'?0:null,
+         color:d.color,inputs:d.ins,outputs:d.outs,_moving:false};
+}
+function inPort(n,i){ const s=n.h/(n.inputs+1); return{x:n.x,y:n.y+s*(i+1)}; }
+function outPort(n){  return{x:n.x+n.w,y:n.y+n.h/2}; }
+function setMode(t){ document.getElementById('sMode').textContent=t; }
+
+// ── Simulation ─────────────────────────────
+function evaluate(){
+  for(const n of nodes) if(n.type!=='INPUT') n.value=null;
+  for(let p=0;p<nodes.length+2;p++){
+    for(const n of nodes){
+      if(n.type==='INPUT') continue;
+      const iv=[];
+      for(let i=0;i<n.inputs;i++){
+        const w=wires.find(w=>w.toId===n.id&&w.toPort===i);
+        if(!w){iv.push(null);continue;}
+        const s=nodes.find(x=>x.id===w.fromId);
+        iv.push(s?s.value:null);
+      }
+      if(iv.some(v=>v===null)){n.value=null;continue;}
+      n.value=gateEval(n.type,iv);
+    }
+  }
+}
+function gateEval(t,[a,b]){
+  switch(t){
+    case'AND': return(a&&b)?1:0;
+    case'OR':  return(a||b)?1:0;
+    case'NOT': return a?0:1;
+    case'NAND':return(a&&b)?0:1;
+    case'NOR': return(a||b)?0:1;
+    case'XOR': return(a!==b)?1:0;
+    case'XNOR':return(a===b)?1:0;
+    case'LAMP':return a;
+  }
+}
+
+// ── Render ─────────────────────────────────
+function render(){
+  evaluate();
+  const W=canvas.width,H=canvas.height;
+  C.clearRect(0,0,W,H);
+
+  // Grid drawn in world space
+  applyVP();
+  const gs=28;
+  // Compute visible world bounds
+  const wx0=(-vx)/vz, wy0=(-vy)/vz;
+  const wx1=wx0+W/vz,  wy1=wy0+H/vz;
+  const gx0=Math.floor(wx0/gs)*gs, gy0=Math.floor(wy0/gs)*gs;
+
+  C.strokeStyle='rgba(30,45,80,.28)'; C.lineWidth=1/vz;
+  for(let x=gx0;x<wx1;x+=gs){C.beginPath();C.moveTo(x,wy0);C.lineTo(x,wy1);C.stroke();}
+  for(let y=gy0;y<wy1;y+=gs){C.beginPath();C.moveTo(wx0,y);C.lineTo(wx1,y);C.stroke();}
+  C.fillStyle='rgba(0,212,255,.055)';
+  for(let x=gx0;x<wx1;x+=gs)for(let y=gy0;y<wy1;y+=gs){C.beginPath();C.arc(x,y,1/vz,0,Math.PI*2);C.fill();}
+
+  // Wires
+  for(const w of wires){
+    const s=nodes.find(n=>n.id===w.fromId),d=nodes.find(n=>n.id===w.toId);
+    if(s&&d) wire(outPort(s),inPort(d,w.toPort),s.value);
+  }
+  // Live preview (mouseX/mouseY are already in world coords)
+  if(wiringFrom){
+    const n=nodes.find(x=>x.id===wiringFrom.nodeId);
+    if(n){
+      const p=wiringFrom.portType==='output'?outPort(n):inPort(n,wiringFrom.portIdx);
+      wire(p,{x:mouseX,y:mouseY},null,true);
+    }
+  }
+  // Nodes
+  for(const n of nodes) drawNode(n);
+  resetVP();
+
+  // Status
+  document.getElementById('sNodes').textContent=nodes.length+' عنصر';
+  document.getElementById('sWires').textContent=wires.length+' سلك';
+}
+
+function wire(p1,p2,val,preview=false){
+  const dx=Math.abs(p2.x-p1.x)*.5;
+  C.beginPath(); C.moveTo(p1.x,p1.y);
+  C.bezierCurveTo(p1.x+dx,p1.y,p2.x-dx,p2.y,p2.x,p2.y);
+  C.setLineDash([]);
+  if(preview){ C.strokeStyle='rgba(0,212,255,.35)'; C.lineWidth=1.5; C.setLineDash([6,4]); C.shadowBlur=0; }
+  else if(val===1){ C.strokeStyle='#00d4ff'; C.lineWidth=2.5; C.shadowColor='#00d4ff'; C.shadowBlur=9; }
+  else if(val===0){ C.strokeStyle='#1a3050'; C.lineWidth=2; C.shadowBlur=0; }
+  else { C.strokeStyle='rgba(70,100,150,.4)'; C.lineWidth=1.5; C.setLineDash([4,4]); C.shadowBlur=0; }
+  C.stroke(); C.setLineDash([]); C.shadowBlur=0;
+}
+
+function drawNode(n){
+  const{x,y,w,h,type,color,value,_moving:mv}=n;
+  const on=value===1, nil=value===null;
+  C.save();
+  if(on&&type!=='LAMP'){C.shadowColor=color;C.shadowBlur=15;}
+  if(mv){C.shadowColor='#fff';C.shadowBlur=20;}
+  const sel=n._selected;
+  if(sel){ C.shadowColor='#ff3d6b'; C.shadowBlur=22; }
+  C.fillStyle=mv?'rgba(18,28,55,.97)':'rgba(10,14,26,.93)';
+  C.strokeStyle=sel?'#ff3d6b':(mv?'#fff':(nil?'rgba(70,100,155,.4)':(on?color:'rgba(38,62,108,.8)')));
+  C.lineWidth=sel?2.5:(mv?2.5:(on?2:1.5));
+  rr(x,y,w,h,10); C.fill(); C.stroke(); C.shadowBlur=0;
+  if(sel){
+    C.setLineDash([5,4]); C.strokeStyle='rgba(255,61,107,.45)';
+    C.lineWidth=1/vz; rr(x-5,y-5,w+10,h+10,14); C.stroke(); C.setLineDash([]);
+  }
+  C.fillStyle=color+(on?'aa':'25'); rrTop(x,y,w,6,10); C.fill();
+
+  if(type==='INPUT'){ drawInput(n); C.restore(); return; }
+  if(type==='LAMP'){  drawLamp(n);  C.restore(); return; }
+
+  // Gate label
+  C.fillStyle=nil?'rgba(80,115,165,.6)':(on?color:'rgba(135,168,210,.9)');
+  C.font=`bold 12px 'Share Tech Mono',monospace`;
+  C.textAlign='center'; C.textBaseline='middle';
+  C.fillText(type,x+w/2,y+h/2);
+
+  // Value badge
+  if(value!==null){
+    const bx=x+w-13,by=y+11;
+    C.fillStyle=on?color:'#182840';
+    C.beginPath();C.arc(bx,by,7,0,Math.PI*2);C.fill();
+    C.fillStyle=on?'#000':'#aaa'; C.font='bold 8px monospace'; C.fillText(value,bx,by);
+  }
+  for(let i=0;i<n.inputs;i++) dot(inPort(n,i), wireIn(n,i));
+  if(n.outputs>0) dot(outPort(n),value);
+  C.restore();
+}
+
+function wireIn(n,i){
+  const w=wires.find(w=>w.toId===n.id&&w.toPort===i);
+  if(!w) return null;
+  const s=nodes.find(x=>x.id===w.fromId);
+  return s?s.value:null;
+}
+
+function dot(p,val){
+  C.beginPath(); C.arc(p.x,p.y,5.5,0,Math.PI*2);
+  if(val===1){C.fillStyle='#00d4ff';C.shadowColor='#00d4ff';C.shadowBlur=9;}
+  else if(val===0){C.fillStyle='#192e4a';C.shadowBlur=0;}
+  else{C.fillStyle='rgba(48,68,108,.8)';C.shadowBlur=0;}
+  C.fill();
+  C.strokeStyle=val===1?'#00d4ff':'rgba(70,110,170,.4)';
+  C.lineWidth=1; C.stroke(); C.shadowBlur=0;
+}
+
+function drawInput(n){
+  const{x,y,w,h,value:v}=n, on=v===1;
+  C.fillStyle=on?'rgba(0,255,136,.13)':'rgba(0,35,22,.3)';
+  rr(x+2,y+2,w-4,h-4,7); C.fill();
+  if(on){C.shadowColor='#00ff88';C.shadowBlur=14;}
+  C.fillStyle=on?'#00ff88':'rgba(0,190,90,.35)';
+  C.font=`bold 24px 'Share Tech Mono',monospace`;
+  C.textAlign='center'; C.textBaseline='middle';
+  C.fillText(on?'1':'0',x+w/2-5,y+h/2);
+  C.shadowBlur=0;
+  C.fillStyle='rgba(120,155,200,.4)'; C.font='9px Cairo';
+  C.fillText('IN',x+w/2+12,y+h/2);
+  C.fillStyle='rgba(0,190,90,.28)'; C.font='8px Cairo';
+  C.fillText('اضغط',x+w/2,y+h-8);
+  dot(outPort(n),v);
+}
+
+function drawLamp(n){
+  const{x,y,w,h,value:v}=n, on=v===1;
+  const cx=x+w/2-5, cy=y+h/2, r=14;
+  if(on){
+    const g=C.createRadialGradient(cx,cy,2,cx,cy,r*3);
+    g.addColorStop(0,'rgba(255,215,0,.5)'); g.addColorStop(1,'rgba(255,200,0,0)');
+    C.fillStyle=g; C.beginPath(); C.arc(cx,cy,r*3,0,Math.PI*2); C.fill();
+    C.shadowColor='#ffd700'; C.shadowBlur=26;
+  }
+  C.beginPath();
+  C.arc(cx,cy-2,r,0,Math.PI*1.3,true);
+  C.arc(cx,cy-2,r,Math.PI*1.7,Math.PI*2,false);
+  C.fillStyle=on?'rgba(255,228,65,.92)':'rgba(52,43,16,.85)'; C.fill();
+  C.strokeStyle=on?'#ffd700':'rgba(120,100,44,.5)'; C.lineWidth=1.5; C.stroke();
+  C.shadowBlur=0;
+  C.fillStyle=on?'#9e7808':'#2a2010'; C.strokeStyle=on?'#ffd700':'#433818';
+  rr(cx-6,cy+r-3,12,7,2); C.fill(); C.stroke();
+  if(on){
+    C.strokeStyle='rgba(255,255,185,.7)'; C.lineWidth=1;
+    C.beginPath();
+    C.moveTo(cx-3,cy+2); C.quadraticCurveTo(cx,cy-4,cx+1,cy+2);
+    C.quadraticCurveTo(cx+4,cy-4,cx+4,cy+2); C.stroke();
+  }
+  C.fillStyle='rgba(130,165,205,.5)'; C.font='9px Cairo';
+  C.textAlign='right'; C.textBaseline='middle';
+  C.fillText('مصباح',x+w-3,y+h/2);
+  C.fillStyle=on?'#ffd700':'rgba(85,75,38,.6)';
+  C.font=`bold 10px 'Share Tech Mono'`;
+  C.fillText(v!==null?(on?'ON':'OFF'):'?',x+w-3,y+h/2+13);
+  dot(inPort(n,0),v);
+}
+
+function rr(x,y,w,h,r){
+  C.beginPath();
+  C.moveTo(x+r,y); C.lineTo(x+w-r,y); C.quadraticCurveTo(x+w,y,x+w,y+r);
+  C.lineTo(x+w,y+h-r); C.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  C.lineTo(x+r,y+h); C.quadraticCurveTo(x,y+h,x,y+h-r);
+  C.lineTo(x,y+r); C.quadraticCurveTo(x,y,x+r,y); C.closePath();
+}
+function rrTop(x,y,w,h,r){
+  C.beginPath();
+  C.moveTo(x+r,y); C.lineTo(x+w-r,y); C.quadraticCurveTo(x+w,y,x+w,y+r);
+  C.lineTo(x+w,y+h); C.lineTo(x,y+h); C.lineTo(x,y+r);
+  C.quadraticCurveTo(x,y,x+r,y); C.closePath();
+}
+
+// ── Hit testing ────────────────────────────
+function portAt(mx,my){
+  for(const n of nodes){
+    for(let i=0;i<n.inputs;i++){
+      const p=inPort(n,i);
+      if(Math.hypot(mx-p.x,my-p.y)<13) return{nodeId:n.id,portType:'input',portIdx:i};
+    }
+    if(n.outputs>0){
+      const p=outPort(n);
+      if(Math.hypot(mx-p.x,my-p.y)<13) return{nodeId:n.id,portType:'output',portIdx:0};
+    }
+  }
+  return null;
+}
+function nodeAt(mx,my){
+  for(let i=nodes.length-1;i>=0;i--){
+    const n=nodes[i];
+    if(mx>=n.x&&mx<=n.x+n.w&&my>=n.y&&my<=n.y+n.h) return n;
+  }
+  return null;
+}
+
+// ── Touch ripple feedback ──────────────────
+function ripple(cx,cy,color='#00d4ff'){
+  const d=document.createElement('div');
+  d.style.cssText=`position:fixed;z-index:300;pointer-events:none;
+    border-radius:50%;width:44px;height:44px;
+    border:2px solid ${color};opacity:.7;
+    left:${cx}px;top:${cy}px;
+    transform:translate(-50%,-50%) scale(0);
+    transition:transform .4s ease-out,opacity .4s ease-out;`;
+  document.body.appendChild(d);
+  requestAnimationFrame(()=>{
+    d.style.transform='translate(-50%,-50%) scale(2.2)';
+    d.style.opacity='0';
+  });
+  setTimeout(()=>d.remove(),420);
+}
+
+// ── Long press ring ─────────────────────────
+function lpShow(cx,cy){
+  lpRing.style.left=cx+'px'; lpRing.style.top=cy+'px';
+  lpRing.classList.add('show');
+}
+function lpHide(){ lpRing.classList.remove('show'); }
+
+// ── Selection state ─────────────────────────
+// selectedNodes = Set of node ids (declared at top)
+
+function isSelected(n){ return selectedNodes.has(n.id); }
+
+function selectOne(n){
+  // deselect all others
+  nodes.forEach(x=>x._selected=false);
+  selectedNodes.clear();
+  selectedNodes.add(n.id);
+  n._selected=true;
+  updateSelUI();
+}
+
+function addToSelection(n){
+  n._selected=true;
+  selectedNodes.add(n.id);
+  updateSelUI();
+}
+
+function deselectAll(){
+  nodes.forEach(x=>x._selected=false);
+  selectedNodes.clear();
+  hideDeleteBtn();
+}
+
+function updateSelUI(){
+  if(selectedNodes.size===0){ hideDeleteBtn(); return; }
+  // Find bounding box of all selected nodes
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const n of nodes){
+    if(!isSelected(n)) continue;
+    minX=Math.min(minX,n.x); minY=Math.min(minY,n.y);
+    maxX=Math.max(maxX,n.x+n.w); maxY=Math.max(maxY,n.y+n.h);
+  }
+  const r=wrap.getBoundingClientRect();
+  const scx=r.left+(minX+maxX)/2*vz+vx;
+  const scy=r.top +minY*vz+vy-14;
+  showDeleteBtn(scx,scy);
+}
+
+let delBtn=null;
+function showDeleteBtn(sx,sy){
+  if(!delBtn){
+    delBtn=document.createElement('div');
+    delBtn.style.cssText='position:fixed;z-index:600;background:#ff3d6b;color:#fff;'+
+      'border:none;border-radius:50%;width:44px;height:44px;font-size:20px;'+
+      'display:flex;align-items:center;justify-content:center;cursor:pointer;'+
+      'box-shadow:0 4px 22px rgba(255,61,107,.65);transform:translate(-50%,-100%);'+
+      'font-family:Cairo,sans-serif;';
+    delBtn.textContent='✕';
+    delBtn.addEventListener('click',deleteSelected);
+    delBtn.addEventListener('touchend',e=>{e.preventDefault();deleteSelected();},{passive:false});
+    document.body.appendChild(delBtn);
+  }
+  delBtn.style.left=sx+'px'; delBtn.style.top=sy+'px';
+  delBtn.style.display='flex';
+}
+function hideDeleteBtn(){
+  if(delBtn) delBtn.style.display='none';
+}
+function deleteSelected(){
+  const ids=new Set(selectedNodes);
+  wires=wires.filter(w=>!ids.has(w.fromId)&&!ids.has(w.toId));
+  nodes=nodes.filter(n=>!ids.has(n.id));
+  selectedNodes.clear(); dragNode=null;
+  hideDeleteBtn(); setMode('عادي'); render();
+}
+
+// ── Pointer helpers ─────────────────────────
+function ePos(e){
+  const r=canvas.getBoundingClientRect();
+  const src=(e.touches&&e.touches.length>0)?e.touches[0]
+           :(e.changedTouches&&e.changedTouches.length>0)?e.changedTouches[0]:e;
+  const sx=src.clientX-r.left, sy=src.clientY-r.top;
+  const w=toWorld(sx,sy);
+  return{sx,sy,mx:w.x,my:w.y,cx:src.clientX,cy:src.clientY};
+}
+function ePosAll(e){
+  const r=canvas.getBoundingClientRect();
+  return Array.from(e.touches).map(t=>({sx:t.clientX-r.left,sy:t.clientY-r.top}));
+}
+
+// ══════════════════════════════════════════════
+//  INTERACTION STATE MACHINE
+//
+//  States: IDLE | WIRING | LP_WAIT | SELECTED | DRAGGING | PANNING
+// ══════════════════════════════════════════════
+
+function cancelLP(){
+  if(lpTimer){clearTimeout(lpTimer);lpTimer=null;}
+  lpNode=null; lpActive=false; lpHide();
+}
+
+function onDown(e){
+  if(e.button===2){
+    const{mx,my,cx,cy}=ePos(e);
+    const n=nodeAt(mx,my);
+    if(n) showCtx(cx,cy,n);
+    return;
+  }
+  if(e.touches&&e.touches.length===2){ cancelLP(); return; }
+
+  const{sx,sy,mx,my,cx,cy}=ePos(e);
+  pressX=mx; pressY=my; pressSX=sx; pressSY=sy;
+  hideCtx();
+
+  // Visual ripple on every touch/click
+  if(e.touches) ripple(cx,cy,'rgba(0,212,255,.6)');
+
+  // ── PORT → wiring ──────────────────────────
+  const port=portAt(mx,my);
+  if(port){
+    wiringFrom=port; IM='WIRING';
+    setMode('توصيل'); return;
+  }
+
+  const n=nodeAt(mx,my);
+
+  // ── NODE ───────────────────────────────────
+  if(n){
+    if(IM==='SELECTED'){
+      if(isSelected(n)){
+        // Tap on already-selected → start drag immediately
+        dragNode=n; dragOX=mx-n.x; dragOY=my-n.y;
+        nodes.splice(nodes.indexOf(n),1); nodes.push(n);
+        IM='DRAGGING'; canvas.style.cursor='grabbing';
+        if(e.touches) ripple(cx,cy,'#ffd700');
+        return;
+      } else {
+        // Long-press on another node while in SELECTED → add to selection
+        cancelLP(); lpNode=n; lpActive=false;
+        lpShow(cx,cy);
+        lpTimer=setTimeout(()=>{
+          lpActive=true; lpHide();
+          addToSelection(n);
+          if(e.touches) ripple(cx,cy,'#ff3d6b');
+          setMode('محدد ('+selectedNodes.size+')');
+          render();
+        },LP_MS);
+        return;
+      }
+    }
+
+    // IDLE: start LP timer
+    cancelLP(); lpNode=n; lpActive=false;
+    lpShow(cx,cy);
+    lpTimer=setTimeout(()=>{
+      lpActive=true; lpHide();
+      selectOne(n);
+      IM='SELECTED';
+      if(e.touches) ripple(cx,cy,'#ff3d6b');
+      else ripple(cx,cy,'#ff3d6b');
+      setMode('محدد');
+      canvas.style.cursor='grab';
+      render();
+    },LP_MS);
+    return;
+  }
+
+  // ── EMPTY SPACE → pan or deselect ──────────
+  if(IM==='SELECTED'){ deselectAll(); IM='IDLE'; }
+  panning=true; panSX=sx; panSY=sy; panVX=vx; panVY=vy;
+  IM='PANNING'; canvas.style.cursor='grabbing';
+  setMode('تحريك المختبر');
+}
+
+function onMove(e){
+  // Pinch zoom
+  if(e.touches&&e.touches.length===2){
+    const ts=ePosAll(e);
+    const dist=Math.hypot(ts[0].sx-ts[1].sx,ts[0].sy-ts[1].sy);
+    if(pinchDist!==null){
+      const mc=(ts[0].sx+ts[1].sx)/2,mc2=(ts[0].sy+ts[1].sy)/2;
+      zoomAt(mc,mc2,dist/pinchDist);
+    }
+    pinchDist=dist; render(); return;
+  }
+  pinchDist=null;
+
+  const{sx,sy,mx,my}=ePos(e);
+  mouseX=mx; mouseY=my;
+
+  // Pan
+  if(IM==='PANNING'){ vx=panVX+(sx-panSX); vy=panVY+(sy-panSY); render(); return; }
+
+  // Cancel LP if finger drifted
+  if(lpTimer&&!lpActive){
+    if(Math.hypot(sx-pressSX,sy-pressSY)>20){ cancelLP(); IM='IDLE'; }
+  }
+
+  // Drag
+  if(IM==='DRAGGING'&&dragNode){
+    dragNode.x=mx-dragOX; dragNode.y=my-dragOY;
+    updateSelUI();
+  }
+
+  // Cursor (desktop)
+  if(!e.touches){
+    if(IM==='WIRING')       canvas.style.cursor='crosshair';
+    else if(IM==='DRAGGING')canvas.style.cursor='grabbing';
+    else if(IM==='PANNING') canvas.style.cursor='grabbing';
+    else if(portAt(mx,my))  canvas.style.cursor='crosshair';
+    else if(nodeAt(mx,my))  canvas.style.cursor=IM==='SELECTED'?'grab':'default';
+    else                    canvas.style.cursor='default';
+  }
+  render();
+}
+
+function onUp(e){
+  pinchDist=null;
+
+  if(IM==='PANNING'){
+    panning=false; IM='IDLE'; canvas.style.cursor='default'; setMode('عادي'); render(); return;
+  }
+
+  const{mx,my,cx,cy}=ePos(e);
+
+  // Finish wiring
+  if(IM==='WIRING'){
+    const port=portAt(mx,my);
+    const moved=Math.hypot(mx-pressX,my-pressY)>8/vz;
+    if(moved&&port&&port.nodeId!==wiringFrom.nodeId){
+      let fp=wiringFrom,tp=port;
+      if(fp.portType==='input'&&tp.portType==='output')[fp,tp]=[tp,fp];
+      if(fp.portType==='output'&&tp.portType==='input'){
+        wires=wires.filter(w=>!(w.toId===tp.nodeId&&w.toPort===tp.portIdx));
+        wires.push({fromId:fp.nodeId,toId:tp.nodeId,toPort:tp.portIdx});
+        if(e.changedTouches) ripple(cx,cy,'#00ff88');
+      }
+    }
+    if(!moved){
+      const p=wiringFrom;
+      if(p.portType==='input') wires=wires.filter(w=>!(w.toId===p.nodeId&&w.toPort===p.portIdx));
+      else wires=wires.filter(w=>w.fromId!==p.nodeId);
+    }
+    wiringFrom=null; IM='IDLE'; setMode('عادي'); render(); return;
+  }
+
+  // Finish drag → stay SELECTED
+  if(IM==='DRAGGING'){
+    dragNode=null; IM='SELECTED';
+    canvas.style.cursor='grab';
+    setMode('محدد'); render(); return;
+  }
+
+  // Short tap
+  const wasLP=lpActive;
+  cancelLP();
+  if(!wasLP){
+    if(IM==='SELECTED'){
+      // Short tap on selected node = nothing (already selected)
+      // Short tap on empty = deselect
+      const n=nodeAt(mx,my);
+      if(!n){ deselectAll(); IM='IDLE'; setMode('عادي'); }
+      else if(n.type==='INPUT'){ n.value=n.value===1?0:1; if(e.changedTouches) ripple(cx,cy,'#00ff88'); }
+    } else {
+      const n=nodeAt(mx,my);
+      if(n&&n.type==='INPUT'){ n.value=n.value===1?0:1; if(e.changedTouches) ripple(cx,cy,'#00ff88'); }
+      else if(!n){ deselectAll(); IM='IDLE'; }
+    }
+  } else {
+    // LP fired → already handled in timer callback
+  }
+  render();
+}
+
+// Mouse events
+canvas.addEventListener('mousedown',  onDown);
+canvas.addEventListener('mousemove',  onMove);
+canvas.addEventListener('mouseup',    onUp);
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+
+// Mouse hover ripple feedback
+canvas.addEventListener('mouseenter', e=>{});
+canvas.addEventListener('mouseleave', e=>{ if(IM==='IDLE') canvas.style.cursor='default'; });
+
+// Scroll wheel zoom
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=canvas.getBoundingClientRect();
+  zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.12:1/1.12);
+  render();
+},{passive:false});
+
+// Middle-mouse pan
+canvas.addEventListener('mousedown',e=>{
+  if(e.button===1){
+    e.preventDefault();
+    const r=canvas.getBoundingClientRect();
+    panning=true; panSX=e.clientX-r.left; panSY=e.clientY-r.top; panVX=vx; panVY=vy;
+    IM='PANNING'; canvas.style.cursor='grabbing';
+  }
+});
+
+// Touch events
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  if(e.touches.length===2){ pinchDist=null; cancelLP(); return; }
+  onDown(e);
+},{passive:false});
+canvas.addEventListener('touchmove', e=>{e.preventDefault();onMove(e);},{passive:false});
+canvas.addEventListener('touchend',  e=>{e.preventDefault();onUp(e);},{passive:false});
+canvas.addEventListener('touchcancel',e=>{
+  cancelLP(); dragNode=null; wiringFrom=null; panning=false;
+  IM='IDLE'; deselectAll(); render();
+},{passive:false});
+
+// ══════════════════════════════════════════════════
+//  SIDEBAR DRAG — uses Pointer Events API
+//  Works on mouse + touch, no HTML5 DnD issues,
+//  no conflict with touch-action:none on canvas.
+// ══════════════════════════════════════════════════
+
+let sdType   = null;   // gate type being dragged from sidebar
+let sdItem   = null;   // sidebar DOM element
+let sdActive = false;  // threshold crossed?
+let sdStartX = 0, sdStartY = 0;
+const SD_THRESHOLD = 6; // px
+
+function sdGhostShow(type, cx, cy) {
+  const m = GATE_META[type] || { name: type, sub:'', color:'#00d4ff' };
+  const src = document.querySelector(`.gate-item[data-type="${type}"] .gate-symbol`);
+  dgSvg.innerHTML = src ? src.innerHTML : '';
+  dgName.textContent       = m.name;
+  dgName.style.color       = m.color;
+  dgSub.textContent        = m.sub;
+  dragGhost.style.borderColor = m.color;
+  dragGhost.style.boxShadow   = `0 0 20px ${m.color}55,0 6px 28px #000c`;
+  dragGhost.style.display     = 'flex';
+  sdGhostMove(cx, cy);
+}
+function sdGhostMove(cx, cy) {
+  dragGhost.style.left = cx + 'px';
+  dragGhost.style.top  = cy + 'px';
+}
+function sdGhostHide() {
+  dragGhost.style.display = 'none';
+  wrap.classList.remove('dz-active');
+  if (sdItem) sdItem.classList.remove('is-dragging');
+}
+
+document.querySelectorAll('.gate-item').forEach(item => {
+  // ── Pointer Down on sidebar item ─────────
+  item.addEventListener('pointerdown', e => {
+    // only main button (mouse left) or touch
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.stopPropagation();          // don't bubble to canvas handlers
+    item.setPointerCapture(e.pointerId);
+    sdType   = item.dataset.type;
+    sdItem   = item;
+    sdActive = false;
+    sdStartX = e.clientX;
+    sdStartY = e.clientY;
+  });
+
+  // ── Pointer Move ──────────────────────────
+  item.addEventListener('pointermove', e => {
+    if (!sdType) return;
+    const dx = e.clientX - sdStartX;
+    const dy = e.clientY - sdStartY;
+    if (!sdActive) {
+      if (Math.hypot(dx, dy) < SD_THRESHOLD) return;
+      // threshold crossed → start drag
+      sdActive = true;
+      sdItem.classList.add('is-dragging');
+      sdGhostShow(sdType, e.clientX, e.clientY);
+    }
+    e.preventDefault();
+    sdGhostMove(e.clientX, e.clientY);
+    // highlight canvas if pointer is over it
+    const r = wrap.getBoundingClientRect();
+    const over = e.clientX >= r.left && e.clientX <= r.right &&
+                 e.clientY >= r.top  && e.clientY <= r.bottom;
+    wrap.classList.toggle('dz-active', over);
+  });
+
+  // ── Pointer Up ────────────────────────────
+  item.addEventListener('pointerup', e => {
+    if (!sdType) return;
+    const type = sdType;
+    sdGhostHide();
+    sdType = sdItem = null;
+    if (!sdActive) return;   // was a tap, not a drag
+    sdActive = false;
+    // drop into canvas?
+    const r = wrap.getBoundingClientRect();
+    if (e.clientX >= r.left && e.clientX <= r.right &&
+        e.clientY >= r.top  && e.clientY <= r.bottom) {
+      const wx = toWorld(e.clientX - r.left, e.clientY - r.top);
+      addNode(type, wx.x - DEFS[type].w/2, wx.y - DEFS[type].h/2);
+      ripple(e.clientX, e.clientY, GATE_META[type]?.color || '#00d4ff');
+    }
+  });
+
+  // ── Pointer Cancel ────────────────────────
+  item.addEventListener('pointercancel', e => {
+    sdGhostHide();
+    sdType = sdItem = null; sdActive = false;
+  });
+});
+
+function addNode(type,x,y){
+  nodes.push(mkNode(type,Math.max(4,x),Math.max(4,y)));
+  render();
+}
+
+// ── Context menu ────────────────────────────
+function showCtx(x,y,n){
+  ctxTarget=n;
+  const m=document.getElementById('ctxMenu');
+  document.getElementById('ctxToggleBtn').style.display=n.type==='INPUT'?'flex':'none';
+  m.style.display='block';
+  m.style.left=Math.min(x,window.innerWidth-165)+'px';
+  m.style.top =Math.min(y,window.innerHeight-100)+'px';
+}
+function hideCtx(){
+  document.getElementById('ctxMenu').style.display='none';
+  ctxTarget=null;
+}
+function ctxToggle(){
+  if(ctxTarget&&ctxTarget.type==='INPUT'){ctxTarget.value=ctxTarget.value===1?0:1;render();}
+  hideCtx();
+}
+function ctxDelete(){
+  if(!ctxTarget) return;
+  wires=wires.filter(w=>w.fromId!==ctxTarget.id&&w.toId!==ctxTarget.id);
+  nodes=nodes.filter(n=>n.id!==ctxTarget.id);
+  hideCtx(); render();
+}
+document.addEventListener('click',      e=>{if(!e.target.closest('#ctxMenu'))hideCtx();});
+document.addEventListener('touchstart', e=>{if(!e.target.closest('#ctxMenu'))hideCtx();},{passive:true});
+
+// ── Controls ────────────────────────────────
+function runSim(){ evaluate(); render(); }
+function clearAll(){ nodes=[]; wires=[]; render(); }
+
+// ── Demo ────────────────────────────────────
+(function(){
+  const cw=wrap.clientWidth||300;
+  const s=Math.max(.45,Math.min(1,cw/480));
+  const X=v=>Math.round(v*s+8), Y=v=>Math.round(v*s+16);
+
+  const a=mkNode('INPUT',X(18),Y(18)); a.value=1;
+  const b=mkNode('INPUT',X(18),Y(100)); b.value=0;
+  const ag=mkNode('AND',X(140),Y(46));
+  const l1=mkNode('LAMP',X(278),X(40));
+  nodes.push(a,b,ag,l1);
+  wires.push({fromId:a.id,toId:ag.id,toPort:0},{fromId:b.id,toId:ag.id,toPort:1},{fromId:ag.id,toId:l1.id,toPort:0});
+
+  const c=mkNode('INPUT',X(18),Y(200)); c.value=1;
+  const d=mkNode('INPUT',X(18),Y(282)); d.value=1;
+  const og=mkNode('OR',X(140),Y(228));
+  const l2=mkNode('LAMP',X(278),Y(222));
+  nodes.push(c,d,og,l2);
+  wires.push({fromId:c.id,toId:og.id,toPort:0},{fromId:d.id,toId:og.id,toPort:1},{fromId:og.id,toId:l2.id,toPort:0});
+
+  render();
+})();
+</script>
+</body>
+</html>

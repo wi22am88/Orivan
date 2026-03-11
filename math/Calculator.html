@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculator Dark Pro - English Version</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --text-main: #f8fafc;
+            --key-bg: #334155;
+        }
+
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+        
+        #main-container { display: flex; flex: 1; overflow: hidden; }
+
+        #sidebar {
+            width: 320px; background: var(--sidebar-bg); border-right: 1px solid #334155;
+            display: flex; flex-direction: column; padding: 15px; z-index: 5;
+            gap: 10px;
+        }
+
+        #graph-container { flex: 1; position: relative; background: var(--bg-dark); touch-action: none; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* حقل الإدخال الأصلي أصبح مخفياً ونستخدم بدلاً منه حقل العرض */
+        #eqInput {
+            display: none;
+        }
+
+        /* حقل العرض الجديد */
+        #eqDisplay {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            background: #0f172a;
+            border: 2px solid #475569;
+            color: var(--accent-purple);   /* لون LaTeX */
+            border-radius: 12px;
+            outline: none;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+            direction: ltr;
+            text-align: left;
+            white-space: nowrap;
+            overflow-x: auto;
+            font-family: 'Segoe UI', sans-serif;
+            cursor: text;
+            min-height: 60px;
+        }
+        #eqDisplay:focus {
+            border-color: var(--accent-purple);
+        }
+
+        /* إخفاء عنصر LaTeX القديم */
+        #latex-render {
+            display: none;
+        }
+
+        #math-keyboard {
+            background: #111827; border-top: 1px solid #334155; padding: 8px;
+            display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px;
+            user-select: none;
+        }
+
+        .key {
+            background: var(--key-bg); border: none; color: white; padding: 12px 5px; border-radius: 6px;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .key:active { transform: scale(0.95); background: var(--accent-purple); }
+        .key.op { color: var(--accent-purple); background: #1e293b; }
+        .key.func { color: var(--accent-blue); background: #1e293b; }
+        .key.delete { background: #7f1d1d; color: #fca5a5; }
+        .key.switch { background: #475569; color: var(--accent-blue); }
+        .key.nav { background: #475569; color: #fff; }
+
+        #error { color: #fb7185; font-size: 12px; margin-top: 5px; height: 15px; }
+
+        /* أدوات التحكم بالتكبير */
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+            justify-content: flex-start;
+        }
+        .zoom-btn {
+            background: #334155;
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.1s;
+        }
+        .zoom-btn:hover {
+            background: var(--accent-purple);
+        }
+        .zoom-btn:active {
+            transform: scale(0.9);
+        }
+        .coord-info {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 5px;
+            text-align: left;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar { width: 100%; height: 200px; position: absolute; top: 0; border-right: none; border-bottom: 1px solid #334155; }
+            #main-container { flex-direction: column; }
+            #math-keyboard { height: 40vh; }
+            .zoom-controls { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="main-container">
+    <div id="sidebar">
+        <h3 style="color: var(--accent-purple); margin: 0 0 10px 0;">Calculator Graph Pro</h3>
+        
+        <!-- حقل الإدخال الأصلي أصبح مخفياً ويستخدم لتخزين النص الخام -->
+        <input type="text" id="eqInput" class="input-box" 
+               placeholder="Equation here..." 
+               value="x^2" 
+               inputmode="none"
+               autocomplete="off">
+
+        <!-- حقل العرض الجديد (LaTeX) -->
+        <div id="eqDisplay" class="input-box" contenteditable="false"></div>
+
+        <!-- عنصر latex-render الأصلي تم إخفاؤه بواسطة CSS -->
+        <div id="latex-render">$$x^2$$</div>
+
+        <div id="error"></div>
+
+        <!-- أدوات التكبير/التصغير وإعادة الضبط -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomIn">+</button>
+            <button class="zoom-btn" id="zoomOut">-</button>
+            <button class="zoom-btn" id="resetView">⟲</button>
+        </div>
+
+        <!-- معلومات الإحداثيات (عند تحريك الماوس) -->
+        <div class="coord-info" id="coordDisplay">x: 0.00, y: 0.00</div>
+    </div>
+
+    <div id="graph-container">
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
+
+<div id="math-keyboard">
+    <button class="key func" data-val="sin()">sin</button>
+    <button class="key func" data-val="cos()">cos</button>
+    <button class="key func" data-val="tan()">tan</button>
+    <button class="key op" data-val="^()">xʸ</button>
+    <button class="key" data-val="1">1</button>
+    <button class="key" data-val="2">2</button>
+    <button class="key" data-val="3">3</button>
+    <button class="key op" data-val="/">÷</button>
+    <button class="key delete" onclick="backspace()" style="grid-column: span 2;">DEL</button>
+
+    <button class="key func" data-val="sqrt()">√</button>
+    <button class="key func" data-val="log()">log</button>
+    <button class="key func" data-val="abs()">|x|</button>
+    <button class="key op" data-val="^2">x²</button>
+    <button class="key" data-val="4">4</button>
+    <button class="key" data-val="5">5</button>
+    <button class="key" data-val="6">6</button>
+    <button class="key op" data-val="*">×</button>
+    <button class="key op" onclick="clearInput()" style="grid-column: span 2;">AC</button>
+
+    <button class="key op" data-val="pi">π</button>
+    <button class="key op" data-val="e">e</button>
+    <button class="key op" data-val="(">(</button>
+    <button class="key op" data-val=")">)</button>
+    <button class="key" data-val="7">7</button>
+    <button class="key" data-val="8">8</button>
+    <button class="key" data-val="9">9</button>
+    <button class="key op" data-val="-">-</button>
+    <button class="key nav" onclick="moveCursor('up')">↑</button>
+    <button class="key nav" onclick="moveCursor('down')">↓</button>
+
+    <!-- الصف الرابع: تمت إضافة زر = بجانب 0 والنقطة -->
+    <button class="key op" data-val="x">x</button>
+    <button class="key op" data-val="y">y</button>
+    <button class="key op" data-val=" <= ">≤</button>
+    <button class="key op" data-val=" >= ">≥</button>
+    <button class="key" data-val="0">0</button>
+    <button class="key" data-val=".">.</button>
+    <button class="key op" data-val="=">=</button>   <!-- زر يساوي الجديد -->
+    <button class="key op" data-val="+">+</button>
+    <button class="key nav" onclick="moveCursor('left')">←</button>
+    <button class="key nav" onclick="moveCursor('right')">→</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // المتغيرات الجديدة: rawInput هو الحقل الأصلي المخفي، و displayDiv هو الحقل المرئي
+    const rawInput = document.getElementById('eqInput');
+    const displayDiv = document.getElementById('eqDisplay');
+    
+    const errorDisplay = document.getElementById('error');
+    const mathKb = document.getElementById('math-keyboard');
+    const latexRender = document.getElementById('latex-render');  // لا نستخدمه ولكن نبقي عليه
+    const coordDisplay = document.getElementById('coordDisplay');
+
+    let config = { zoom: 60, offsetX: 0, offsetY: 0 };
+
+    // دالة لتحديث عرض LaTeX في displayDiv بناءً على قيمة rawInput
+    function updateLatex() {
+        try {
+            const val = rawInput.value;
+            if (!val) { 
+                displayDiv.innerHTML = ""; 
+                return; 
+            }
+            const node = math.parse(val);
+            const latex = node.toTex();
+            // عرض LaTeX باستخدام MathJax (نضعه داخل div)
+            displayDiv.innerHTML = '$$' + latex + '$$';
+            if (window.MathJax) {
+                MathJax.typesetPromise([displayDiv]).catch(err => console.log(err));
+            }
+        } catch (e) {
+            // في حالة خطأ، نعرض النص الخام
+            displayDiv.innerText = rawInput.value;
+        }
+    }
+
+    // دالة لإدراج نص في rawInput (مع الحفاظ على موضع المؤشر)
+    function insertText(text) {
+        const start = rawInput.selectionStart;
+        const end = rawInput.selectionEnd;
+        
+        let offset = text.length;
+        if (text.endsWith("()")) {
+            offset = text.length - 1; 
+        }
+
+        rawInput.value = rawInput.value.substring(0, start) + text + rawInput.value.substring(end);
+        rawInput.setSelectionRange(start + offset, start + offset);
+        
+        updateLatex();
+        draw();
+        rawInput.focus();
+    }
+
+    // دالة لتحريك المؤشر في rawInput
+    function moveCursor(direction) {
+        let start = rawInput.selectionStart;
+        if (direction === 'left' && start > 0) {
+            rawInput.setSelectionRange(start - 1, start - 1);
+        } else if (direction === 'right' && start < rawInput.value.length) {
+            rawInput.setSelectionRange(start + 1, start + 1);
+        } else if (direction === 'up') {
+            rawInput.setSelectionRange(0, 0);
+        } else if (direction === 'down') {
+            rawInput.setSelectionRange(rawInput.value.length, rawInput.value.length);
+        }
+        rawInput.focus();
+    }
+
+    // دالة الحذف الخلفي
+    function backspace() {
+        const start = rawInput.selectionStart;
+        const end = rawInput.selectionEnd;
+        if (start === end && start > 0) {
+            rawInput.value = rawInput.value.substring(0, start - 1) + rawInput.value.substring(end);
+            rawInput.setSelectionRange(start - 1, start - 1);
+        } else {
+            rawInput.value = rawInput.value.substring(0, start) + rawInput.value.substring(end);
+            rawInput.setSelectionRange(start, start);
+        }
+        updateLatex();
+        draw();
+        rawInput.focus();
+    }
+
+    // مسح الكل
+    function clearInput() {
+        rawInput.value = "";
+        updateLatex();
+        draw();
+        rawInput.focus();
+    }
+
+    // تكبير/تصغير الرسم
+    function resize() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        draw();
+    }
+
+    // دالة لرسم الشبكة والمحاور والأرقام
+    function drawGrid() {
+        const w = canvas.width, h = canvas.height;
+        const cx = w/2 + config.offsetX;
+        const cy = h/2 + config.offsetY;
+        const step = config.zoom;
+        const subStep = step / 4; // شبكة فرعية رفيعة
+
+        // خلفية داكنة
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        // رسم الشبكة الفرعية (خطوط رفيعة جداً)
+        ctx.strokeStyle = '#1e2b3c';
+        ctx.lineWidth = 0.5;
+        for (let x = cx % subStep; x < w; x += subStep) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.strokeStyle = '#1e2b3c';
+            ctx.stroke();
+        }
+        for (let y = cy % subStep; y < h; y += subStep) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.strokeStyle = '#1e2b3c';
+            ctx.stroke();
+        }
+
+        // رسم الشبكة الرئيسية
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1;
+        for (let x = cx % step; x < w; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.strokeStyle = '#334155';
+            ctx.stroke();
+        }
+        for (let y = cy % step; y < h; y += step) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.strokeStyle = '#334155';
+            ctx.stroke();
+        }
+
+        // رسم المحاور الرئيسية
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(w, cy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, h);
+        ctx.stroke();
+
+        // رسم الأرقام على المحاور
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px "Segoe UI", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        // الأرقام الأفقية
+        for (let x = cx % step; x < w; x += step) {
+            if (Math.abs(x - cx) < 5) continue; // تجنب الكتابة فوق نقطة الأصل
+            let xVal = ((x - cx) / step).toFixed(1);
+            ctx.fillText(xVal, x, cy - 15);
+        }
+        // الأرقام الرأسية
+        for (let y = cy % step; y < h; y += step) {
+            if (Math.abs(y - cy) < 5) continue;
+            let yVal = ((cy - y) / step).toFixed(1);
+            ctx.fillText(yVal, cx + 15, y);
+        }
+        // نقطة الأصل
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, 2*Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('0', cx + 10, cy - 10);
+    }
+
+    // دالة الرسم المحسنة
+    function draw() {
+        const w = canvas.width, h = canvas.height;
+        const cx = w/2 + config.offsetX;
+        const cy = h/2 + config.offsetY;
+
+        // رسم الشبكة والمحاور
+        drawGrid();
+
+        // رسم المنحنى
+        try {
+            const expr = math.compile(rawInput.value);
+            ctx.strokeStyle = '#c084fc';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            // حساب الخطوة التكيفية بناءً على التكبير
+            let step = 1;
+            if (config.zoom > 100) step = 0.5;
+            if (config.zoom < 20) step = 3;
+
+            let first = true;
+            for (let i = 0; i < w; i += step) {
+                const x = (i - cx) / config.zoom;
+                let y;
+                try {
+                    y = expr.evaluate({x: x});
+                } catch (e) {
+                    first = true;
+                    continue;
+                }
+                const sy = cy - (y * config.zoom);
+                if (!isFinite(sy)) {
+                    first = true;
+                    continue;
+                }
+                if (first) {
+                    ctx.moveTo(i, sy);
+                    first = false;
+                } else {
+                    ctx.lineTo(i, sy);
+                }
+            }
+            ctx.stroke();
+            errorDisplay.innerText = "";
+        } catch(e) { 
+            errorDisplay.innerText = "Syntax Error"; 
+        }
+
+        // تحديث معلومات الإحداثيات (إذا كان الماوس داخل الكانفاس)
+    }
+
+    // إحداثيات الماوس
+    function handleMouseMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        const cx = canvas.width/2 + config.offsetX;
+        const cy = canvas.height/2 + config.offsetY;
+        const x = (mouseX - cx) / config.zoom;
+        const y = (cy - mouseY) / config.zoom;
+        coordDisplay.innerText = `x: ${x.toFixed(2)}, y: ${y.toFixed(2)}`;
+    }
+
+    // تهيئة الصفحة
+    function init() {
+        resize();
+        window.onresize = resize;
+        
+        // ربط أحداث الأزرار (تظل كما هي ولكن تعمل على rawInput)
+        document.querySelectorAll('.key[data-val]').forEach(btn => {
+            btn.onclick = () => insertText(btn.getAttribute('data-val'));
+        });
+        
+        // تفعيل السحب على canvas
+        let isDragging = false, lastPos = {x:0, y:0};
+        canvas.onmousedown = e => { 
+            isDragging = true; 
+            lastPos = {x:e.clientX, y:e.clientY}; 
+            canvas.style.cursor = 'grabbing';
+        };
+        window.onmouseup = () => { 
+            isDragging = false; 
+            canvas.style.cursor = 'default';
+        };
+        window.onmousemove = e => {
+            handleMouseMove(e);
+            if (!isDragging) return;
+            config.offsetX += e.clientX - lastPos.x;
+            config.offsetY += e.clientY - lastPos.y;
+            lastPos = {x:e.clientX, y:e.clientY};
+            draw();
+        };
+
+        // دعم اللمس للهواتف
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastPos = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+            }
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDragging || e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            config.offsetX += touch.clientX - lastPos.x;
+            config.offsetY += touch.clientY - lastPos.y;
+            lastPos = {x: touch.clientX, y: touch.clientY};
+            draw();
+        });
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDragging = false;
+        });
+
+        // تكبير/تصغير بالعجلة مع تركيز على نقطة الماوس
+        canvas.onwheel = e => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            const cx = canvas.width/2 + config.offsetX;
+            const cy = canvas.height/2 + config.offsetY;
+            const x = (mouseX - cx) / config.zoom;
+            const y = (cy - mouseY) / config.zoom;
+            
+            const factor = e.deltaY < 0 ? 1.1 : 0.9;
+            config.zoom *= factor;
+            
+            // إعادة تمركز العرض بحيث تبقى النقطة تحت الماوس ثابتة
+            const newCx = canvas.width/2 + config.offsetX;
+            const newCy = canvas.height/2 + config.offsetY;
+            config.offsetX += (mouseX - newCx) - x * config.zoom;
+            config.offsetY += (newCy - mouseY) - y * config.zoom;
+            
+            draw();
+        };
+
+        // أزرار التكبير
+        document.getElementById('zoomIn').onclick = () => {
+            config.zoom *= 1.2;
+            draw();
+        };
+        document.getElementById('zoomOut').onclick = () => {
+            config.zoom /= 1.2;
+            draw();
+        };
+        document.getElementById('resetView').onclick = () => {
+            config.zoom = 60;
+            config.offsetX = 0;
+            config.offsetY = 0;
+            draw();
+        };
+
+        // تعيين القيمة الافتراضية لـ rawInput وعرض LaTeX
+        rawInput.value = "x^2";
+        updateLatex();
+        draw();
+
+        // عند النقر على displayDiv، ننقل التركيز إلى rawInput
+        displayDiv.addEventListener('click', () => {
+            rawInput.focus();
+        });
+
+        // تحديث LaTeX عند تغيير rawInput (بما في ذلك الكتابة من لوحة المفاتيح)
+        rawInput.addEventListener('input', () => {
+            updateLatex();
+            draw();
+        });
+
+        // منع ظهور لوحة المفاتيح الافتراضية على displayDiv
+        displayDiv.addEventListener('focus', (e) => e.preventDefault());
+        
+        // نقل focus إلى rawInput عند تحميل الصفحة
+        rawInput.focus();
+
+        // تتبع حركة الماوس لعرض الإحداثيات
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseleave', () => {
+            coordDisplay.innerText = 'x: 0.00, y: 0.00';
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>

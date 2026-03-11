@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>البوابة التعليمية الذكية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #020817;
+  --bg2:      #030d1f;
+  --c1:       #00d4ff;
+  --c2:       #7c3aed;
+  --c3:       #f59e0b;
+  --c4:       #10b981;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --card:     rgba(15,23,42,0.85);
+  --border:   rgba(0,212,255,0.15);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ══════════════════ CANVAS BG ══════════════════ */
+#bg-canvas{
+  position:fixed;inset:0;z-index:0;
+}
+
+/* ══════════════════ GRID OVERLAY ══════════════════ */
+.grid-overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,212,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.03) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+
+/* ══════════════════ SCANLINES ══════════════════ */
+.scanlines{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,.06) 2px, rgba(0,0,0,.06) 4px
+  );
+}
+
+/* ══════════════════ CORNER DECORATIONS ══════════════════ */
+.corner{position:fixed;width:40px;height:40px;z-index:10;pointer-events:none;}
+.corner.tl{top:16px;left:16px;border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.tr{top:16px;right:16px;border-top:2px solid var(--c2);border-right:2px solid var(--c2);}
+.corner.bl{bottom:16px;left:16px;border-bottom:2px solid var(--c4);border-left:2px solid var(--c4);}
+.corner.br{bottom:16px;right:16px;border-bottom:2px solid var(--c3);border-right:2px solid var(--c3);}
+
+/* ══════════════════ STATUS BAR ══════════════════ */
+.status-bar{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 28px;
+  background:rgba(2,8,23,0.7);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.status-logo{
+  font-family:'Orbitron',sans-serif;
+  font-size:.7rem;font-weight:700;
+  color:var(--c1);letter-spacing:3px;
+  text-shadow:0 0 10px rgba(0,212,255,.5);
+}
+.status-indicators{display:flex;gap:20px;align-items:center;}
+.status-dot{
+  display:flex;align-items:center;gap:6px;
+  font-size:.6rem;letter-spacing:2px;color:var(--muted);
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  animation:pulse 2s ease-in-out infinite;
+}
+.dot.green{background:var(--c4);box-shadow:0 0 6px var(--c4);}
+.dot.blue{background:var(--c1);box-shadow:0 0 6px var(--c1);animation-delay:.5s;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.status-time{
+  font-family:'Orbitron',sans-serif;
+  font-size:.65rem;color:var(--c3);
+  letter-spacing:2px;
+}
+
+/* ══════════════════ MAIN WRAPPER ══════════════════ */
+.wrapper{
+  position:relative;z-index:5;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px 24px 40px;
+  gap:0;
+}
+
+/* ══════════════════ HERO ══════════════════ */
+.hero{
+  text-align:center;
+  margin-bottom:60px;
+  animation:fadeUp .8s ease both;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,.06);
+  border:1px solid rgba(0,212,255,.2);
+  border-radius:100px;
+  padding:6px 18px;
+  font-size:.7rem;letter-spacing:3px;color:var(--c1);
+  margin-bottom:28px;
+  animation:fadeUp .6s ease both;
+}
+.hero-badge-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--c1);
+  box-shadow:0 0 8px var(--c1);
+  animation:pulse 1.5s ease-in-out infinite;
+}
+
+.hero-title{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(2rem,5vw,3.8rem);
+  font-weight:800;
+  line-height:1.15;
+  margin-bottom:18px;
+  animation:fadeUp .7s .1s ease both;
+}
+.hero-title .line1{
+  display:block;
+  background:linear-gradient(135deg,#fff 30%,var(--c1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-title .line2{
+  display:block;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  font-size:.65em;font-weight:400;letter-spacing:.05em;
+}
+
+.hero-sub{
+  color:var(--muted);
+  font-size:1rem;font-weight:300;
+  max-width:460px;margin:0 auto;
+  line-height:1.8;
+  animation:fadeUp .7s .2s ease both;
+}
+
+/* ══════════════════ STATS ROW ══════════════════ */
+.stats{
+  display:flex;gap:40px;justify-content:center;
+  margin-bottom:56px;
+  animation:fadeUp .7s .3s ease both;
+}
+.stat{text-align:center;}
+.stat-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;font-weight:700;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.stat-lbl{font-size:.7rem;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+.stat-divider{width:1px;background:var(--border);align-self:stretch;}
+
+/* ══════════════════ CARDS GRID ══════════════════ */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  width:100%;max-width:1000px;
+  animation:fadeUp .7s .35s ease both;
+}
+
+/* ══════════════════ CARD ══════════════════ */
+.card{
+  position:relative;
+  background:var(--card);
+  border-radius:20px;
+  border:1px solid var(--border);
+  padding:32px 28px;
+  cursor:pointer;
+  text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:transform .35s cubic-bezier(.175,.885,.32,1.275),
+             border-color .35s ease,
+             box-shadow .35s ease;
+  backdrop-filter:blur(12px);
+}
+.card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);
+  pointer-events:none;
+}
+.card::after{
+  content:'';
+  position:absolute;
+  top:-80px;left:-80px;
+  width:200px;height:200px;
+  border-radius:50%;
+  opacity:0;
+  filter:blur(60px);
+  transition:opacity .4s ease;
+  pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.card:hover::after{opacity:1;}
+
+/* per-card accent colors */
+.card.physics{--accent:var(--c1);}
+.card.physics:hover{border-color:var(--c1);box-shadow:0 20px 60px rgba(0,212,255,.15);}
+.card.physics::after{background:var(--c1);}
+
+.card.math{--accent:var(--c2);}
+.card.math:hover{border-color:var(--c2);box-shadow:0 20px 60px rgba(124,58,237,.2);}
+.card.math::after{background:var(--c2);}
+
+.card.chemistry{--accent:var(--c4);}
+.card.chemistry:hover{border-color:var(--c4);box-shadow:0 20px 60px rgba(16,185,129,.15);}
+.card.chemistry::after{background:var(--c4);}
+
+.card.programming{--accent:var(--c3);}
+.card.programming:hover{border-color:var(--c3);box-shadow:0 20px 60px rgba(245,158,11,.15);}
+.card.programming::after{background:var(--c3);}
+
+/* card top bar */
+.card-bar{
+  height:3px;border-radius:3px;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+  margin-bottom:24px;
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .4s .1s ease;
+}
+.card:hover .card-bar{transform:scaleX(1);}
+
+/* card icon */
+.card-icon-wrap{
+  width:60px;height:60px;border-radius:16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;
+  margin-bottom:20px;
+  position:relative;
+  transition:background .3s ease, border-color .3s ease;
+}
+.card:hover .card-icon-wrap{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.15);
+}
+
+.card-tag{
+  position:absolute;top:10px;left:10px;
+  font-size:.55rem;letter-spacing:2px;
+  color:var(--accent);
+  font-family:'Orbitron',sans-serif;
+  opacity:.7;
+}
+
+.card h2{
+  font-size:1.25rem;font-weight:700;
+  margin-bottom:10px;
+  color:#f1f5f9;
+}
+
+.card p{
+  color:var(--muted);
+  font-size:.88rem;line-height:1.7;
+  flex:1;margin-bottom:20px;
+}
+
+/* topics pills */
+.card-topics{
+  display:flex;gap:6px;flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.topic-pill{
+  font-size:.6rem;letter-spacing:1px;
+  padding:3px 10px;border-radius:100px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  color:var(--muted);
+  transition:background .2s,color .2s,border-color .2s;
+}
+.card:hover .topic-pill{
+  background:rgba(255,255,255,.08);
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* card footer */
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.06);
+  padding-top:18px;
+}
+.card-meta{font-size:.65rem;color:var(--muted);letter-spacing:1px;}
+.card-arrow{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;
+  transition:all .3s ease;
+  color:var(--accent);
+}
+.card:hover .card-arrow{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#000;
+  transform:rotate(-45deg);
+}
+
+/* NEW badge */
+.card-new{
+  position:absolute;top:16px;right:16px;
+  font-size:.55rem;letter-spacing:2px;
+  padding:3px 9px;border-radius:100px;
+  background:rgba(245,158,11,.15);
+  border:1px solid rgba(245,158,11,.3);
+  color:var(--c3);
+  font-family:'Orbitron',sans-serif;
+}
+
+/* progress bar inside card */
+.card-progress{
+  margin-bottom:18px;
+}
+.progress-label{
+  display:flex;justify-content:space-between;
+  font-size:.6rem;color:var(--muted);margin-bottom:6px;
+  letter-spacing:1px;
+}
+.progress-track{
+  height:3px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;border-radius:3px;
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent);
+  transition:width .8s ease;
+  width:0;
+}
+.card:hover .progress-fill{width:var(--prog);}
+
+/* ══════════════════ BOTTOM CTA ══════════════════ */
+.bottom-row{
+  display:flex;align-items:center;gap:24px;
+  margin-top:48px;
+  animation:fadeUp .7s .5s ease both;
+}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 28px;border-radius:12px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:#fff;font-weight:700;font-size:.9rem;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:opacity .2s,transform .2s;
+  box-shadow:0 0 30px rgba(0,212,255,.2);
+}
+.cta-btn:hover{opacity:.88;transform:translateY(-2px);}
+.cta-link{
+  color:var(--muted);font-size:.85rem;text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:color .2s,border-color .2s;
+}
+.cta-link:hover{color:var(--text);border-color:var(--muted);}
+
+/* ══════════════════ FLOATING PARTICLES ══════════════════ */
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.particle{
+  position:absolute;
+  width:2px;height:2px;border-radius:50%;
+  background:var(--c1);
+  opacity:0;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) translateX(0);opacity:0;}
+  10%{opacity:.6;}
+  90%{opacity:.2;}
+  100%{transform:translateY(-20px) translateX(var(--drift));opacity:0;}
+}
+
+/* ══════════════════ RESPONSIVE ══════════════════ */
+@media(max-width:640px){
+  .cards-grid{grid-template-columns:1fr;}
+  .stats{gap:20px;}
+  .stat-num{font-size:1.2rem;}
+  .bottom-row{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- Background Canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Overlays -->
+<div class="grid-overlay"></div>
+<div class="scanlines"></div>
+<div class="particles" id="particles"></div>
+
+<!-- Corner decorations -->
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- Status bar -->
+<header class="status-bar">
+  <div class="status-logo">EDU·PORTAL</div>
+  <div class="status-indicators">
+    <div class="status-dot"><div class="dot green"></div>متصل</div>
+    <div class="status-dot"><div class="dot blue"></div>٤ مسارات نشطة</div>
+  </div>
+  <div class="status-time" id="clock">--:--:--</div>
+</header>
+
+<!-- Main Content -->
+<main class="wrapper">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      البوابة التعليمية الذكية · v2.0
+    </div>
+    <h1 class="hero-title">
+      <span class="line1">اختر مسارك التعليمي</span>
+      <span class="line2">CHOOSE YOUR LEARNING PATH</span>
+    </h1>
+    <p class="hero-sub">
+      منصة تفاعلية متكاملة لدراسة الفيزياء، الرياضيات، الكيمياء والبرمجة
+      مع أدوات تحليل وحل متقدمة مدعومة بالذكاء الاصطناعي.
+    </p>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="cnt-lessons">٠</div>
+      <div class="stat-lbl">درس تفاعلي</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num" id="cnt-tools">٠</div>
+      <div class="stat-lbl">أداة ذكية</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num" id="cnt-users">٠</div>
+      <div class="stat-lbl">طالب نشط</div>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="cards-grid">
+
+    <!-- Physics -->
+    <a href="physics.html" class="card physics">
+      <div class="card-bar"></div>
+      <div class="card-tag">PHYS·01</div>
+      <div class="card-icon-wrap">🚀</div>
+      <h2>مسار الفيزياء</h2>
+      <p>تحليل حركة المقذوفات، المجالات الكهرومغناطيسية، الديناميكا الحرارية والميكانيكا الكمية باستخدام قوانين نيوتن وبالإضافة إلى المعادلات التفاضلية.</p>
+      <div class="card-topics">
+        <span class="topic-pill">الحركة</span>
+        <span class="topic-pill">الطاقة</span>
+        <span class="topic-pill">الكهرباء</span>
+        <span class="topic-pill">الموجات</span>
+      </div>
+      <div class="card-progress">
+        <div class="progress-label"><span>التقدم</span><span>٧٢٪</span></div>
+        <div class="progress-track"><div class="progress-fill" style="--prog:72%"></div></div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">٤٢ درس · ١٨ تمرين</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Math -->
+    <a href="math.html" class="card math">
+      <div class="card-bar"></div>
+      <div class="card-tag">MATH·02</div>
+      <span class="card-new">جديد</span>
+      <div class="card-icon-wrap">📐</div>
+      <h2>مسار الرياضيات</h2>
+      <p>استكشاف الدوال، التفاضل والتكامل المزدوج والثلاثي، المعادلات التفاضلية والجبر الخطي مع تمثيل بياني تفاعلي ثلاثي الأبعاد.</p>
+      <div class="card-topics">
+        <span class="topic-pill">التفاضل</span>
+        <span class="topic-pill">التكامل</span>
+        <span class="topic-pill">المتتاليات</span>
+        <span class="topic-pill">المصفوفات</span>
+      </div>
+      <div class="card-progress">
+        <div class="progress-label"><span>التقدم</span><span>٥٥٪</span></div>
+        <div class="progress-track"><div class="progress-fill" style="--prog:55%"></div></div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">٦١ درس · ٣٤ تمرين</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Chemistry -->
+    <a href="chemistry.html" class="card chemistry">
+      <div class="card-bar"></div>
+      <div class="card-tag">CHEM·03</div>
+      <div class="card-icon-wrap">⚗️</div>
+      <h2>مسار الكيمياء</h2>
+      <p>التفاعلات الكيميائية، التوازن الحركي، الكيمياء العضوية وغير العضوية مع محاكاة تفاعلية للجزيئات والروابط الكيميائية.</p>
+      <div class="card-topics">
+        <span class="topic-pill">العضوية</span>
+        <span class="topic-pill">التفاعلات</span>
+        <span class="topic-pill">الجزيئات</span>
+        <span class="topic-pill">التوازن</span>
+      </div>
+      <div class="card-progress">
+        <div class="progress-label"><span>التقدم</span><span>٣٠٪</span></div>
+        <div class="progress-track"><div class="progress-fill" style="--prog:30%"></div></div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">٣٨ درس · ٢٢ تمرين</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Programming -->
+    <a href="programming.html" class="card programming">
+      <div class="card-bar"></div>
+      <div class="card-tag">PROG·04</div>
+      <span class="card-new">قريباً</span>
+      <div class="card-icon-wrap">💻</div>
+      <h2>مسار البرمجة</h2>
+      <p>أساسيات الخوارزميات وهياكل البيانات، البرمجة الكائنية، تطوير تطبيقات الويب وتطبيقات الذكاء الاصطناعي.</p>
+      <div class="card-topics">
+        <span class="topic-pill">خوارزميات</span>
+        <span class="topic-pill">Python</span>
+        <span class="topic-pill">JavaScript</span>
+        <span class="topic-pill">AI</span>
+      </div>
+      <div class="card-progress">
+        <div class="progress-label"><span>التقدم</span><span>١٥٪</span></div>
+        <div class="progress-track"><div class="progress-fill" style="--prog:15%"></div></div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">٥٠ درس · ٤٠ تمرين</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="bottom-row">
+    <a href="#" class="cta-btn">
+      <span>🎓</span>
+      ابدأ التعلم الآن
+    </a>
+    <a href="#" class="cta-link">استعرض جميع المواد ←</a>
+  </div>
+
+</main>
+
+<script>
+// ── Clock ──────────────────────────────────────────
+(function tick(){
+  const n=new Date();
+  const pad=v=>String(v).padStart(2,'0');
+  document.getElementById('clock').textContent=
+    `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  setTimeout(tick,1000);
+})();
+
+// ── Animated counters ──────────────────────────────
+function animCount(el, target, suffix=''){
+  let cur=0;
+  const step=Math.ceil(target/60);
+  const t=setInterval(()=>{
+    cur=Math.min(cur+step, target);
+    el.textContent=cur.toLocaleString('ar-EG')+suffix;
+    if(cur>=target) clearInterval(t);
+  },30);
+}
+setTimeout(()=>{
+  animCount(document.getElementById('cnt-lessons'),240,'');
+  animCount(document.getElementById('cnt-tools'),18,'');
+  animCount(document.getElementById('cnt-users'),3800,'');
+},500);
+
+// ── Floating particles ─────────────────────────────
+const particlesEl=document.getElementById('particles');
+const colors=['#00d4ff','#7c3aed','#10b981','#f59e0b'];
+for(let i=0;i<35;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  const color=colors[Math.floor(Math.random()*colors.length)];
+  const size=Math.random()*2.5+1;
+  const drift=(Math.random()-0.5)*200;
+  const duration=Math.random()*15+10;
+  const delay=Math.random()*15;
+  p.style.cssText=`
+    left:${Math.random()*100}%;
+    width:${size}px;height:${size}px;
+    background:${color};
+    box-shadow:0 0 ${size*3}px ${color};
+    --drift:${drift}px;
+    animation-duration:${duration}s;
+    animation-delay:${delay}s;
+  `;
+  particlesEl.appendChild(p);
+}
+
+// ── Canvas Background — animated nebula ────────────
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,orbs;
+
+function initCanvas(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+  orbs=[
+    {x:W*.2,y:H*.3,r:350,color:'rgba(0,212,255,',speed:.0003,phase:0},
+    {x:W*.8,y:H*.6,r:400,color:'rgba(124,58,237,',speed:.0004,phase:2},
+    {x:W*.5,y:H*.85,r:300,color:'rgba(16,185,129,',speed:.00035,phase:4},
+    {x:W*.9,y:H*.1,r:280,color:'rgba(245,158,11,',speed:.00025,phase:1},
+  ];
+}
+
+function drawCanvas(t){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020817';
+  ctx.fillRect(0,0,W,H);
+  for(const o of orbs){
+    o.phase+=o.speed;
+    const ox=o.x+Math.sin(o.phase)*80;
+    const oy=o.y+Math.cos(o.phase*.7)*60;
+    const g=ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
+    g.addColorStop(0,o.color+'0.07)');
+    g.addColorStop(.5,o.color+'0.03)');
+    g.addColorStop(1,o.color+'0)');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.arc(ox,oy,o.r,0,Math.PI*2);
+    ctx.fill();
+  }
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('resize',initCanvas);
+initCanvas();
+requestAnimationFrame(drawCanvas);
+
+// ── Mouse parallax on cards ───────────────────────
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const rect=card.getBoundingClientRect();
+    const cx=rect.left+rect.width/2;
+    const cy=rect.top+rect.height/2;
+    const dx=(e.clientX-cx)/rect.width;
+    const dy=(e.clientY-cy)/rect.height;
+    card.style.transform=`translateY(-10px) rotateY(${dx*6}deg) rotateX(${-dy*4}deg)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='';
+  });
+});
+</script>
+</body>
+</html>

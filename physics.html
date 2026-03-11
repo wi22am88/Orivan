@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار الفيزياء | البوابة التعليمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:    #020817;
+  --bg2:   #030d1f;
+  --c1:    #00d4ff;
+  --c2:    #7c3aed;
+  --c3:    #f59e0b;
+  --c4:    #10b981;
+  --text:  #e2e8f0;
+  --muted: #64748b;
+  --card:  rgba(15,23,42,0.9);
+  --border:rgba(0,212,255,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
+
+#bg-canvas{position:fixed;inset:0;z-index:0;}
+.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:50px 50px;}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
+.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
+.corner.tl{top:14px;left:14px;border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.tr{top:14px;right:14px;border-top:2px solid var(--c2);border-right:2px solid var(--c2);}
+.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c4);border-left:2px solid var(--c4);}
+.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c3);border-right:2px solid var(--c3);}
+
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c1);letter-spacing:3px;text-shadow:0 0 10px rgba(0,212,255,.5);}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
+.back-btn:hover{color:var(--c1);border-color:var(--c1);}
+.header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
+
+.wrapper{position:relative;z-index:5;max-width:1000px;margin:0 auto;padding:60px 24px 80px;}
+
+.page-hero{text-align:center;margin-bottom:56px;animation:fadeUp .7s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:100px;padding:5px 16px;font-size:.65rem;letter-spacing:3px;color:var(--c1);margin-bottom:20px;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c1);box-shadow:0 0 8px var(--c1);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.page-hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--c1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
+.page-hero p{color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.8;}
+
+/* ══ BRANCH CARDS ══ */
+.branch-selector{display:grid;grid-template-columns:1fr 1fr;gap:24px;animation:fadeUp .7s .1s ease both;}
+
+.branch-card{
+  position:relative;
+  background:var(--card);
+  border-radius:24px;
+  border:1px solid var(--border);
+  padding:40px 36px;
+  cursor:pointer;
+  overflow:hidden;
+  transition:all .35s ease;
+  backdrop-filter:blur(12px);
+  text-decoration:none;
+  display:block;
+  color:var(--text);
+}
+.branch-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none;}
+.branch-card.classical{--acc:var(--c1);}
+.branch-card.modern{--acc:var(--c2);}
+.branch-card.classical:hover{border-color:var(--c1);box-shadow:0 0 50px rgba(0,212,255,.15),0 24px 60px rgba(0,0,0,.5);transform:translateY(-8px);}
+.branch-card.modern:hover{border-color:var(--c2);box-shadow:0 0 50px rgba(124,58,237,.18),0 24px 60px rgba(0,0,0,.5);transform:translateY(-8px);}
+
+.branch-glow{position:absolute;top:-80px;left:-80px;width:220px;height:220px;border-radius:50%;filter:blur(60px);opacity:0;transition:opacity .4s ease;pointer-events:none;}
+.branch-card.classical .branch-glow{background:var(--c1);}
+.branch-card.modern .branch-glow{background:var(--c2);}
+.branch-card:hover .branch-glow{opacity:.1;}
+
+/* top accent bar */
+.branch-bar{height:3px;border-radius:3px;margin-bottom:28px;transform:scaleX(0);transform-origin:right;transition:transform .4s .1s ease;}
+.branch-card.classical .branch-bar{background:var(--c1);box-shadow:0 0 10px var(--c1);}
+.branch-card.modern   .branch-bar{background:var(--c2);box-shadow:0 0 10px var(--c2);}
+.branch-card:hover .branch-bar{transform:scaleX(1);}
+
+.branch-tag{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;color:var(--acc);margin-bottom:12px;opacity:.85;}
+.branch-icon{font-size:3rem;margin-bottom:18px;display:block;}
+.branch-card h2{font-size:1.5rem;font-weight:800;margin-bottom:12px;color:#f1f5f9;}
+.branch-card p{color:var(--muted);font-size:.88rem;line-height:1.75;margin-bottom:24px;}
+
+.branch-topics{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:28px;}
+.btopic{font-size:.62rem;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--muted);transition:all .25s;}
+.branch-card:hover .btopic{border-color:var(--acc);color:var(--acc);}
+
+.branch-footer{display:flex;align-items:center;justify-content:space-between;}
+.branch-count{font-size:.72rem;color:var(--muted);}
+.branch-arrow{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--acc);font-size:1rem;
+  transition:all .3s ease;
+}
+.branch-card:hover .branch-arrow{background:var(--acc);border-color:var(--acc);color:#000;transform:rotate(-45deg);}
+
+@media(max-width:680px){
+  .branch-selector{grid-template-columns:1fr;}
+  header{padding:10px 14px;}
+  .wrapper{padding:40px 14px 60px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="scanlines"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<header>
+  <a class="back-btn" href="index.html">← رجوع</a>
+  <div class="header-title">مسار الفيزياء</div>
+  <div class="logo">PHYS·LAB</div>
+</header>
+
+<div class="wrapper">
+
+  <section class="page-hero">
+    <div class="page-badge"><div class="badge-dot"></div>مسار الفيزياء · PHYS·01</div>
+    <h1>اختر فرع الفيزياء</h1>
+    <p>اكتب المعطيات وسيتم حل المسألة خطوة بخطوة مع عرض القوانين المستخدمة</p>
+  </section>
+
+  <div class="branch-selector">
+
+    <!-- Classical -->
+    <a href="physics/classical.html" class="branch-card classical">
+      <div class="branch-glow"></div>
+      <div class="branch-bar"></div>
+      <div class="branch-tag">CLASSICAL · PHYSICS</div>
+      <span class="branch-icon">⚙️</span>
+      <h2>الفيزياء الكلاسيكية</h2>
+      <p>قوانين نيوتن، الحركة، الطاقة، الكهرومغناطيسية والموجات الميكانيكية</p>
+      <div class="branch-topics">
+        <span class="btopic">الحركة 1D</span>
+        <span class="btopic">الحركة 2D</span>
+        <span class="btopic">ميكانيك</span>
+        <span class="btopic">كهرومغناطيسية</span>
+        <span class="btopic">الطاقة</span>
+        <span class="btopic">موجات</span>
+      </div>
+      <div class="branch-footer">
+        <span class="branch-count">٦ مواضيع تفاعلية</span>
+        <div class="branch-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Modern -->
+    <a href="physics/modern.html" class="branch-card modern">
+      <div class="branch-glow"></div>
+      <div class="branch-bar"></div>
+      <div class="branch-tag">MODERN · PHYSICS</div>
+      <span class="branch-icon">⚛️</span>
+      <h2>الفيزياء الحديثة</h2>
+      <p>النسبية الخاصة، ميكانيكا الكم، الفيزياء النووية وتأثير كومبتون والفوتونات</p>
+      <div class="branch-topics">
+        <span class="btopic">النسبية</span>
+        <span class="btopic">الكم</span>
+        <span class="btopic">الذرة</span>
+        <span class="btopic">النووية</span>
+        <span class="btopic">الفوتونات</span>
+      </div>
+      <div class="branch-footer">
+        <span class="branch-count">٤ مواضيع تفاعلية</span>
+        <div class="branch-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,orbs;
+function initCanvas(){
+  W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
+  orbs=[
+    {x:W*.15,y:H*.3,r:350,color:'rgba(0,212,255,',speed:.0003,phase:0},
+    {x:W*.85,y:H*.6,r:400,color:'rgba(124,58,237,',speed:.0004,phase:2},
+    {x:W*.5,y:H*.9,r:280,color:'rgba(16,185,129,',speed:.00035,phase:4},
+  ];
+}
+function drawCanvas(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#020817';ctx.fillRect(0,0,W,H);
+  for(const o of orbs){
+    o.phase+=o.speed;
+    const ox=o.x+Math.sin(o.phase)*70,oy=o.y+Math.cos(o.phase*.7)*50;
+    const g=ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
+    g.addColorStop(0,o.color+'0.06)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(ox,oy,o.r,0,Math.PI*2);ctx.fill();
+  }
+  requestAnimationFrame(drawCanvas);
+}
+window.addEventListener('resize',initCanvas);
+initCanvas();requestAnimationFrame(drawCanvas);
+</script>
+</body>
+</html>
