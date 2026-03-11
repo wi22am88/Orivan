@@ -252,6 +252,26 @@
       <div class="gate-info"><div class="gate-name">مصباح</div><div class="gate-sub">مخرج مرئي</div></div>
     </div>
 
+    <div class="sidebar-section">توزيع</div>
+    <div class="gate-item" data-type="JUNCTION">
+      <svg class="gate-symbol" viewBox="0 0 34 26">
+        <!-- input wire -->
+        <line x1="0" y1="13" x2="9" y2="13" stroke="#ff8c00" stroke-width="1.5"/>
+        <!-- body circle -->
+        <circle cx="17" cy="13" r="8" fill="rgba(255,140,0,.15)" stroke="#ff8c00" stroke-width="1.5"/>
+        <!-- inner dot -->
+        <circle cx="17" cy="13" r="3" fill="#ff8c00"/>
+        <!-- cross -->
+        <line x1="12.5" y1="13" x2="21.5" y2="13" stroke="rgba(255,180,0,.6)" stroke-width="1"/>
+        <line x1="17" y1="8.5" x2="17" y2="17.5" stroke="rgba(255,180,0,.6)" stroke-width="1"/>
+        <!-- output wires -->
+        <line x1="25" y1="9"  x2="34" y2="6"  stroke="#ff8c00" stroke-width="1.5"/>
+        <line x1="25" y1="13" x2="34" y2="13" stroke="#ff8c00" stroke-width="1.5"/>
+        <line x1="25" y1="17" x2="34" y2="20" stroke="#ff8c00" stroke-width="1.5"/>
+      </svg>
+      <div class="gate-info"><div class="gate-name">نقطة توزيع</div><div class="gate-sub">توزيع الإشارة</div></div>
+    </div>
+
   </div>
 
   <div class="canvas-wrap" id="canvasWrap">
@@ -264,7 +284,7 @@
   <div class="s-item" id="sNodes">0 عنصر</div>
   <div class="s-item" id="sWires">0 سلك</div>
   <div class="s-item" id="sMode">عادي</div>
-  <div class="s-hint">اضغط IN للتبديل • اسحب منفذاً للتوصيل • يمكن للمخرج الاتصال بأكثر من عنصر • اضغط مطوّلاً (1 ث) لتحريك العنصر • اسحب الفراغ للتنقل</div>
+  <div class="s-hint">اضغط IN للتبديل • اسحب منفذاً للتوصيل • كل العناصر تقبل وتخرج أسلاكاً غير محدودة • اضغط مطوّلاً (1 ث) لتحريك العنصر</div>
   <div style="display:flex;gap:5px;margin-right:auto;flex-shrink:0;">
     <button onclick="zoomAt(canvas.width/2,canvas.height/2,1.25);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تكبير">＋</button>
     <button onclick="zoomAt(canvas.width/2,canvas.height/2,0.8);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تصغير">－</button>
@@ -274,8 +294,10 @@
 
 <div id="ctxMenu">
   <div class="ctx-item" id="ctxToggleBtn" onclick="ctxToggle()">⇄ تبديل القيمة</div>
+  <div class="ctx-sep" id="ctxWireSep" style="display:none"></div>
+  <div id="ctxWireList"></div>
   <div class="ctx-sep"></div>
-  <div class="ctx-item del" onclick="ctxDelete()">✕ حذف</div>
+  <div class="ctx-item del" onclick="ctxDelete()">✕ حذف العنصر</div>
 </div>
 <div id="lpRing"></div>
 <div id="dragGhost">
@@ -307,7 +329,8 @@ const GATE_META = {
   NOR:  { name:'NOR',    sub:'عكس OR',      color:'#7b2fff' },
   XOR:  { name:'XOR',    sub:'أو حصري',     color:'#ffd700' },
   XNOR: { name:'XNOR',  sub:'عكس XOR',     color:'#ffd700' },
-  LAMP: { name:'مصباح', sub:'مخرج مرئي',   color:'#ffd700' },
+  LAMP:    { name:'مصباح',       sub:'مخرج مرئي',   color:'#ffd700' },
+  JUNCTION:{ name:'نقطة توزيع', sub:'توزيع الإشارة',color:'#ff8c00' },
 };
 
 let nodes=[], wires=[], nextId=1;
@@ -338,16 +361,18 @@ function zoomAt(sx,sy,factor){
 
 // Long-press
 
+// ins/outs = -1 means unlimited (dynamic, determined by actual wires)
 const DEFS = {
-  INPUT:{ color:'#00ff88', ins:0, outs:1, w:74, h:52 },
-  AND:  { color:'#00d4ff', ins:2, outs:1, w:84, h:64 },
-  OR:   { color:'#00d4ff', ins:2, outs:1, w:84, h:64 },
-  NOT:  { color:'#00d4ff', ins:1, outs:1, w:74, h:52 },
-  NAND: { color:'#7b2fff', ins:2, outs:1, w:84, h:64 },
-  NOR:  { color:'#7b2fff', ins:2, outs:1, w:84, h:64 },
-  XOR:  { color:'#ffd700', ins:2, outs:1, w:84, h:64 },
-  XNOR: { color:'#ffd700', ins:2, outs:1, w:84, h:64 },
-  LAMP: { color:'#ffd700', ins:1, outs:0, w:74, h:64 },
+  INPUT:   { color:'#00ff88', ins:0,  outs:-1, w:74, h:52 },
+  AND:     { color:'#00d4ff', ins:-1, outs:-1, w:84, h:64 },
+  OR:      { color:'#00d4ff', ins:-1, outs:-1, w:84, h:64 },
+  NOT:     { color:'#00d4ff', ins:-1, outs:-1, w:74, h:52 },
+  NAND:    { color:'#7b2fff', ins:-1, outs:-1, w:84, h:64 },
+  NOR:     { color:'#7b2fff', ins:-1, outs:-1, w:84, h:64 },
+  XOR:     { color:'#ffd700', ins:-1, outs:-1, w:84, h:64 },
+  XNOR:    { color:'#ffd700', ins:-1, outs:-1, w:84, h:64 },
+  LAMP:    { color:'#ffd700', ins:-1, outs:-1, w:74, h:64 },
+  JUNCTION:{ color:'#ff8c00', ins:-1, outs:-1, w:22, h:22 },
 };
 
 // ── Resize ─────────────────────────────────
@@ -364,40 +389,73 @@ function mkNode(type,x,y){
   const d=DEFS[type];
   return{id:nextId++,type,x,y,w:d.w,h:d.h,
          value:type==='INPUT'?0:null,
-         color:d.color,inputs:d.ins,outputs:d.outs,_moving:false};
+         color:d.color,
+         _moving:false};
 }
-function inPort(n,i){ const s=n.h/(n.inputs+1); return{x:n.x,y:n.y+s*(i+1)}; }
-function outPort(n){  return{x:n.x+n.w,y:n.y+n.h/2}; }
+// Returns actual input wire count for a node (from wires array)
+function inWireCount(n){ return wires.filter(w=>w.toId===n.id).length; }
+// Returns actual output wire count for a node
+function outWireCount(n){ return wires.filter(w=>w.fromId===n.id).length; }
+
+// Dynamic port positions — evenly spaced on left edge for inputs, right edge for outputs
+// portIdx here is a logical index into the *connected* wires sorted by toPort
+function inPort(n,portIdx){
+  if(n.type==='JUNCTION') return{x:n.x, y:n.y+n.h/2};
+  // Count how many input slots exist: max(actual wires, minSlots) + 1 empty slot
+  const minSlots = {AND:2,OR:2,NOT:1,NAND:2,NOR:2,XOR:2,XNOR:2,LAMP:1,JUNCTION:1}[n.type]||1;
+  const connected = wires.filter(w=>w.toId===n.id).length;
+  const slots = Math.max(minSlots, connected) + 1; // +1 empty slot always visible
+  const step = n.h / (slots + 1);
+  return {x:n.x, y:n.y + step*(portIdx+1)};
+}
+function outPort(n){
+  if(n.type==='JUNCTION') return{x:n.x+n.w, y:n.y+n.h/2};
+  return{x:n.x+n.w, y:n.y+n.h/2};
+}
+
+// Get position of the "next free" input slot (for display)
+function nextInPort(n){
+  if(n.type==='JUNCTION') return{x:n.x, y:n.y+n.h/2};
+  const minSlots = {AND:2,OR:2,NOT:1,NAND:2,NOR:2,XOR:2,XNOR:2,LAMP:1,JUNCTION:1}[n.type]||1;
+  const connected = wires.filter(w=>w.toId===n.id).length;
+  const slots = Math.max(minSlots, connected) + 1;
+  const step = n.h / (slots + 1);
+  return {x:n.x, y:n.y + step*(connected+1)};
+}
 function setMode(t){ document.getElementById('sMode').textContent=t; }
 
 // ── Simulation ─────────────────────────────
 function evaluate(){
   for(const n of nodes) if(n.type!=='INPUT') n.value=null;
-  for(let p=0;p<nodes.length+2;p++){
+  for(let pass=0; pass<nodes.length+4; pass++){
     for(const n of nodes){
       if(n.type==='INPUT') continue;
-      const iv=[];
-      for(let i=0;i<n.inputs;i++){
-        const w=wires.find(w=>w.toId===n.id&&w.toPort===i);
-        if(!w){iv.push(null);continue;}
-        const s=nodes.find(x=>x.id===w.fromId);
-        iv.push(s?s.value:null);
-      }
-      if(iv.some(v=>v===null)){n.value=null;continue;}
-      n.value=gateEval(n.type,iv);
+      // Collect values from ALL wires going INTO this node
+      const inWires = wires.filter(w=>w.toId===n.id);
+      const iv = inWires.map(w=>{
+        const src=nodes.find(x=>x.id===w.fromId);
+        return src?src.value:null;
+      });
+      // If any source is unresolved, skip for now (will retry next pass)
+      if(iv.some(v=>v===null) && iv.length>0){ n.value=null; continue; }
+      n.value = gateEval(n.type, iv);
     }
   }
 }
-function gateEval(t,[a,b]){
-  switch(t){
-    case'AND': return(a&&b)?1:0;
-    case'OR':  return(a||b)?1:0;
-    case'NOT': return a?0:1;
-    case'NAND':return(a&&b)?0:1;
-    case'NOR': return(a||b)?0:1;
-    case'XOR': return(a!==b)?1:0;
-    case'XNOR':return(a===b)?1:0;
-    case'LAMP':return a;
+function gateEval(type, iv){
+  // iv = array of input values (0 or 1)
+  if(iv.length===0) return null;
+  switch(type){
+    case'AND':     return iv.every(v=>v===1)?1:0;
+    case'OR':      return iv.some(v=>v===1)?1:0;
+    case'NOT':     return iv[0]===1?0:1;           // uses first input, ignores rest
+    case'NAND':    return iv.every(v=>v===1)?0:1;
+    case'NOR':     return iv.some(v=>v===1)?0:1;
+    case'XOR':     return iv.reduce((a,b)=>a^b,0); // multi-input XOR = odd parity
+    case'XNOR':    return iv.reduce((a,b)=>a^b,0)===0?1:0;
+    case'LAMP':    return iv.some(v=>v===1)?1:0;   // lights up if ANY input is 1
+    case'JUNCTION':return iv.some(v=>v===1)?1:0;   // pass-through (OR logic for multi-in)
+    default:       return null;
   }
 }
 
@@ -479,6 +537,10 @@ function drawNode(n){
   const{x,y,w,h,type,color,value,_moving:mv}=n;
   const on=value===1, nil=value===null;
   C.save();
+
+  // JUNCTION has its own full drawing routine — skip rect background
+  if(type==='JUNCTION'){ drawJunction(n); C.restore(); return; }
+
   if(on&&type!=='LAMP'){C.shadowColor=color;C.shadowBlur=15;}
   if(mv){C.shadowColor='#fff';C.shadowBlur=20;}
   const sel=n._selected;
@@ -509,8 +571,18 @@ function drawNode(n){
     C.beginPath();C.arc(bx,by,7,0,Math.PI*2);C.fill();
     C.fillStyle=on?'#000':'#aaa'; C.font='bold 8px monospace'; C.fillText(value,bx,by);
   }
-  for(let i=0;i<n.inputs;i++) dot(inPort(n,i), wireIn(n,i));
-  if(n.outputs>0) dot(outPort(n),value);
+
+  // Dynamic input ports — draw one dot per connected wire + one empty "add" slot
+  const inW=wires.filter(w=>w.toId===n.id).sort((a,b)=>a.toPort-b.toPort);
+  for(let i=0;i<inW.length;i++){
+    const src=nodes.find(x=>x.id===inW[i].fromId);
+    dot(inPort(n,i), src?src.value:null);
+  }
+  // Empty slot — dim dot to show a new wire can be connected here
+  dotEmpty(nextInPort(n));
+
+  // Output port (always one visual port, fan-out handled by wires)
+  dot(outPort(n), value);
   C.restore();
 }
 
@@ -529,6 +601,13 @@ function dot(p,val){
   C.fill();
   C.strokeStyle=val===1?'#00d4ff':'rgba(70,110,170,.4)';
   C.lineWidth=1; C.stroke(); C.shadowBlur=0;
+}
+// Empty "add wire here" slot — small dashed circle
+function dotEmpty(p){
+  C.beginPath(); C.arc(p.x,p.y,4,0,Math.PI*2);
+  C.fillStyle='rgba(0,0,0,0)';
+  C.strokeStyle='rgba(0,180,220,.25)';
+  C.setLineDash([2,2]); C.lineWidth=1; C.stroke(); C.setLineDash([]);
 }
 
 function drawInput(n){
@@ -577,7 +656,59 @@ function drawLamp(n){
   C.fillStyle=on?'#ffd700':'rgba(85,75,38,.6)';
   C.font=`bold 10px 'Share Tech Mono'`;
   C.fillText(v!==null?(on?'ON':'OFF'):'?',x+w-3,y+h/2+13);
-  dot(inPort(n,0),v);
+  // Dynamic input ports
+  const inW=wires.filter(w=>w.toId===n.id).sort((a,b)=>a.toPort-b.toPort);
+  for(let i=0;i<inW.length;i++){
+    const src=nodes.find(x=>x.id===inW[i].fromId);
+    dot(inPort(n,i), src?src.value:null);
+  }
+  dotEmpty(nextInPort(n));
+}
+
+function drawJunction(n){
+  const{x,y,w,h,value:v,_selected:sel}=n;
+  const on=v===1, nil=v===null;
+  const cx=x+w/2, cy=y+h/2, r=h/2;
+  const color='#ff8c00';
+
+  // Outer glow when active
+  if(on){
+    const g=C.createRadialGradient(cx,cy,2,cx,cy,r*3.5);
+    g.addColorStop(0,'rgba(255,140,0,.45)'); g.addColorStop(1,'rgba(255,140,0,0)');
+    C.fillStyle=g; C.beginPath(); C.arc(cx,cy,r*3.5,0,Math.PI*2); C.fill();
+    C.shadowColor=color; C.shadowBlur=18;
+  }
+  if(sel){ C.shadowColor='#ff3d6b'; C.shadowBlur=22; }
+
+  // Body circle
+  C.beginPath(); C.arc(cx,cy,r,0,Math.PI*2);
+  C.fillStyle=on?'rgba(255,140,0,.22)':'rgba(30,20,0,.7)';
+  C.fill();
+  C.strokeStyle=sel?'#ff3d6b':(on?color:(nil?'rgba(120,80,0,.5)':'rgba(90,60,0,.7)'));
+  C.lineWidth=sel?2.5:(on?2:1.5);
+  C.stroke(); C.shadowBlur=0;
+
+  // Inner dot
+  C.beginPath(); C.arc(cx,cy,r*0.38,0,Math.PI*2);
+  C.fillStyle=on?color:(nil?'rgba(120,80,0,.4)':'rgba(80,55,0,.6)');
+  C.fill();
+
+  // Cross lines
+  C.strokeStyle=on?'rgba(255,180,0,.7)':'rgba(120,90,0,.4)';
+  C.lineWidth=1.2;
+  C.beginPath(); C.moveTo(cx-r*.55,cy); C.lineTo(cx+r*.55,cy); C.stroke();
+  C.beginPath(); C.moveTo(cx,cy-r*.55); C.lineTo(cx,cy+r*.55); C.stroke();
+
+  // Wire count labels
+  const inCount=wires.filter(w=>w.toId===n.id).length;
+  const outCount=wires.filter(w=>w.fromId===n.id).length;
+  C.font='7px Cairo'; C.textAlign='center'; C.textBaseline='top';
+  C.fillStyle='rgba(180,120,0,.7)';
+  C.fillText(`${inCount}↓${outCount}↑`, cx, y+h+2);
+
+  // Single in port (left) and out port (right) — unlimited wires connect to each
+  dot({x:n.x,        y:cy}, v);
+  dot({x:n.x+n.w,    y:cy}, v);
 }
 
 function rr(x,y,w,h,r){
@@ -597,13 +728,33 @@ function rrTop(x,y,w,h,r){
 // ── Hit testing ────────────────────────────
 function portAt(mx,my){
   for(const n of nodes){
-    for(let i=0;i<n.inputs;i++){
-      const p=inPort(n,i);
-      if(Math.hypot(mx-p.x,my-p.y)<13) return{nodeId:n.id,portType:'input',portIdx:i};
+    if(n.type==='JUNCTION'){
+      const cy=n.y+n.h/2;
+      // Left port = input
+      if(Math.hypot(mx-n.x,my-cy)<14){
+        const cnt=wires.filter(w=>w.toId===n.id).length;
+        return{nodeId:n.id,portType:'input',portIdx:cnt};
+      }
+      // Right port = output
+      if(Math.hypot(mx-(n.x+n.w),my-cy)<14)
+        return{nodeId:n.id,portType:'output',portIdx:0};
+      continue;
     }
-    if(n.outputs>0){
+    // Output port (right side) — always one point, unlimited connections allowed
+    if(n.type!=='LAMP'){
       const p=outPort(n);
-      if(Math.hypot(mx-p.x,my-p.y)<13) return{nodeId:n.id,portType:'output',portIdx:0};
+      if(Math.hypot(mx-p.x,my-p.y)<14) return{nodeId:n.id,portType:'output',portIdx:0};
+    }
+    // Input ports — check existing connected ports + the next free slot
+    if(n.type!=='INPUT'){
+      const inW=wires.filter(w=>w.toId===n.id).sort((a,b)=>a.toPort-b.toPort);
+      for(let i=0;i<inW.length;i++){
+        const p=inPort(n,i);
+        if(Math.hypot(mx-p.x,my-p.y)<14) return{nodeId:n.id,portType:'input',portIdx:inW[i].toPort};
+      }
+      // Also check the next free slot
+      const p=nextInPort(n);
+      if(Math.hypot(mx-p.x,my-p.y)<14) return{nodeId:n.id,portType:'input',portIdx:inW.length};
     }
   }
   return null;
@@ -611,7 +762,13 @@ function portAt(mx,my){
 function nodeAt(mx,my){
   for(let i=nodes.length-1;i>=0;i--){
     const n=nodes[i];
-    if(mx>=n.x&&mx<=n.x+n.w&&my>=n.y&&my<=n.y+n.h) return n;
+    if(n.type==='JUNCTION'){
+      // Circular hit test for junction
+      const cx=n.x+n.w/2, cy=n.y+n.h/2, r=n.h/2+4;
+      if(Math.hypot(mx-cx,my-cy)<=r) return n;
+    } else {
+      if(mx>=n.x&&mx<=n.x+n.w&&my>=n.y&&my<=n.y+n.h) return n;
+    }
   }
   return null;
 }
@@ -864,23 +1021,42 @@ function onUp(e){
     const moved=Math.hypot(mx-pressX,my-pressY)>8/vz;
     if(moved&&port&&port.nodeId!==wiringFrom.nodeId){
       let fp=wiringFrom,tp=port;
+      // Auto-swap: if user dragged from input to output, flip them
       if(fp.portType==='input'&&tp.portType==='output')[fp,tp]=[tp,fp];
       if(fp.portType==='output'&&tp.portType==='input'){
-        // Remove existing wire going INTO the target input port (each input still has one source)
-        wires=wires.filter(w=>!(w.toId===tp.nodeId&&w.toPort===tp.portIdx));
-        // Allow multiple wires from the same output (fan-out) — no restriction on fromId
-        // Prevent duplicate wire (same from→to)
-        const dup=wires.find(w=>w.fromId===fp.nodeId&&w.toId===tp.nodeId&&w.toPort===tp.portIdx);
+        // Assign next available toPort index for this target node
+        const existing=wires.filter(w=>w.toId===tp.nodeId);
+        const usedPorts=new Set(existing.map(w=>w.toPort));
+        // Use the portIdx suggested by portAt, or find next free
+        let portIdx=tp.portIdx;
+        while(usedPorts.has(portIdx)) portIdx++;
+        // Prevent exact duplicate (same from→same to node→same slot)
+        const dup=wires.find(w=>w.fromId===fp.nodeId&&w.toId===tp.nodeId&&w.toPort===portIdx);
         if(!dup){
-          wires.push({fromId:fp.nodeId,toId:tp.nodeId,toPort:tp.portIdx});
+          wires.push({fromId:fp.nodeId,toId:tp.nodeId,toPort:portIdx});
           if(e.changedTouches) ripple(cx,cy,'#00ff88');
+          else ripple(cx,cy,'#00ff88');
         }
       }
     }
     if(!moved){
+      // Tap on a port = disconnect the last wire on that port
       const p=wiringFrom;
-      if(p.portType==='input') wires=wires.filter(w=>!(w.toId===p.nodeId&&w.toPort===p.portIdx));
-      // Tapping an output port: do nothing (don't wipe all fan-out wires)
+      if(p.portType==='input'){
+        // Find and remove the wire going into this specific slot
+        const idx=wires.findLastIndex(w=>w.toId===p.nodeId&&w.toPort===p.portIdx);
+        if(idx!==-1) wires.splice(idx,1);
+        else {
+          // Slot not found exactly — disconnect any wire into this node (last one added)
+          const idx2=wires.findLastIndex(w=>w.toId===p.nodeId);
+          if(idx2!==-1) wires.splice(idx2,1);
+        }
+      }
+      if(p.portType==='output'){
+        // Tap on output = disconnect last outgoing wire from this node
+        const idx=wires.findLastIndex(w=>w.fromId===p.nodeId);
+        if(idx!==-1) wires.splice(idx,1);
+      }
     }
     wiringFrom=null; IM='IDLE'; setMode('عادي'); render(); return;
   }
@@ -1058,9 +1234,50 @@ function showCtx(x,y,n){
   ctxTarget=n;
   const m=document.getElementById('ctxMenu');
   document.getElementById('ctxToggleBtn').style.display=n.type==='INPUT'?'flex':'none';
+
+  // Build wire disconnect list
+  const wireList=document.getElementById('ctxWireList');
+  const wireSep=document.getElementById('ctxWireSep');
+  wireList.innerHTML='';
+  const connectedWires=[
+    ...wires.filter(w=>w.fromId===n.id).map(w=>({w,dir:'out',other:nodes.find(x=>x.id===w.toId)})),
+    ...wires.filter(w=>w.toId===n.id).map(w=>({w,dir:'in', other:nodes.find(x=>x.id===w.fromId)}))
+  ];
+  if(connectedWires.length>0){
+    wireSep.style.display='block';
+    const hdr=document.createElement('div');
+    hdr.style.cssText='padding:4px 14px;font-size:10px;color:#4a6080;';
+    hdr.textContent='قطع سلك:';
+    wireList.appendChild(hdr);
+    connectedWires.forEach(({w,dir,other})=>{
+      const label=other?(GATE_META[other.type]?.name||other.type):'؟';
+      const arrow=dir==='out'?'→':'←';
+      const item=document.createElement('div');
+      item.className='ctx-item del';
+      item.style.fontSize='12px';
+      item.innerHTML=`✂ ${arrow} ${label}`;
+      item.onclick=()=>{ wires=wires.filter(x=>x!==w); hideCtx(); render(); };
+      wireList.appendChild(item);
+    });
+    // "Disconnect all" if more than 1 wire
+    if(connectedWires.length>1){
+      const all=document.createElement('div');
+      all.className='ctx-item del';
+      all.style.fontSize='12px';
+      all.innerHTML=`✂✂ قطع كل الأسلاك (${connectedWires.length})`;
+      all.onclick=()=>{
+        wires=wires.filter(w=>w.fromId!==n.id&&w.toId!==n.id);
+        hideCtx(); render();
+      };
+      wireList.appendChild(all);
+    }
+  } else {
+    wireSep.style.display='none';
+  }
+
   m.style.display='block';
-  m.style.left=Math.min(x,window.innerWidth-165)+'px';
-  m.style.top =Math.min(y,window.innerHeight-100)+'px';
+  m.style.left=Math.min(x,window.innerWidth-185)+'px';
+  m.style.top =Math.min(y,window.innerHeight-200)+'px';
 }
 function hideCtx(){
   document.getElementById('ctxMenu').style.display='none';
