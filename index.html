@@ -63,16 +63,14 @@ html,body{
 .status-bar{
   position:fixed;top:0;left:0;right:0;z-index:20;
   display:flex;align-items:center;justify-content:space-between;
-  padding:10px 28px;
+  padding:6px 28px;
   background:rgba(2,8,23,0.7);
   border-bottom:1px solid var(--border);
   backdrop-filter:blur(10px);
 }
-.status-logo{
-  font-family:'Orbitron',sans-serif;
-  font-size:.7rem;font-weight:700;
-  color:var(--c1);letter-spacing:3px;
-  text-shadow:0 0 10px rgba(0,212,255,.5);
+.status-bar img{
+  height:34px;width:auto;
+  filter:drop-shadow(0 0 8px rgba(0,212,255,0.35));
 }
 .status-indicators{display:flex;gap:20px;align-items:center;}
 .status-dot{
@@ -427,7 +425,7 @@ html,body{
 
 <!-- Status bar -->
 <header class="status-bar">
-  <div class="status-logo">EDU·PORTAL</div>
+  <img src="logo-bawaba.svg" alt="البوابة التعليمية الذكية" height="34" style="display:block;">
   <div class="status-indicators">
     <div class="status-dot"><div class="dot green"></div>متصل</div>
     <div class="status-dot"><div class="dot blue"></div>٤ مسارات نشطة</div>
