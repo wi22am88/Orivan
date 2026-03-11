@@ -264,7 +264,7 @@
   <div class="s-item" id="sNodes">0 عنصر</div>
   <div class="s-item" id="sWires">0 سلك</div>
   <div class="s-item" id="sMode">عادي</div>
-  <div class="s-hint">اضغط IN للتبديل • اسحب منفذاً للتوصيل • اضغط مطوّلاً (1 ث) للتحريك العنصر • اسحب الفراغ للتنقل</div>
+  <div class="s-hint">اضغط IN للتبديل • اسحب منفذاً للتوصيل • يمكن للمخرج الاتصال بأكثر من عنصر • اضغط مطوّلاً (1 ث) لتحريك العنصر • اسحب الفراغ للتنقل</div>
   <div style="display:flex;gap:5px;margin-right:auto;flex-shrink:0;">
     <button onclick="zoomAt(canvas.width/2,canvas.height/2,1.25);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تكبير">＋</button>
     <button onclick="zoomAt(canvas.width/2,canvas.height/2,0.8);render()" style="background:transparent;border:1px solid #1e2d50;color:#c8d8f0;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:13px;" title="تصغير">－</button>
@@ -425,6 +425,26 @@ function render(){
   for(const w of wires){
     const s=nodes.find(n=>n.id===w.fromId),d=nodes.find(n=>n.id===w.toId);
     if(s&&d) wire(outPort(s),inPort(d,w.toPort),s.value);
+  }
+
+  // Junction dots — draw a filled circle at output ports that fan out to 2+ wires
+  const fanOut = {};
+  for(const w of wires){
+    const key = w.fromId;
+    fanOut[key] = (fanOut[key]||0)+1;
+  }
+  for(const [idStr, count] of Object.entries(fanOut)){
+    if(count < 2) continue;
+    const src = nodes.find(n=>n.id===+idStr);
+    if(!src) continue;
+    const p = outPort(src);
+    const val = src.value;
+    C.beginPath(); C.arc(p.x, p.y, 5, 0, Math.PI*2);
+    if(val===1){ C.fillStyle='#00d4ff'; C.shadowColor='#00d4ff'; C.shadowBlur=10; }
+    else if(val===0){ C.fillStyle='#1a4060'; C.shadowBlur=0; }
+    else { C.fillStyle='rgba(70,110,160,.6)'; C.shadowBlur=0; }
+    C.fill(); C.shadowBlur=0;
+    C.strokeStyle='rgba(0,0,0,.5)'; C.lineWidth=1; C.stroke();
   }
   // Live preview (mouseX/mouseY are already in world coords)
   if(wiringFrom){
@@ -846,15 +866,21 @@ function onUp(e){
       let fp=wiringFrom,tp=port;
       if(fp.portType==='input'&&tp.portType==='output')[fp,tp]=[tp,fp];
       if(fp.portType==='output'&&tp.portType==='input'){
+        // Remove existing wire going INTO the target input port (each input still has one source)
         wires=wires.filter(w=>!(w.toId===tp.nodeId&&w.toPort===tp.portIdx));
-        wires.push({fromId:fp.nodeId,toId:tp.nodeId,toPort:tp.portIdx});
-        if(e.changedTouches) ripple(cx,cy,'#00ff88');
+        // Allow multiple wires from the same output (fan-out) — no restriction on fromId
+        // Prevent duplicate wire (same from→to)
+        const dup=wires.find(w=>w.fromId===fp.nodeId&&w.toId===tp.nodeId&&w.toPort===tp.portIdx);
+        if(!dup){
+          wires.push({fromId:fp.nodeId,toId:tp.nodeId,toPort:tp.portIdx});
+          if(e.changedTouches) ripple(cx,cy,'#00ff88');
+        }
       }
     }
     if(!moved){
       const p=wiringFrom;
       if(p.portType==='input') wires=wires.filter(w=>!(w.toId===p.nodeId&&w.toPort===p.portIdx));
-      else wires=wires.filter(w=>w.fromId!==p.nodeId);
+      // Tapping an output port: do nothing (don't wipe all fan-out wires)
     }
     wiringFrom=null; IM='IDLE'; setMode('عادي'); render(); return;
   }
