@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مختبر البوابات المنطقية</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Share+Tech+Mono&display=swap');
   :root {
@@ -39,40 +41,56 @@
 
   /* SIDEBAR */
   .sidebar {
-    width:66px; background:var(--panel); border-left:1px solid var(--border);
-    overflow-y:auto; overflow-x:hidden; flex-shrink:0;
-    padding:7px 5px; display:flex; flex-direction:column; gap:4px;
-    scrollbar-width:none;
+    width:160px; background:var(--panel); border-left:1px solid var(--border);
+    overflow-y:scroll; overflow-x:hidden; flex-shrink:0;
+    padding:8px 8px 16px;
+    display:flex; flex-direction:column; gap:3px;
     touch-action:pan-y;
+    /* custom slim scrollbar */
+    scrollbar-width:thin;
+    scrollbar-color:var(--border) transparent;
   }
-  .sidebar::-webkit-scrollbar { display:none; }
-  @media(min-width:580px){
-    .sidebar { width:168px; padding:10px 8px; gap:5px; }
-  }
+  .sidebar::-webkit-scrollbar { width:4px; }
+  .sidebar::-webkit-scrollbar-track { background:transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+  .sidebar::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+
+  @media(max-width:479px){ .sidebar { width:58px; padding:6px 5px 12px; } }
+
   .sidebar-section {
     font-size:9px; font-weight:700; color:var(--dim);
     text-transform:uppercase; letter-spacing:1.5px;
-    padding:6px 2px 2px; border-top:1px solid var(--border); margin-top:2px;
-    display:none;
+    padding:10px 4px 4px;
+    border-top:1px solid var(--border);
+    margin-top:4px;
+    display:flex; align-items:center; gap:6px;
   }
-  @media(min-width:580px){ .sidebar-section { display:block; } }
-  .sidebar-section:first-child { border-top:none; margin-top:0; }
+  .sidebar-section::before {
+    content:''; width:3px; height:12px; border-radius:2px; flex-shrink:0;
+    background: var(--section-color, var(--dim));
+  }
+  .sidebar-section:first-of-type { border-top:none; margin-top:0; padding-top:4px; }
+  @media(max-width:479px){ .sidebar-section { display:none; } }
 
   .gate-item {
-    display:flex; align-items:center; gap:7px;
-    padding:8px 5px; background:var(--panel2); border:1px solid var(--border);
-    border-radius:8px; cursor:grab; transition:border-color .18s,background .18s;
-    user-select:none; -webkit-user-select:none; position:relative; overflow:hidden;
-    justify-content:center;
-    touch-action:none;  /* allow pointer capture to work on touch */
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px; background:var(--panel2); border:1px solid var(--border);
+    border-radius:8px; cursor:grab; transition:border-color .18s, background .18s, box-shadow .18s;
+    user-select:none; -webkit-user-select:none; position:relative;
+    touch-action:none;
+    min-height:40px;
   }
-  @media(min-width:580px){ .gate-item { justify-content:flex-start; padding:8px 9px; } }
-  .gate-item:hover,.gate-item:active { border-color:var(--accent); background:rgba(0,212,255,.07); }
+  @media(max-width:479px){
+    .gate-item { justify-content:center; padding:7px 5px; }
+  }
+  .gate-item:hover { border-color:var(--accent); background:rgba(0,212,255,.07); box-shadow:0 0 8px rgba(0,212,255,.12); }
+  .gate-item:active { border-color:var(--accent); background:rgba(0,212,255,.12); }
+
   .gate-symbol { width:34px; height:26px; flex-shrink:0; }
-  .gate-info { display:none; }
-  @media(min-width:580px){ .gate-info { display:block; } }
-  .gate-name { font-size:12px; font-weight:600; }
-  .gate-sub { font-size:10px; color:var(--dim); }
+  .gate-info { flex:1; min-width:0; }
+  @media(max-width:479px){ .gate-info { display:none; } }
+  .gate-name { font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gate-sub  { font-size:10px; color:var(--dim); margin-top:1px; white-space:nowrap; }
 
   /* CANVAS */
   .canvas-wrap {
@@ -136,6 +154,142 @@
   .canvas-wrap.dz-active { outline: 2px solid rgba(0,212,255,.5); outline-offset:-2px; }
   /* sidebar item while dragging */
   .gate-item.is-dragging { opacity:.3; }
+
+  /* INFO BUTTON */
+  .info-btn {
+    width:18px; height:18px; border-radius:50%;
+    background:rgba(0,212,255,.1); border:1px solid rgba(0,212,255,.3);
+    color:rgba(0,212,255,.85); font-size:11px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .18s;
+    font-family:'Share Tech Mono',monospace; line-height:1;
+    flex-shrink:0;
+    margin-right:0;
+  }
+  @media(max-width:479px){
+    .info-btn {
+      position:absolute; top:3px; left:3px;
+      width:14px; height:14px; font-size:9px;
+    }
+  }
+  .info-btn:hover { background:rgba(0,212,255,.3); border-color:var(--accent); color:#fff; transform:scale(1.18); box-shadow:0 0 8px rgba(0,212,255,.4); }
+
+  /* MODAL OVERLAY */
+  #gateModal {
+    position:fixed; inset:0; z-index:2000;
+    background:rgba(5,8,18,.82); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  #gateModal.open { display:flex; }
+
+  /* MODAL BOX */
+  .modal-box {
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:16px; width:100%; max-width:420px;
+    max-height:88vh; overflow-y:auto; overflow-x:hidden;
+    box-shadow:0 24px 80px rgba(0,0,0,.8);
+    animation:modalIn .22s cubic-bezier(.2,1,.3,1);
+    scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+  }
+  @keyframes modalIn { from{transform:scale(.88) translateY(18px);opacity:0} to{transform:none;opacity:1} }
+
+  .modal-head {
+    display:flex; align-items:center; gap:12px;
+    padding:18px 20px 14px;
+    border-bottom:1px solid var(--border); position:sticky; top:0;
+    background:var(--panel); z-index:2; border-radius:16px 16px 0 0;
+  }
+  .modal-icon { font-size:28px; }
+  .modal-title { flex:1; }
+  .modal-title h2 { font-size:18px; font-weight:700; font-family:'Share Tech Mono',monospace; }
+  .modal-title p  { font-size:12px; color:var(--dim); margin-top:2px; }
+  .modal-close {
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--border);
+    background:transparent; color:var(--dim); font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:all .15s;
+    flex-shrink:0;
+  }
+  .modal-close:hover { border-color:var(--red); color:var(--red); background:rgba(255,61,107,.1); }
+
+  .modal-body { padding:16px 20px 20px; display:flex; flex-direction:column; gap:16px; }
+
+  /* description block */
+  .modal-desc {
+    font-size:13px; line-height:1.7; color:var(--text);
+    background:var(--panel2); border-radius:10px; padding:12px 14px;
+    border-right:3px solid var(--accent);
+  }
+
+  /* equation */
+  .modal-eq-label { font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:6px; }
+  .modal-eq {
+    background:var(--panel2); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; font-family:'Share Tech Mono',monospace; font-size:15px;
+    color:var(--accent); text-align:center; letter-spacing:1px;
+  }
+
+  /* truth table */
+  .modal-table-wrap { overflow-x:auto; }
+  .modal-table {
+    width:100%; border-collapse:collapse; font-family:'Share Tech Mono',monospace;
+    font-size:13px; border-radius:10px; overflow:hidden;
+  }
+  .modal-table th {
+    background:rgba(0,212,255,.1); color:var(--accent);
+    padding:8px 12px; font-size:11px; font-weight:700; text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  .modal-table td {
+    padding:7px 12px; text-align:center; border-bottom:1px solid rgba(30,45,80,.5);
+    transition:background .12s;
+  }
+  .modal-table tr:last-child td { border-bottom:none; }
+  .modal-table tr:hover td { background:rgba(0,212,255,.05); }
+  .td-1 { color:#00ff88; font-weight:700; }
+  .td-0 { color:#4a6080; }
+  .td-out-1 { color:#ffd700; font-weight:700; font-size:15px; }
+  .td-out-0 { color:#ff3d6b; font-size:15px; }
+
+  /* uses */
+  .modal-uses { font-size:12px; color:var(--dim); line-height:1.6; }
+  .modal-uses span { color:var(--text); }
+
+  /* BOOLEAN PANEL */
+  #boolPanel {
+    background:var(--panel); border-top:1px solid var(--border);
+    padding:0 14px; min-height:0; max-height:0;
+    overflow:hidden; flex-shrink:0;
+    transition:max-height .35s cubic-bezier(.2,1,.3,1), padding .35s;
+    direction:ltr; text-align:left;
+  }
+  #boolPanel.open {
+    max-height:120px;
+    padding:8px 16px;
+    overflow-y:auto;
+  }
+  .bool-row {
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:4px 0; border-bottom:1px solid rgba(30,45,80,.4);
+    direction:ltr; text-align:left;
+  }
+  .bool-row:last-child { border-bottom:none; }
+  .bool-lamp-label {
+    font-size:11px; color:var(--yellow); font-weight:700;
+    white-space:nowrap; flex-shrink:0;
+    font-family:'Cairo',sans-serif;
+  }
+  .bool-katex {
+    flex:1;
+    /* KaTeX color overrides to match dark theme */
+    --katex-color: #e0eeff;
+  }
+  .bool-katex .katex { color:#e0eeff; font-size:14px; }
+  .bool-katex .katex .mord  { color:#00ff88; }   /* variables */
+  .bool-katex .katex .mbin  { color:#a060ff; }   /* + operator */
+  .bool-katex .katex .mrel  { color:#00d4ff; }   /* = */
+  .bool-katex .katex .overline .mord { color:#e0eeff; } /* NOT bar stays white */
+  .bool-incomplete { color:#4a6080; font-size:11px; font-style:italic; font-family:'Cairo',sans-serif; }
 </style>
 </head>
 <body>
@@ -146,7 +300,6 @@
     <span class="logo-text">مختبر البوابات المنطقية</span>
   </div>
   <div class="header-actions">
-    <button class="btn" onclick="runSim()">▶ تشغيل</button>
     <button class="btn danger" onclick="clearAll()">✕ مسح</button>
   </div>
 </header>
@@ -154,7 +307,7 @@
 <div class="workspace">
   <div class="sidebar" id="sidebar">
 
-    <div class="sidebar-section">مدخلات</div>
+    <div class="sidebar-section" style="--section-color:#00ff88">مدخلات</div>
     <div class="gate-item" data-type="INPUT">
       <svg class="gate-symbol" viewBox="0 0 34 26">
         <rect x="3" y="5" width="20" height="16" rx="3" fill="none" stroke="#00ff88" stroke-width="1.5"/>
@@ -162,9 +315,10 @@
         <text x="13" y="17" text-anchor="middle" fill="#00ff88" font-size="8" font-family="monospace">IN</text>
       </svg>
       <div class="gate-info"><div class="gate-name">مدخل</div><div class="gate-sub">0 / 1</div></div>
+      <button class="info-btn" onclick="showGateInfo('INPUT',event)">!</button>
     </div>
 
-    <div class="sidebar-section">أساسية</div>
+    <div class="sidebar-section" style="--section-color:#00d4ff">أساسية</div>
     <div class="gate-item" data-type="AND">
       <svg class="gate-symbol" viewBox="0 0 34 26">
         <path d="M4 3 H17 Q29 3 29 13 Q29 23 17 23 H4 Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
@@ -173,6 +327,7 @@
         <line x1="29" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">AND</div><div class="gate-sub">و المنطقية</div></div>
+      <button class="info-btn" onclick="showGateInfo('AND',event)">!</button>
     </div>
     <div class="gate-item" data-type="OR">
       <svg class="gate-symbol" viewBox="0 0 34 26">
@@ -183,6 +338,7 @@
         <line x1="27" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">OR</div><div class="gate-sub">أو المنطقية</div></div>
+      <button class="info-btn" onclick="showGateInfo('OR',event)">!</button>
     </div>
     <div class="gate-item" data-type="NOT">
       <svg class="gate-symbol" viewBox="0 0 34 26">
@@ -192,9 +348,10 @@
         <line x1="31" y1="13" x2="34" y2="13" stroke="#00d4ff" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">NOT</div><div class="gate-sub">عاكس</div></div>
+      <button class="info-btn" onclick="showGateInfo('NOT',event)">!</button>
     </div>
 
-    <div class="sidebar-section">مركبة</div>
+    <div class="sidebar-section" style="--section-color:#7b2fff">مركبة</div>
     <div class="gate-item" data-type="NAND">
       <svg class="gate-symbol" viewBox="0 0 34 26">
         <path d="M4 3 H15 Q26 3 26 13 Q26 23 15 23 H4 Z" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
@@ -204,6 +361,7 @@
         <line x1="31" y1="13" x2="34" y2="13" stroke="#7b2fff" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">NAND</div><div class="gate-sub">عكس AND</div></div>
+      <button class="info-btn" onclick="showGateInfo('NAND',event)">!</button>
     </div>
     <div class="gate-item" data-type="NOR">
       <svg class="gate-symbol" viewBox="0 0 34 26">
@@ -215,6 +373,7 @@
         <line x1="29" y1="13" x2="34" y2="13" stroke="#7b2fff" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">NOR</div><div class="gate-sub">عكس OR</div></div>
+      <button class="info-btn" onclick="showGateInfo('NOR',event)">!</button>
     </div>
     <div class="gate-item" data-type="XOR">
       <svg class="gate-symbol" viewBox="0 0 34 26">
@@ -226,6 +385,7 @@
         <line x1="27" y1="13" x2="34" y2="13" stroke="#ffd700" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">XOR</div><div class="gate-sub">أو حصري</div></div>
+      <button class="info-btn" onclick="showGateInfo('XOR',event)">!</button>
     </div>
     <div class="gate-item" data-type="XNOR">
       <svg class="gate-symbol" viewBox="0 0 34 26">
@@ -238,9 +398,68 @@
         <line x1="29" y1="13" x2="34" y2="13" stroke="#ffd700" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">XNOR</div><div class="gate-sub">عكس XOR</div></div>
+      <button class="info-btn" onclick="showGateInfo('XNOR',event)">!</button>
     </div>
 
-    <div class="sidebar-section">مخرجات</div>
+    <div class="sidebar-section" style="--section-color:#00d4ff">ثلاثية المدخل</div>
+
+    <div class="gate-item" data-type="AND3">
+      <svg class="gate-symbol" viewBox="0 0 34 30">
+        <path d="M4 2 H17 Q29 2 29 15 Q29 28 17 28 H4 Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="6"  x2="4" y2="6"  stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="15" x2="4" y2="15" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="24" x2="4" y2="24" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="29" y1="15" x2="34" y2="15" stroke="#00d4ff" stroke-width="1.5"/>
+        <text x="16" y="19" text-anchor="middle" fill="#00d4ff" font-size="6" font-family="monospace">3</text>
+      </svg>
+      <div class="gate-info"><div class="gate-name">AND-3</div><div class="gate-sub">ثلاثي المدخل</div></div>
+      <button class="info-btn" onclick="showGateInfo('AND3',event)">!</button>
+    </div>
+
+    <div class="gate-item" data-type="OR3">
+      <svg class="gate-symbol" viewBox="0 0 34 30">
+        <path d="M4 2 Q10 2 22 15 Q10 28 4 28 Q9 15 4 2Z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <path d="M4 2 Q14 2 27 15 Q14 28 4 28" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="6"  x2="7" y2="6"  stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="15" x2="6" y2="15" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="0" y1="24" x2="7" y2="24" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="27" y1="15" x2="34" y2="15" stroke="#00d4ff" stroke-width="1.5"/>
+        <text x="16" y="19" text-anchor="middle" fill="#00d4ff" font-size="6" font-family="monospace">3</text>
+      </svg>
+      <div class="gate-info"><div class="gate-name">OR-3</div><div class="gate-sub">ثلاثي المدخل</div></div>
+      <button class="info-btn" onclick="showGateInfo('OR3',event)">!</button>
+    </div>
+
+    <div class="gate-item" data-type="NAND3">
+      <svg class="gate-symbol" viewBox="0 0 34 30">
+        <path d="M4 2 H15 Q26 2 26 15 Q26 28 15 28 H4 Z" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <circle cx="28.5" cy="15" r="2.5" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="6"  x2="4" y2="6"  stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="15" x2="4" y2="15" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="24" x2="4" y2="24" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="31" y1="15" x2="34" y2="15" stroke="#7b2fff" stroke-width="1.5"/>
+        <text x="14" y="19" text-anchor="middle" fill="#7b2fff" font-size="6" font-family="monospace">3</text>
+      </svg>
+      <div class="gate-info"><div class="gate-name">NAND-3</div><div class="gate-sub">ثلاثي المدخل</div></div>
+      <button class="info-btn" onclick="showGateInfo('NAND3',event)">!</button>
+    </div>
+
+    <div class="gate-item" data-type="NOR3">
+      <svg class="gate-symbol" viewBox="0 0 34 30">
+        <path d="M4 2 Q10 2 21 15 Q10 28 4 28 Q9 15 4 2Z" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <path d="M4 2 Q14 2 24 15 Q14 28 4 28" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <circle cx="26.5" cy="15" r="2.5" fill="none" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="6"  x2="7" y2="6"  stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="15" x2="6" y2="15" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="0" y1="24" x2="7" y2="24" stroke="#7b2fff" stroke-width="1.5"/>
+        <line x1="29" y1="15" x2="34" y2="15" stroke="#7b2fff" stroke-width="1.5"/>
+        <text x="14" y="19" text-anchor="middle" fill="#7b2fff" font-size="6" font-family="monospace">3</text>
+      </svg>
+      <div class="gate-info"><div class="gate-name">NOR-3</div><div class="gate-sub">ثلاثي المدخل</div></div>
+      <button class="info-btn" onclick="showGateInfo('NOR3',event)">!</button>
+    </div>
+
+    <div class="sidebar-section" style="--section-color:#ffd700">مخرجات</div>
     <div class="gate-item" data-type="LAMP">
       <svg class="gate-symbol" viewBox="0 0 34 26">
         <circle cx="17" cy="13" r="9" fill="none" stroke="#ffd700" stroke-width="1.5"/>
@@ -250,9 +469,10 @@
         <line x1="8" y1="13" x2="0" y2="13" stroke="#ffd700" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">مصباح</div><div class="gate-sub">مخرج مرئي</div></div>
+      <button class="info-btn" onclick="showGateInfo('LAMP',event)">!</button>
     </div>
 
-    <div class="sidebar-section">توزيع</div>
+    <div class="sidebar-section" style="--section-color:#ff8c00">توزيع</div>
     <div class="gate-item" data-type="JUNCTION">
       <svg class="gate-symbol" viewBox="0 0 34 26">
         <!-- input wire -->
@@ -270,6 +490,7 @@
         <line x1="25" y1="17" x2="34" y2="20" stroke="#ff8c00" stroke-width="1.5"/>
       </svg>
       <div class="gate-info"><div class="gate-name">نقطة توزيع</div><div class="gate-sub">توزيع الإشارة</div></div>
+      <button class="info-btn" onclick="showGateInfo('JUNCTION',event)">!</button>
     </div>
 
   </div>
@@ -292,6 +513,8 @@
   </div>
 </div>
 
+<div id="boolPanel"></div>
+
 <div id="ctxMenu">
   <div class="ctx-item" id="ctxToggleBtn" onclick="ctxToggle()">⇄ تبديل القيمة</div>
   <div class="ctx-sep" id="ctxWireSep" style="display:none"></div>
@@ -303,6 +526,10 @@
 <div id="dragGhost">
   <svg id="dgSvg" width="34" height="26" viewBox="0 0 34 26" style="flex-shrink:0"></svg>
   <div><div class="dg-name" id="dgName"></div><div class="dg-sub" id="dgSub"></div></div>
+</div>
+
+<div id="gateModal" onclick="if(event.target===this)closeGateInfo()">
+  <div class="modal-box" id="modalBox"></div>
 </div>
 
 <script>/* v1773198617 */
@@ -329,6 +556,10 @@ const GATE_META = {
   NOR:  { name:'NOR',    sub:'عكس OR',      color:'#7b2fff' },
   XOR:  { name:'XOR',    sub:'أو حصري',     color:'#ffd700' },
   XNOR: { name:'XNOR',  sub:'عكس XOR',     color:'#ffd700' },
+  AND3: { name:'AND-3',  sub:'ثلاثي المدخل',color:'#00d4ff' },
+  OR3:  { name:'OR-3',   sub:'ثلاثي المدخل',color:'#00d4ff' },
+  NAND3:{ name:'NAND-3', sub:'ثلاثي المدخل',color:'#7b2fff' },
+  NOR3: { name:'NOR-3',  sub:'ثلاثي المدخل',color:'#7b2fff' },
   LAMP:    { name:'مصباح',       sub:'مخرج مرئي',   color:'#ffd700' },
   JUNCTION:{ name:'نقطة توزيع', sub:'توزيع الإشارة',color:'#ff8c00' },
 };
@@ -371,6 +602,10 @@ const DEFS = {
   NOR:     { color:'#7b2fff', ins:2, w:84, h:64 },
   XOR:     { color:'#ffd700', ins:2, w:84, h:64 },
   XNOR:    { color:'#ffd700', ins:2, w:84, h:64 },
+  AND3:    { color:'#00d4ff', ins:3, w:84, h:80 },
+  OR3:     { color:'#00d4ff', ins:3, w:84, h:80 },
+  NAND3:   { color:'#7b2fff', ins:3, w:84, h:80 },
+  NOR3:    { color:'#7b2fff', ins:3, w:84, h:80 },
   LAMP:    { color:'#ffd700', ins:1, w:74, h:64 },
   JUNCTION:{ color:'#ff8c00', ins:1, w:22, h:22 },
 };
@@ -392,16 +627,60 @@ function mkNode(type,x,y){
          color:d.color,
          _moving:false};
 }
-// ── Port positions — fixed, based on DEFS.ins ─
-// portIdx = 0-based index of the fixed port slot
+// ── Port positions — matched to actual gate shapes ─
 function inPort(n, portIdx){
   if(n.type==='JUNCTION') return{x:n.x, y:n.y+n.h/2};
-  const ins = DEFS[n.type].ins || 1;
-  const step = n.h / (ins + 1);
-  return {x:n.x, y:n.y + step*(portIdx+1)};
+
+  const {x,y,w,h,type}=n;
+  const sx=w/34, sy=h/26;
+  const ins=DEFS[type].ins||1;
+
+  // Y positions: evenly spaced matching SVG input lines
+  // For 2-input gates the SVG has lines at y=8 and y=18 (out of 26)
+  // For 3-input gates (h=80, viewBox ~30): y=6,15,24 out of 30
+  // For 1-input: y=13 out of 26
+  let yFrac=[];
+  if(ins===1)  yFrac=[13/26];
+  if(ins===2)  yFrac=[8/26, 18/26];
+  if(ins===3)  yFrac=[6/30, 15/30, 24/30];
+
+  const py = y + h*yFrac[portIdx];
+
+  // X position depends on gate type — OR/NOR/XOR/XNOR have curved left edge
+  let px = x; // default: left edge
+  switch(type){
+    case'OR': case'OR3':
+      // SVG input lines start at x=0,y=8/18 → enter curve at ~x=7*sx
+      px = x + (portIdx===1 ? 7*sx : 7*sx);
+      break;
+    case'NOR': case'NOR3':
+      px = x + 7*sx;
+      break;
+    case'XOR':
+      px = x + 8*sx;
+      break;
+    case'XNOR':
+      px = x + 8*sx;
+      break;
+    default:
+      px = x; // AND/NAND/NOT: straight left edge
+  }
+  return {x:px, y:py};
 }
+
 function outPort(n){
-  return {x:n.x+n.w, y:n.y+n.h/2};
+  const {x,y,w,h,type}=n;
+  const sx=w/34;
+  switch(type){
+    case'AND':  case'AND3':  return {x: x+29*sx, y: y+h/2};
+    case'OR':   case'OR3':   return {x: x+27*sx, y: y+h/2};
+    case'NOT':               return {x: x+31*sx, y: y+h/2};
+    case'NAND': case'NAND3': return {x: x+31*sx, y: y+h/2};
+    case'NOR':  case'NOR3':  return {x: x+29*sx, y: y+h/2};
+    case'XOR':               return {x: x+27*sx, y: y+h/2};
+    case'XNOR':              return {x: x+29*sx, y: y+h/2};
+    default:                 return {x: x+w,     y: y+h/2};
+  }
 }
 function setMode(t){ document.getElementById('sMode').textContent=t; }
 
@@ -414,12 +693,15 @@ function evaluate(){
       const ins = DEFS[n.type]?.ins ?? 1;
 
       if(n.type==='JUNCTION'){
-        // JUNCTION: collect all incoming wires, OR them
+        // JUNCTION: true signal splitter — takes ONE input and fans it out
+        // If multiple wires connected to input, OR them (graceful fallback)
         const inWires=wires.filter(w=>w.toId===n.id);
         if(inWires.length===0){n.value=null;continue;}
         const vals=inWires.map(w=>{const s=nodes.find(x=>x.id===w.fromId);return s?s.value:null;});
-        if(vals.some(v=>v===null)){n.value=null;continue;}
-        n.value=vals.some(v=>v===1)?1:0;
+        if(vals.every(v=>v===null)){n.value=null;continue;}
+        // Use first resolved value (splitter), fall back to OR for multi-input edge case
+        const resolved=vals.filter(v=>v!==null);
+        n.value=resolved.some(v=>v===1)?1:0;
         continue;
       }
 
@@ -457,6 +739,12 @@ function gateEval(type, iv){
     // XOR / XNOR: require at least 2 inputs; odd-parity logic
     case'XOR':  return iv.length<2 ? null : (iv.reduce((a,b)=>a^b,0));
     case'XNOR': return iv.length<2 ? null : (iv.reduce((a,b)=>a^b,0)===0?1:0);
+
+    // 3-input gates: require all 3 inputs connected
+    case'AND3':  return iv.length<3 ? null : (iv.every(v=>v===1)?1:0);
+    case'NAND3': return iv.length<3 ? null : (iv.every(v=>v===1)?0:1);
+    case'OR3':   return iv.length<3 ? null : (iv.some(v=>v===1)?1:0);
+    case'NOR3':  return iv.length<3 ? null : (iv.some(v=>v===1)?0:1);
 
     // LAMP: lights up if ANY connected input is 1 (1 input is fine)
     case'LAMP':    return iv.some(v=>v===1)?1:0;
@@ -528,6 +816,7 @@ function render(){
   // Status
   document.getElementById('sNodes').textContent=nodes.length+' عنصر';
   document.getElementById('sWires').textContent=wires.length+' سلك';
+  updateBoolPanel();
 }
 
 function wire(p1,p2,val,preview=false){
@@ -548,57 +837,219 @@ function drawNode(n){
   C.save();
 
   if(type==='JUNCTION'){ drawJunction(n); C.restore(); return; }
+  if(type==='INPUT'){
+    // Draw background box
+    if(on&&type!=='LAMP'){C.shadowColor=color;C.shadowBlur=15;}
+    if(mv){C.shadowColor='#fff';C.shadowBlur=20;}
+    const sel=n._selected;
+    if(sel){C.shadowColor='#ff3d6b';C.shadowBlur=22;}
+    C.fillStyle=mv?'rgba(18,28,55,.97)':'rgba(10,14,26,.93)';
+    C.strokeStyle=sel?'#ff3d6b':(mv?'#fff':(nil?'rgba(70,100,155,.4)':(on?color:'rgba(38,62,108,.8)')));
+    C.lineWidth=sel?2.5:(mv?2.5:(on?2:1.5));
+    rr(x,y,w,h,10); C.fill(); C.stroke(); C.shadowBlur=0;
+    if(sel){C.setLineDash([5,4]);C.strokeStyle='rgba(255,61,107,.45)';C.lineWidth=1/vz;rr(x-5,y-5,w+10,h+10,14);C.stroke();C.setLineDash([]);}
+    C.fillStyle=color+(on?'aa':'25'); rrTop(x,y,w,6,10); C.fill();
+    drawInput(n); C.restore(); return;
+  }
+  if(type==='LAMP'){
+    const sel=n._selected;
+    C.fillStyle=mv?'rgba(18,28,55,.97)':'rgba(10,14,26,.93)';
+    C.strokeStyle=sel?'#ff3d6b':(mv?'#fff':(nil?'rgba(70,100,155,.4)':(on?color:'rgba(38,62,108,.8)')));
+    C.lineWidth=sel?2.5:(mv?2.5:(on?2:1.5));
+    if(sel){C.shadowColor='#ff3d6b';C.shadowBlur=22;}
+    rr(x,y,w,h,10); C.fill(); C.stroke(); C.shadowBlur=0;
+    if(sel){C.setLineDash([5,4]);C.strokeStyle='rgba(255,61,107,.45)';C.lineWidth=1/vz;rr(x-5,y-5,w+10,h+10,14);C.stroke();C.setLineDash([]);}
+    drawLamp(n); C.restore(); return;
+  }
 
-  if(on&&type!=='LAMP'){C.shadowColor=color;C.shadowBlur=15;}
-  if(mv){C.shadowColor='#fff';C.shadowBlur=20;}
+  // ── Logic gate shapes ──────────────────────
   const sel=n._selected;
-  if(sel){ C.shadowColor='#ff3d6b'; C.shadowBlur=22; }
-  C.fillStyle=mv?'rgba(18,28,55,.97)':'rgba(10,14,26,.93)';
-  C.strokeStyle=sel?'#ff3d6b':(mv?'#fff':(nil?'rgba(70,100,155,.4)':(on?color:'rgba(38,62,108,.8)')));
-  C.lineWidth=sel?2.5:(mv?2.5:(on?2:1.5));
-  rr(x,y,w,h,10); C.fill(); C.stroke(); C.shadowBlur=0;
+  if(on){C.shadowColor=color;C.shadowBlur=16;}
+  if(mv){C.shadowColor='#fff';C.shadowBlur=20;}
+  if(sel){C.shadowColor='#ff3d6b';C.shadowBlur=22;}
+
+  const lw = sel?2.5:(mv?2.5:(on?2.2:1.6));
+  const stroke = sel?'#ff3d6b':(mv?'#fff':(nil?'rgba(70,100,155,.4)':(on?color:'rgba(50,80,140,.85)')));
+  const fill = mv?'rgba(18,28,55,.97)':'rgba(10,14,26,.93)';
+
+  // Scale from a 34×26 (or 34×30 for 3-input) logical space to node bounds
+  // We draw in node-local coords then translate
+  C.translate(x, y);
+  const sx = w/34, sy = h/26; // scale factors
+
+  // selection ring
   if(sel){
     C.setLineDash([5,4]); C.strokeStyle='rgba(255,61,107,.45)';
-    C.lineWidth=1/vz; rr(x-5,y-5,w+10,h+10,14); C.stroke(); C.setLineDash([]);
+    C.lineWidth=1/vz; rr(-5,-5,w+10,h+10,14); C.stroke(); C.setLineDash([]);
   }
-  C.fillStyle=color+(on?'aa':'25'); rrTop(x,y,w,6,10); C.fill();
 
-  if(type==='INPUT'){ drawInput(n); C.restore(); return; }
-  if(type==='LAMP'){  drawLamp(n);  C.restore(); return; }
+  C.fillStyle=fill; C.strokeStyle=stroke; C.lineWidth=lw; C.shadowBlur=0;
+  if(on){C.shadowColor=color;C.shadowBlur=14;}
+  if(sel){C.shadowColor='#ff3d6b';C.shadowBlur=18;}
 
-  // Gate label
-  C.fillStyle=nil?'rgba(80,115,165,.6)':(on?color:'rgba(135,168,210,.9)');
-  C.font=`bold 12px 'Share Tech Mono',monospace`;
-  C.textAlign='center'; C.textBaseline='middle';
-  C.fillText(type, x+w/2, y+h/2);
+  const S=(px,py)=>({x:px*sx, y:py*sy}); // scale point
+
+  // Draw the proper gate shape
+  drawGateShape(type, sx, sy, color, on, nil, stroke, fill, lw);
+
+  C.restore(); // back to world coords before drawing ports and badge
+
+  // Input port dots
+  C.save();
+  const ins=DEFS[type].ins||1;
+  for(let slot=0;slot<ins;slot++){
+    const onSlot=wires.filter(ww=>ww.toId===n.id&&ww.toPort===slot);
+    const slotVal=onSlot.length===0?null
+      :onSlot.some(ww=>{const s=nodes.find(xx=>xx.id===ww.fromId);return s&&s.value===1;})?1:0;
+    const p=inPort(n,slot);
+    dot(p,slotVal);
+    if(onSlot.length>1){
+      C.fillStyle='rgba(0,212,255,.85)';C.font='bold 7px monospace';
+      C.textAlign='left';C.textBaseline='middle';
+      C.fillText('×'+onSlot.length,p.x+8,p.y);
+    }
+  }
+  dot(outPort(n),value);
 
   // Value badge
   if(value!==null){
     const bx=x+w-13,by=y+11;
     C.fillStyle=on?color:'#182840';
     C.beginPath();C.arc(bx,by,7,0,Math.PI*2);C.fill();
-    C.fillStyle=on?'#000':'#aaa'; C.font='bold 8px monospace'; C.fillText(value,bx,by);
+    C.fillStyle=on?'#000':'#aaa';C.font='bold 8px monospace';
+    C.textAlign='center';C.textBaseline='middle';C.fillText(value,bx,by);
   }
+  C.restore();
+}
 
-  // Fixed input ports — one dot per slot, colour reflects any wire on that slot
-  const ins=DEFS[type].ins||1;
-  for(let slot=0;slot<ins;slot++){
-    const onSlot=wires.filter(w=>w.toId===n.id&&w.toPort===slot);
-    const slotVal = onSlot.length===0 ? null
-      : onSlot.some(w=>{ const s=nodes.find(x=>x.id===w.fromId); return s&&s.value===1; }) ? 1 : 0;
-    // Draw wire-count badge if >1 wire stacked
-    const p=inPort(n,slot);
-    dot(p, slotVal);
-    if(onSlot.length>1){
-      C.fillStyle='rgba(0,212,255,.85)'; C.font='bold 7px monospace';
-      C.textAlign='left'; C.textBaseline='middle';
-      C.fillText('×'+onSlot.length, p.x+8, p.y);
+function drawGateShape(type, sx, sy, color, on, nil, stroke, fill, lw){
+  // All paths use scaled coords matching the sidebar SVGs exactly
+  const H3 = (sy*26/2); // half-height for 2-input gates
+
+  C.beginPath();
+  C.fillStyle=fill; C.strokeStyle=stroke; C.lineWidth=lw;
+
+  switch(type){
+    case'AND': case'AND3':{
+      const yT=2*sy, yB=24*sy, xL=4*sx, xM=17*sx, xR=29*sx;
+      C.moveTo(xL,yT); C.lineTo(xM,yT);
+      C.bezierCurveTo(xR,yT, xR,yB, xM,yB);
+      C.lineTo(xL,yB); C.closePath();
+      C.fill(); C.stroke();
+      break;
+    }
+    case'NAND': case'NAND3':{
+      const yT=2*sy, yB=24*sy, xL=4*sx, xM=15*sx, xR=26*sx;
+      C.moveTo(xL,yT); C.lineTo(xM,yT);
+      C.bezierCurveTo(xR,yT, xR,yB, xM,yB);
+      C.lineTo(xL,yB); C.closePath();
+      C.fill(); C.stroke();
+      // bubble
+      C.beginPath(); C.arc(28.5*sx,13*sy,2.5*sx,0,Math.PI*2);
+      C.fillStyle=fill; C.fill(); C.stroke();
+      break;
+    }
+    case'OR': case'OR3':{
+      const yT=2*sy, yB=24*sy, yM=13*sy;
+      C.moveTo(4*sx,yT);
+      C.quadraticCurveTo(10*sx,yT, 22*sx,yM);
+      C.quadraticCurveTo(10*sx,yB, 4*sx,yB);
+      C.quadraticCurveTo(9*sx,yM,  4*sx,yT);
+      C.fill();
+      C.beginPath();
+      C.moveTo(4*sx,yT);
+      C.quadraticCurveTo(14*sx,yT, 27*sx,yM);
+      C.quadraticCurveTo(14*sx,yB, 4*sx,yB);
+      C.stroke();
+      C.beginPath();
+      C.moveTo(4*sx,yT); C.quadraticCurveTo(9*sx,yM, 4*sx,yB);
+      C.stroke();
+      break;
+    }
+    case'NOR': case'NOR3':{
+      const yT=2*sy, yB=24*sy, yM=13*sy;
+      C.moveTo(4*sx,yT);
+      C.quadraticCurveTo(10*sx,yT, 21*sx,yM);
+      C.quadraticCurveTo(10*sx,yB, 4*sx,yB);
+      C.quadraticCurveTo(9*sx,yM,  4*sx,yT);
+      C.fill();
+      C.beginPath();
+      C.moveTo(4*sx,yT);
+      C.quadraticCurveTo(14*sx,yT, 24*sx,yM);
+      C.quadraticCurveTo(14*sx,yB, 4*sx,yB);
+      C.stroke();
+      C.beginPath();
+      C.moveTo(4*sx,yT); C.quadraticCurveTo(9*sx,yM, 4*sx,yB); C.stroke();
+      // bubble
+      C.beginPath(); C.arc(26.5*sx,yM,2.5*sx,0,Math.PI*2);
+      C.fillStyle=fill; C.fill(); C.stroke();
+      break;
+    }
+    case'NOT':{
+      const yT=3*sy, yB=23*sy, yM=13*sy;
+      C.moveTo(3*sx,yT); C.lineTo(26*sx,yM); C.lineTo(3*sx,yB); C.closePath();
+      C.fill(); C.stroke();
+      C.beginPath(); C.arc(28.5*sx,yM,2.5*sx,0,Math.PI*2);
+      C.fillStyle=fill; C.fill(); C.stroke();
+      break;
+    }
+    case'XOR':{
+      const yT=3*sy, yB=23*sy, yM=13*sy;
+      C.moveTo(6*sx,yT);
+      C.quadraticCurveTo(12*sx,yT, 23*sx,yM);
+      C.quadraticCurveTo(12*sx,yB, 6*sx,yB);
+      C.quadraticCurveTo(11*sx,yM, 6*sx,yT);
+      C.fill();
+      C.beginPath();
+      C.moveTo(6*sx,yT);
+      C.quadraticCurveTo(16*sx,yT, 27*sx,yM);
+      C.quadraticCurveTo(16*sx,yB, 6*sx,yB);
+      C.stroke();
+      C.beginPath();
+      C.moveTo(6*sx,yT); C.quadraticCurveTo(11*sx,yM, 6*sx,yB); C.stroke();
+      // extra curve
+      C.beginPath();
+      C.moveTo(2*sx,yT); C.quadraticCurveTo(6*sx,yM, 2*sx,yB); C.stroke();
+      break;
+    }
+    case'XNOR':{
+      const yT=3*sy, yB=23*sy, yM=13*sy;
+      C.moveTo(6*sx,yT);
+      C.quadraticCurveTo(12*sx,yT, 21*sx,yM);
+      C.quadraticCurveTo(12*sx,yB, 6*sx,yB);
+      C.quadraticCurveTo(11*sx,yM, 6*sx,yT);
+      C.fill();
+      C.beginPath();
+      C.moveTo(6*sx,yT);
+      C.quadraticCurveTo(16*sx,yT, 24*sx,yM);
+      C.quadraticCurveTo(16*sx,yB, 6*sx,yB);
+      C.stroke();
+      C.beginPath();
+      C.moveTo(6*sx,yT); C.quadraticCurveTo(11*sx,yM, 6*sx,yB); C.stroke();
+      C.beginPath();
+      C.moveTo(2*sx,yT); C.quadraticCurveTo(6*sx,yM, 2*sx,yB); C.stroke();
+      // bubble
+      C.beginPath(); C.arc(26.5*sx,yM,2.5*sx,0,Math.PI*2);
+      C.fillStyle=fill; C.fill(); C.stroke();
+      break;
+    }
+    default:{
+      // fallback rounded rect
+      rr(0,0,34*sx,26*sy,10); C.fill(); C.stroke();
+      C.fillStyle=nil?'rgba(80,115,165,.6)':(on?color:'rgba(135,168,210,.9)');
+      C.font=`bold 11px 'Share Tech Mono',monospace`;
+      C.textAlign='center'; C.textBaseline='middle';
+      C.fillText(type, 17*sx, 13*sy);
     }
   }
 
-  // Output port
-  dot(outPort(n), value);
-  C.restore();
+  // Gate name label inside shape
+  if(!['AND','NAND','OR','NOR','XOR','XNOR','NOT'].includes(type.replace('3',''))){return;}
+  const label = type.replace('3','') + (type.endsWith('3')?'-3':'');
+  C.fillStyle = nil?'rgba(80,115,165,.55)':(on?color:'rgba(160,195,235,.9)');
+  C.font = `bold ${Math.round(11*Math.min(sx,sy))}px 'Share Tech Mono',monospace`;
+  C.textAlign='center'; C.textBaseline='middle';
+  C.fillText(label, 17*sx, 13*sy);
 }
 
 function wireIn(n,i){
@@ -900,6 +1351,14 @@ function cancelLP(){
 }
 
 function onDown(e){
+  // Middle mouse → pan
+  if(e.button===1){
+    e.preventDefault();
+    const r=canvas.getBoundingClientRect();
+    panSX=e.clientX-r.left; panSY=e.clientY-r.top; panVX=vx; panVY=vy;
+    IM='PANNING'; canvas.style.cursor='grabbing';
+    return;
+  }
   if(e.button===2){
     const{mx,my,cx,cy}=ePos(e);
     const n=nodeAt(mx,my);
@@ -1048,7 +1507,8 @@ function onUp(e){
       }
       if(p.portType==='output'){
         // Remove last outgoing wire from this node
-        const idx=wires.findLastIndex(w=>w.fromId===p.nodeId);
+        let idx=-1;
+        for(let i=wires.length-1;i>=0;i--){if(wires[i].fromId===p.nodeId){idx=i;break;}}
         if(idx!==-1) wires.splice(idx,1);
       }
     }
@@ -1089,8 +1549,7 @@ canvas.addEventListener('mousemove',  onMove);
 canvas.addEventListener('mouseup',    onUp);
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
-// Mouse hover ripple feedback
-canvas.addEventListener('mouseenter', e=>{});
+// Mouse hover
 canvas.addEventListener('mouseleave', e=>{ if(IM==='IDLE') canvas.style.cursor='default'; });
 
 // Scroll wheel zoom
@@ -1100,16 +1559,6 @@ canvas.addEventListener('wheel',e=>{
   zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.12:1/1.12);
   render();
 },{passive:false});
-
-// Middle-mouse pan
-canvas.addEventListener('mousedown',e=>{
-  if(e.button===1){
-    e.preventDefault();
-    const r=canvas.getBoundingClientRect();
-    panning=true; panSX=e.clientX-r.left; panSY=e.clientY-r.top; panVX=vx; panVY=vy;
-    IM='PANNING'; canvas.style.cursor='grabbing';
-  }
-});
 
 // Touch events
 canvas.addEventListener('touchstart',e=>{
@@ -1290,32 +1739,430 @@ function ctxDelete(){
 document.addEventListener('click',      e=>{if(!e.target.closest('#ctxMenu'))hideCtx();});
 document.addEventListener('touchstart', e=>{if(!e.target.closest('#ctxMenu'))hideCtx();},{passive:true});
 
+// ── Boolean Expression Builder ───────────────
+// Assigns letter names to INPUT nodes (A, B, C …)
+function getInputLabels(){
+  const labels={};
+  const inputs=nodes.filter(n=>n.type==='INPUT');
+  inputs.forEach((n,i)=>{ labels[n.id]=String.fromCharCode(65+i); });
+  return labels;
+}
+
+// Recursively build LaTeX expression string for a node
+function buildExpr(nodeId, labels, visited=new Set()){
+  if(visited.has(nodeId)) return { expr:'?', complete:false };
+  visited=new Set(visited); visited.add(nodeId);
+
+  const n=nodes.find(x=>x.id===nodeId);
+  if(!n) return { expr:'?', complete:false };
+
+  if(n.type==='INPUT') return { expr: labels[n.id]||'?', complete:true };
+
+  if(n.type==='JUNCTION'){
+    const inW=wires.filter(w=>w.toId===n.id);
+    if(!inW.length) return { expr:'?', complete:false };
+    return buildExpr(inW[0].fromId, labels, visited);
+  }
+
+  const ins=DEFS[n.type].ins||1;
+  const slotExprs=[];
+  let complete=true;
+  for(let slot=0;slot<ins;slot++){
+    const slotWires=wires.filter(w=>w.toId===n.id&&w.toPort===slot);
+    if(!slotWires.length){ complete=false; slotExprs.push('?'); continue; }
+    const r=buildExpr(slotWires[0].fromId, labels, visited);
+    if(!r.complete) complete=false;
+    slotExprs.push(r.expr);
+  }
+
+  // needsParens: wrap sub-expression if it contains binary ops
+  const needsParens=(e)=> /[+\cdot\oplus]/.test(e) || e.includes('\\cdot') || e.includes('+') || e.includes('\\oplus');
+  const wrap=(e)=> needsParens(e) ? `\\left(${e}\\right)` : e;
+
+  let expr='?';
+  switch(n.type){
+    case'AND':
+    case'AND3':  expr=slotExprs.map(wrap).join(' \\cdot '); break;
+    case'OR':
+    case'OR3':   expr=slotExprs.map(wrap).join(' + '); break;
+    case'NOT':   expr=`\\overline{${wrap(slotExprs[0])}}`; break;
+    case'NAND':
+    case'NAND3': expr=`\\overline{${slotExprs.map(wrap).join(' \\cdot ')}}`; break;
+    case'NOR':
+    case'NOR3':  expr=`\\overline{${slotExprs.map(wrap).join(' + ')}}`; break;
+    case'XOR':   expr=slotExprs.map(wrap).join(' \\oplus '); break;
+    case'XNOR':  expr=`\\overline{${slotExprs.map(wrap).join(' \\oplus ')}}`; break;
+    case'LAMP':  expr=slotExprs[0]; break;
+    default:     expr='?';
+  }
+  return {expr, complete};
+}
+
+function updateBoolPanel(){
+  const panel=document.getElementById('boolPanel');
+
+  const outputNodes = nodes.filter(n => {
+    if(n.type==='INPUT') return false;
+    const hasOut = wires.some(w=>w.fromId===n.id);
+    if(n.type==='LAMP') return true;
+    return !hasOut && n.type!=='JUNCTION';
+  });
+
+  if(!outputNodes.length || !wires.length){
+    panel.classList.remove('open');
+    panel.innerHTML='';
+    return;
+  }
+
+  const labels=getInputLabels();
+  let html='';
+  let anyExpr=false;
+
+  outputNodes.forEach((outNode,i)=>{
+    const isLamp = outNode.type==='LAMP';
+    const qLabel = outputNodes.length>1 ? `Q_{${i+1}}` : 'Q';
+
+    let srcId;
+    if(isLamp){
+      const inW=wires.filter(w=>w.toId===outNode.id);
+      if(!inW.length){
+        html+=`<div class="bool-row">
+          <span class="bool-lamp-label">💡 Q${outputNodes.length>1?i+1:''} =</span>
+          <span class="bool-incomplete">— لم يتصل بعد</span>
+        </div>`;
+        return;
+      }
+      srcId = inW[0].fromId;
+    } else {
+      srcId = outNode.id;
+    }
+
+    const {expr, complete} = buildExpr(srcId, labels, new Set());
+    anyExpr = true;
+
+    const latexStr = `${qLabel} = ${expr}`;
+    const renderId = `katex-out-${i}`;
+
+    html+=`<div class="bool-row">
+      <span class="bool-katex" id="${renderId}" data-latex="${latexStr.replace(/"/g,'&quot;')}"></span>
+      ${!complete?'<span class="bool-incomplete">⚠ دائرة غير مكتملة</span>':''}
+    </div>`;
+  });
+
+  if(anyExpr || outputNodes.length){
+    panel.innerHTML = html;
+    panel.classList.add('open');
+
+    // Render each KaTeX block after DOM is updated
+    panel.querySelectorAll('.bool-katex[data-latex]').forEach(el => {
+      const latex = el.getAttribute('data-latex');
+      try {
+        katex.render(latex, el, {
+          throwOnError: false,
+          displayMode: false,
+          output: 'html',
+        });
+      } catch(e) {
+        el.textContent = latex;
+      }
+    });
+  } else {
+    panel.classList.remove('open');
+  }
+}
+
 // ── Controls ────────────────────────────────
-function runSim(){ evaluate(); render(); }
-function clearAll(){ nodes=[]; wires=[]; render(); }
+function clearAll(){ nodes=[]; wires=[]; deselectAll(); render(); }
 
-// ── Demo ────────────────────────────────────
-(function(){
-  const cw=wrap.clientWidth||300;
-  const s=Math.max(.45,Math.min(1,cw/480));
-  const X=v=>Math.round(v*s+8), Y=v=>Math.round(v*s+16);
+// ── Gate Info Modal ──────────────────────────
+const GATE_INFO = {
+  INPUT: {
+    icon: '🔘',
+    name: 'مدخل (INPUT)',
+    sub: 'مصدر الإشارة',
+    color: '#00ff88',
+    desc: 'المدخل هو مصدر الإشارة في الدائرة المنطقية. يمكنه إصدار قيمة ثنائية واحدة فقط: إما 0 (منخفض، مفتوح) أو 1 (مرتفع، مغلق). اضغط عليه في المختبر لتبديل قيمته.',
+    eq: 'Q = 0 أو Q = 1',
+    eqNote: 'قيمة ثابتة يحددها المستخدم',
+    table: {
+      headers: ['المدخل', 'المخرج'],
+      rows: [['0','0'],['1','1']]
+    },
+    uses: 'يُستخدم لمحاكاة المفاتيح، أزرار الضغط، مستشعرات الحالة، وأي إشارة رقمية ثنائية.'
+  },
+  AND: {
+    icon: '⊓',
+    name: 'AND — و المنطقية',
+    sub: 'بوابة التقاطع',
+    color: '#00d4ff',
+    desc: 'بوابة AND تُخرج 1 فقط عندما تكون جميع مدخلاتها 1 في نفس الوقت. كأنها دائرة مفاتيح متسلسلة — كل المفاتيح يجب أن تكون مغلقة ليضيء المصباح.',
+    eq: 'Q = A · B',
+    eqNote: 'النقطة (·) تعني ضرب منطقي',
+    table: {
+      headers: ['A', 'B', 'Q = A·B'],
+      rows: [['0','0','0'],['0','1','0'],['1','0','0'],['1','1','1']]
+    },
+    uses: 'التحقق من تحقق شرطين معاً، دوائر الأمان، فك التشفير، دوائر الانتخاب.'
+  },
+  OR: {
+    icon: '⊔',
+    name: 'OR — أو المنطقية',
+    sub: 'بوابة الاتحاد',
+    color: '#00d4ff',
+    desc: 'بوابة OR تُخرج 1 إذا كان أي مدخل منها يساوي 1. كأنها دائرة مفاتيح متوازية — يكفي مفتاح واحد مغلق لإضاءة المصباح.',
+    eq: 'Q = A + B',
+    eqNote: 'علامة (+) تعني جمع منطقي',
+    table: {
+      headers: ['A', 'B', 'Q = A+B'],
+      rows: [['0','0','0'],['0','1','1'],['1','0','1'],['1','1','1']]
+    },
+    uses: 'الكشف عن أي حدث من عدة أحداث، دوائر الإنذار، الدمج المنطقي.'
+  },
+  NOT: {
+    icon: '¬',
+    name: 'NOT — العاكس',
+    sub: 'بوابة النفي',
+    color: '#00d4ff',
+    desc: 'بوابة NOT (العاكس) تعكس قيمة المدخل. إذا دخل 0 خرج 1، وإذا دخل 1 خرج 0. هي البوابة الوحيدة ذات المدخل الواحد فقط.',
+    eq: 'Q = Ā = NOT A',
+    eqNote: 'الشريط فوق الحرف يعني النفي',
+    table: {
+      headers: ['A', 'Q = Ā'],
+      rows: [['0','1'],['1','0']]
+    },
+    uses: 'عكس الإشارات، بناء بوابات NAND وNOR، دوائر التكامل، مولدات الساعة.'
+  },
+  NAND: {
+    icon: '⊼',
+    name: 'NAND — عكس AND',
+    sub: 'بوابة شاملة',
+    color: '#7b2fff',
+    desc: 'بوابة NAND هي AND متبوعة بـ NOT. تُخرج 0 فقط عندما تكون جميع مدخلاتها 1. تُعدّ "البوابة الشاملة" لأنه يمكن بناء أي دائرة منطقية باستخدامها وحدها.',
+    eq: 'Q = A · B‾ = NOT(A · B)',
+    eqNote: 'الشريط فوق كل العبارة يعني نفي الناتج',
+    table: {
+      headers: ['A', 'B', 'Q = NAND'],
+      rows: [['0','0','1'],['0','1','1'],['1','0','1'],['1','1','0']]
+    },
+    uses: 'البوابة الأكثر استخداماً في تصنيع الشرائح الإلكترونية. يمكن محاكاة AND وOR وNOT منها.'
+  },
+  NOR: {
+    icon: '⊽',
+    name: 'NOR — عكس OR',
+    sub: 'بوابة شاملة',
+    color: '#7b2fff',
+    desc: 'بوابة NOR هي OR متبوعة بـ NOT. تُخرج 1 فقط عندما تكون جميع مدخلاتها 0. مثل NAND تُعدّ بوابة شاملة يمكن بناء أي دائرة منها.',
+    eq: 'Q = A + B‾ = NOT(A + B)',
+    eqNote: 'الشريط فوق كل العبارة يعني نفي الناتج',
+    table: {
+      headers: ['A', 'B', 'Q = NOR'],
+      rows: [['0','0','1'],['0','1','0'],['1','0','0'],['1','1','0']]
+    },
+    uses: 'دوائر الـ SRAM القديمة، بناء دوائر منطقية كاملة، كشف الهدوء التام.'
+  },
+  XOR: {
+    icon: '⊕',
+    name: 'XOR — أو الحصري',
+    sub: 'بوابة الفرق',
+    color: '#ffd700',
+    desc: 'بوابة XOR تُخرج 1 فقط عندما تكون المدخلات مختلفة عن بعض. إذا كانت متساوية (00 أو 11) يكون الخرج 0. تُستخدم في الكشف عن الاختلاف.',
+    eq: 'Q = A ⊕ B = A·B̄ + Ā·B',
+    eqNote: 'تُخرج 1 عند الاختلاف، 0 عند التطابق',
+    table: {
+      headers: ['A', 'B', 'Q = A⊕B'],
+      rows: [['0','0','0'],['0','1','1'],['1','0','1'],['1','1','0']]
+    },
+    uses: 'الجمع الثنائي (نصف الجامع)، كشف الأخطاء، تشفير البيانات، مقارنة البتات.'
+  },
+  XNOR: {
+    icon: '⊙',
+    name: 'XNOR — عكس XOR',
+    sub: 'بوابة التطابق',
+    color: '#ffd700',
+    desc: 'بوابة XNOR هي عكس XOR. تُخرج 1 عندما تكون المدخلات متساوية، و0 عندما تختلف. تُسمى أيضاً "بوابة المساواة".',
+    eq: 'Q = A ⊙ B = NOT(A ⊕ B)',
+    eqNote: 'تُخرج 1 عند التطابق، 0 عند الاختلاف',
+    table: {
+      headers: ['A', 'B', 'Q = XNOR'],
+      rows: [['0','0','1'],['0','1','0'],['1','0','0'],['1','1','1']]
+    },
+    uses: 'مقارنة الأرقام الثنائية، كشف التطابق، دوائر التحقق من التكافؤ.'
+  },
+  AND3: {
+    icon: '⊓',
+    name: 'AND-3 — و ثلاثي المدخل',
+    sub: 'ثلاثة مدخلات',
+    color: '#00d4ff',
+    desc: 'بوابة AND ذات ثلاثة مدخلات. تُخرج 1 فقط عندما تكون المدخلات الثلاثة A وB وC جميعها تساوي 1 في نفس الوقت. أي مدخل يساوي 0 يجعل الخرج 0.',
+    eq: 'Q = A · B · C',
+    eqNote: 'يجب أن تكون A=1 وB=1 وC=1 للحصول على Q=1',
+    table: {
+      headers: ['A', 'B', 'C', 'Q'],
+      rows: [
+        ['0','0','0','0'],['0','0','1','0'],['0','1','0','0'],['0','1','1','0'],
+        ['1','0','0','0'],['1','0','1','0'],['1','1','0','0'],['1','1','1','1']
+      ]
+    },
+    uses: 'التحقق من ثلاثة شروط معاً، دوائر الأمان المتعددة، فك تشفير الأوضاع.'
+  },
+  OR3: {
+    icon: '⊔',
+    name: 'OR-3 — أو ثلاثي المدخل',
+    sub: 'ثلاثة مدخلات',
+    color: '#00d4ff',
+    desc: 'بوابة OR ذات ثلاثة مدخلات. تُخرج 1 إذا كان أي مدخل من المدخلات الثلاثة A أو B أو C يساوي 1. تُخرج 0 فقط عندما تكون الثلاثة تساوي 0.',
+    eq: 'Q = A + B + C',
+    eqNote: 'يكفي أن يكون أحدها 1 للحصول على Q=1',
+    table: {
+      headers: ['A', 'B', 'C', 'Q'],
+      rows: [
+        ['0','0','0','0'],['0','0','1','1'],['0','1','0','1'],['0','1','1','1'],
+        ['1','0','0','1'],['1','0','1','1'],['1','1','0','1'],['1','1','1','1']
+      ]
+    },
+    uses: 'الكشف عن أي حدث من ثلاثة أحداث، دوائر الإنذار، المشغّلات المتعددة.'
+  },
+  NAND3: {
+    icon: '⊼',
+    name: 'NAND-3 — عكس AND ثلاثي',
+    sub: 'ثلاثة مدخلات',
+    color: '#7b2fff',
+    desc: 'بوابة NAND ذات ثلاثة مدخلات. هي عكس AND-3 تماماً. تُخرج 0 فقط عندما تكون المدخلات الثلاثة 1 جميعها، وتُخرج 1 في كل الحالات الأخرى.',
+    eq: 'Q = A · B · C‾ = NOT(A·B·C)',
+    eqNote: 'تُخرج 0 فقط حين A=B=C=1',
+    table: {
+      headers: ['A', 'B', 'C', 'Q'],
+      rows: [
+        ['0','0','0','1'],['0','0','1','1'],['0','1','0','1'],['0','1','1','1'],
+        ['1','0','0','1'],['1','0','1','1'],['1','1','0','1'],['1','1','1','0']
+      ]
+    },
+    uses: 'دوائر منطق سالب، كشف اكتمال الشروط، بناء دوائر كاملة من بوابة واحدة.'
+  },
+  NOR3: {
+    icon: '⊽',
+    name: 'NOR-3 — عكس OR ثلاثي',
+    sub: 'ثلاثة مدخلات',
+    color: '#7b2fff',
+    desc: 'بوابة NOR ذات ثلاثة مدخلات. هي عكس OR-3. تُخرج 1 فقط عندما تكون المدخلات الثلاثة جميعها 0، وتُخرج 0 إذا كان أي مدخل يساوي 1.',
+    eq: 'Q = A + B + C‾ = NOT(A+B+C)',
+    eqNote: 'تُخرج 1 فقط حين A=B=C=0',
+    table: {
+      headers: ['A', 'B', 'C', 'Q'],
+      rows: [
+        ['0','0','0','1'],['0','0','1','0'],['0','1','0','0'],['0','1','1','0'],
+        ['1','0','0','0'],['1','0','1','0'],['1','1','0','0'],['1','1','1','0']
+      ]
+    },
+    uses: 'كشف الصمت التام في ثلاثة خطوط، دوائر الحماية من الإشارات الزائفة.'
+  },
+  LAMP: {
+    icon: '💡',
+    name: 'مصباح (LAMP)',
+    sub: 'مخرج مرئي',
+    color: '#ffd700',
+    desc: 'المصباح هو عنصر المخرج المرئي. يضيء باللون الأصفر عند استقبال إشارة 1، ويطفئ عند استقبال 0. لا يُرسل إشارة لأي عنصر آخر.',
+    eq: 'مضيء إذا Q = 1\nمطفأ إذا Q = 0',
+    eqNote: 'عنصر مخرج فقط — لا يصدر إشارة',
+    table: {
+      headers: ['المدخل', 'الحالة'],
+      rows: [['0','🔴 مطفأ'],['1','🟡 مضيء']]
+    },
+    uses: 'عرض نتائج الدوائر المنطقية، محاكاة المؤشرات الضوئية، التحقق من صحة الدائرة.'
+  },
+  JUNCTION: {
+    icon: '⊛',
+    name: 'نقطة التوزيع (Junction)',
+    sub: 'موزع الإشارة',
+    color: '#ff8c00',
+    desc: 'نقطة التوزيع تستقبل إشارة واحدة وتُوزعها على عدة مخرجات بنفس القيمة. مفيدة لتوصيل نفس الإشارة لأكثر من بوابة دون إعادة رسم الأسلاك.',
+    eq: 'Q₁ = Q₂ = Q₃ = A',
+    eqNote: 'الخرج يساوي المدخل على جميع المنافذ',
+    table: {
+      headers: ['المدخل A', 'Q₁', 'Q₂', 'Q₃'],
+      rows: [['0','0','0','0'],['1','1','1','1']]
+    },
+    uses: 'توزيع إشارة واحدة لعدة بوابات، تبسيط رسم الدوائر المعقدة، الإشارات المشتركة.'
+  }
+};
 
-  const a=mkNode('INPUT',X(18),Y(18)); a.value=1;
-  const b=mkNode('INPUT',X(18),Y(100)); b.value=0;
-  const ag=mkNode('AND',X(140),Y(46));
-  const l1=mkNode('LAMP',X(278),X(40));
-  nodes.push(a,b,ag,l1);
-  wires.push({fromId:a.id,toId:ag.id,toPort:0},{fromId:b.id,toId:ag.id,toPort:1},{fromId:ag.id,toId:l1.id,toPort:0});
+function showGateInfo(type, e) {
+  e.stopPropagation();
+  e.preventDefault();
+  const info = GATE_INFO[type];
+  if (!info) return;
 
-  const c=mkNode('INPUT',X(18),Y(200)); c.value=1;
-  const d=mkNode('INPUT',X(18),Y(282)); d.value=1;
-  const og=mkNode('OR',X(140),Y(228));
-  const l2=mkNode('LAMP',X(278),Y(222));
-  nodes.push(c,d,og,l2);
-  wires.push({fromId:c.id,toId:og.id,toPort:0},{fromId:d.id,toId:og.id,toPort:1},{fromId:og.id,toId:l2.id,toPort:0});
+  // Build truth table rows
+  const isOutput = type === 'LAMP';
+  const thCells = info.table.headers.map((h,i) => {
+    const isOut = i === info.table.headers.length - 1;
+    return `<th style="${isOut ? 'color:var(--yellow);' : ''}">${h}</th>`;
+  }).join('');
 
-  render();
-})();
+  const tdRows = info.table.rows.map(row => {
+    const cells = row.map((v, i) => {
+      const isOut = i === row.length - 1;
+      if (isOut) {
+        if (v === '1') return `<td class="td-out-1">●</td>`;
+        if (v === '0') return `<td class="td-out-0">○</td>`;
+        return `<td style="font-size:12px;">${v}</td>`;
+      }
+      const cls = v === '1' ? 'td-1' : (v === '0' ? 'td-0' : '');
+      return `<td class="${cls}">${v}</td>`;
+    }).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  document.getElementById('modalBox').innerHTML = `
+    <div class="modal-head">
+      <div class="modal-icon">${info.icon}</div>
+      <div class="modal-title">
+        <h2 style="color:${info.color}">${info.name}</h2>
+        <p>${info.sub}</p>
+      </div>
+      <button class="modal-close" onclick="closeGateInfo()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" style="border-color:${info.color}">${info.desc}</div>
+
+      <div>
+        <div class="modal-eq-label">المعادلة المنطقية</div>
+        <div class="modal-eq" style="color:${info.color}">${info.eq}</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:5px;text-align:center">${info.eqNote}</div>
+      </div>
+
+      <div>
+        <div class="modal-eq-label">جدول الحقيقة (Truth Table)</div>
+        <div class="modal-table-wrap">
+          <table class="modal-table">
+            <thead><tr>${thCells}</tr></thead>
+            <tbody>${tdRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="modal-eq-label">تطبيقات</div>
+        <div class="modal-uses"><span>${info.uses}</span></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('gateModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGateInfo() {
+  document.getElementById('gateModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGateInfo(); });
+
+
+
+render();
 </script>
 </body>
 </html>
