@@ -429,6 +429,63 @@ html,body{
   .stat-num{font-size:1.2rem;}
   .bottom-row{flex-direction:column;text-align:center;}
 }
+
+/* ══════════════════ LOCKED CARD ══════════════════ */
+.card.locked{
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+  overflow: hidden;
+}
+.card.locked::before{
+  content:'';
+  position:absolute;inset:0;
+  background: rgba(2,8,23,0.55);
+  backdrop-filter: blur(3px);
+  z-index:2;
+  border-radius:20px;
+}
+.card.locked .card-icon-wrap,
+.card.locked h2,
+.card.locked p,
+.card.locked .card-topics,
+.card.locked .card-progress,
+.card.locked .card-footer{
+  opacity: 0.3;
+  filter: grayscale(0.6);
+}
+.lock-overlay{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.lock-icon{
+  font-size:2.2rem;
+  filter: drop-shadow(0 0 12px rgba(100,116,139,0.8));
+  animation: lockPulse 3s ease-in-out infinite;
+}
+@keyframes lockPulse{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 12px rgba(100,116,139,.8));}
+  50%{transform:scale(1.08);filter:drop-shadow(0 0 20px rgba(100,116,139,1));}
+}
+.lock-text{
+  font-family:'Orbitron',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:#64748b;
+  letter-spacing:4px;
+}
+.lock-sub{
+  font-family:'Orbitron',sans-serif;
+  font-size:.55rem;
+  color:#334155;
+  letter-spacing:3px;
+}
+
 </style>
 </head>
 <body>
@@ -580,10 +637,15 @@ html,body{
     </a>
 
     <!-- Chemistry -->
-    <a href="chemistry.html" class="card chemistry">
+    <div class="card chemistry locked">
       <div class="card-bar"></div>
       <div class="card-tag">CHEM·03</div>
-      <div class="card-icon-wrap">⚗️</div>
+      <div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-text">مقفل</div>
+        <div class="lock-sub">قريباً · COMING SOON</div>
+      </div>
+      <div class="card-icon-wrap locked-icon">⚗️</div>
       <h2>مسار الكيمياء</h2>
       <p>التفاعلات الكيميائية، التوازن الحركي، الكيمياء العضوية وغير العضوية مع محاكاة تفاعلية للجزيئات والروابط الكيميائية.</p>
       <div class="card-topics">
@@ -593,38 +655,15 @@ html,body{
         <span class="topic-pill">التوازن</span>
       </div>
       <div class="card-progress">
-        <div class="progress-label"><span>التقدم</span><span>٣٠٪</span></div>
-        <div class="progress-track"><div class="progress-fill" style="--prog:30%"></div></div>
+        <div class="progress-label"><span>التقدم</span><span>—</span></div>
+        <div class="progress-track"><div class="progress-fill" style="--prog:0%"></div></div>
       </div>
       <div class="card-footer">
         <div class="card-meta">٣٨ درس · ٢٢ تمرين</div>
-        <div class="card-arrow">→</div>
+        <div class="card-arrow">🔒</div>
       </div>
-    </a>
+    </div>
 
-    <!-- Programming -->
-    <a href="programming.html" class="card programming">
-      <div class="card-bar"></div>
-      <div class="card-tag">PROG·04</div>
-      <span class="card-new">قريباً</span>
-      <div class="card-icon-wrap">💻</div>
-      <h2>مسار البرمجة</h2>
-      <p>أساسيات الخوارزميات وهياكل البيانات، البرمجة الكائنية، تطوير تطبيقات الويب وتطبيقات الذكاء الاصطناعي.</p>
-      <div class="card-topics">
-        <span class="topic-pill">خوارزميات</span>
-        <span class="topic-pill">Python</span>
-        <span class="topic-pill">JavaScript</span>
-        <span class="topic-pill">AI</span>
-      </div>
-      <div class="card-progress">
-        <div class="progress-label"><span>التقدم</span><span>١٥٪</span></div>
-        <div class="progress-track"><div class="progress-fill" style="--prog:15%"></div></div>
-      </div>
-      <div class="card-footer">
-        <div class="card-meta">٥٠ درس · ٤٠ تمرين</div>
-        <div class="card-arrow">→</div>
-      </div>
-    </a>
 
   </div>
 
