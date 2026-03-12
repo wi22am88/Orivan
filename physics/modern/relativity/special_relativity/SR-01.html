@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SR-01 · مسلّمتا آينشتاين — النسبية الخاصة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Exo+2:wght@100;300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+/* ═══════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════ */
+:root {
+  --bg:      #03050d;
+  --bg2:     #060a18;
+  --cyan:    #00e5ff;
+  --cyan2:   #80f4ff;
+  --cyan3:   #004d5e;
+  --electric:#4fc3f7;
+  --violet:  #7b61ff;
+  --amber:   #ffb300;
+  --green:   #00e676;
+  --white:   #f0f8ff;
+  --text:    #cce8f4;
+  --muted:   #4a6880;
+  --card:    rgba(4,14,30,0.93);
+  --border:  rgba(0,229,255,0.12);
+  --glow:    rgba(0,229,255,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUNDS ── */
+#sr-canvas{position:fixed;inset:0;z-index:0;}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px;}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 35%,rgba(0,3,10,.8) 100%);}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,255,.008) 3px,rgba(0,229,255,.008) 4px);}
+
+/* ── CORNERS ── */
+.corner{position:fixed;z-index:20;pointer-events:none;width:44px;height:44px;}
+.corner.tl{top:18px;left:18px;border-top:1px solid rgba(0,229,255,.5);border-left:1px solid rgba(0,229,255,.5);}
+.corner.tr{top:18px;right:18px;border-top:1px solid rgba(0,229,255,.5);border-right:1px solid rgba(0,229,255,.5);}
+.corner.bl{bottom:18px;left:18px;border-bottom:1px solid rgba(0,229,255,.3);border-left:1px solid rgba(0,229,255,.3);}
+.corner.br{bottom:18px;right:18px;border-bottom:1px solid rgba(0,229,255,.3);border-right:1px solid rgba(0,229,255,.3);}
+.corner::before{content:'';position:absolute;width:4px;height:4px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan);}
+.corner.tl::before{top:-2px;left:-2px;}
+.corner.tr::before{top:-2px;right:-2px;}
+.corner.bl::before{bottom:-2px;left:-2px;}
+.corner.br::before{bottom:-2px;right:-2px;}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 32px;
+  background:rgba(3,5,13,.88);
+  border-bottom:1px solid rgba(0,229,255,.1);
+  backdrop-filter:blur(20px);
+}
+.header-logo{font-family:'Exo 2',sans-serif;font-size:.65rem;font-weight:900;letter-spacing:5px;color:var(--cyan);text-shadow:0 0 14px rgba(0,229,255,.7);text-transform:uppercase;}
+.header-tag{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:2px;}
+.header-code{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--cyan);background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.18);padding:4px 12px;border-radius:2px;letter-spacing:2px;}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;border:1px solid rgba(0,229,255,.12);padding:7px 18px;border-radius:4px;transition:.25s;background:none;font-family:'Tajawal',sans-serif;cursor:pointer;}
+.back-btn:hover{color:var(--cyan);border-color:var(--cyan);}
+
+/* ── PROGRESS BAR ── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;z-index:200;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  transition:width .1s linear;
+  box-shadow:0 0 12px var(--cyan);
+  width:0%;
+}
+
+/* ── WRAPPER ── */
+.wrapper{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:0 32px 120px;}
+
+/* ═══════════════════════════════════════
+   LESSON HERO
+═══════════════════════════════════════ */
+.lesson-hero{
+  min-height:70vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 20px 60px;
+  position:relative;
+}
+.lesson-eyebrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;letter-spacing:6px;color:var(--cyan);
+  margin-bottom:24px;
+  opacity:0;animation:fadeDown .7s .3s ease forwards;
+  display:flex;align-items:center;gap:16px;
+}
+.lesson-eyebrow::before,.lesson-eyebrow::after{content:'';width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));}
+.lesson-eyebrow::after{background:linear-gradient(90deg,var(--cyan),transparent);}
+.lesson-code-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:3px;
+  color:var(--cyan);
+  background:rgba(0,229,255,.07);
+  border:1px solid rgba(0,229,255,.2);
+  padding:5px 14px;border-radius:2px;
+  margin-bottom:28px;
+  opacity:0;animation:fadeIn .6s .2s ease forwards;
+  display:inline-block;
+}
+.lesson-title{
+  opacity:0;animation:fadeUp .8s .5s ease forwards;
+  margin-bottom:16px;
+}
+.lesson-title .ar{
+  display:block;
+  font-family:'Exo 2',sans-serif;
+  font-size:clamp(2rem,6vw,4.5rem);
+  font-weight:900;
+  background:linear-gradient(135deg,#fff 10%,var(--cyan2) 45%,var(--cyan) 75%,#0088aa 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 30px rgba(0,229,255,.22));
+  line-height:1.1;
+}
+.lesson-title .en{
+  display:block;font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.65rem,1.5vw,.9rem);letter-spacing:7px;
+  color:rgba(0,229,255,.4);margin-top:10px;
+}
+.lesson-intro{
+  max-width:600px;font-size:.95rem;color:var(--muted);line-height:2.1;
+  margin:20px 0 40px;
+  opacity:0;animation:fadeUp .7s .9s ease forwards;
+}
+
+/* lesson meta pills */
+.lesson-meta{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp .7s 1.1s ease forwards;
+  margin-bottom:48px;
+}
+.meta-pill{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:2px;
+  color:var(--muted);
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.1);
+  padding:5px 14px;border-radius:2px;
+  display:flex;align-items:center;gap:7px;
+}
+.meta-pill .dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;box-shadow:0 0 6px var(--cyan);}
+
+/* TOC */
+.toc-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 32px;
+  background:transparent;border:1px solid var(--cyan);
+  color:var(--cyan);font-weight:700;font-size:.9rem;
+  border-radius:3px;cursor:pointer;font-family:'Tajawal',sans-serif;
+  text-decoration:none;transition:.3s;position:relative;overflow:hidden;
+  opacity:0;animation:fadeUp .7s 1.3s ease forwards;
+}
+.toc-btn::before{content:'';position:absolute;inset:0;background:var(--cyan);transform:scaleX(0);transform-origin:right;transition:.35s cubic-bezier(.23,1,.32,1);}
+.toc-btn:hover::before{transform:scaleX(1);transform-origin:left;}
+.toc-btn:hover{color:#000;}
+.toc-btn span{position:relative;z-index:1;}
+
+/* ── scroll hint ── */
+.scroll-beam-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  margin-top:40px;
+  opacity:0;animation:fadeIn 1s 2s ease forwards;
+  color:var(--muted);font-size:.55rem;letter-spacing:4px;
+  font-family:'Share Tech Mono',monospace;
+}
+.scroll-beam{width:1px;height:50px;background:linear-gradient(to bottom,var(--cyan),transparent);animation:beamPulse 1.6s ease-in-out infinite;}
+@keyframes beamPulse{0%,100%{opacity:.7;transform:scaleY(1)}50%{opacity:.2;transform:scaleY(.5)}}
+
+/* ═══════════════════════════════════════
+   TABLE OF CONTENTS
+═══════════════════════════════════════ */
+.toc-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:36px;
+  margin-bottom:72px;
+}
+.toc-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.85rem;font-weight:700;
+  color:var(--cyan);letter-spacing:4px;
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.toc-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.25),transparent);}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:0;}
+.toc-item{
+  display:flex;align-items:center;gap:16px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(0,229,255,.05);
+  text-decoration:none;color:var(--text);
+  transition:.2s;
+  cursor:pointer;
+}
+.toc-item:last-child{border-bottom:none;}
+.toc-item:hover{color:var(--cyan);}
+.toc-item:hover .toc-num{color:var(--cyan);border-color:rgba(0,229,255,.4);}
+.toc-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:2px;
+  color:var(--muted);
+  border:1px solid rgba(0,229,255,.12);
+  padding:3px 9px;border-radius:2px;
+  min-width:50px;text-align:center;
+  transition:.2s;
+}
+.toc-text{font-size:.88rem;}
+.toc-arrow{margin-right:auto;margin-left:0;color:rgba(0,229,255,.3);font-size:.7rem;transition:.2s;}
+.toc-item:hover .toc-arrow{color:var(--cyan);}
+
+/* ═══════════════════════════════════════
+   SECTION BLOCK — the core layout
+═══════════════════════════════════════ */
+.lesson-section{
+  margin-bottom:80px;
+  opacity:0;transform:translateY(32px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.lesson-section.visible{opacity:1;transform:none;}
+
+.sec-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:5px;
+  color:var(--cyan);
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:18px;
+  opacity:.8;
+}
+.sec-label::before{content:'';width:24px;height:1px;background:var(--cyan);}
+
+.sec-heading{
+  font-family:'Exo 2',sans-serif;
+  font-size:clamp(1.3rem,3vw,2rem);
+  font-weight:700;
+  color:var(--white);
+  margin-bottom:20px;
+  line-height:1.25;
+}
+
+.sec-body{
+  font-size:.93rem;
+  line-height:2.15;
+  color:var(--text);
+}
+.sec-body p{margin-bottom:18px;}
+.sec-body p:last-child{margin-bottom:0;}
+
+/* ── HIGHLIGHT BOX ── */
+.highlight-box{
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.18);
+  border-right:3px solid var(--cyan);
+  padding:20px 24px;
+  border-radius:3px;
+  margin:28px 0;
+  position:relative;
+}
+.highlight-box.amber{border-right-color:var(--amber);background:rgba(255,179,0,.03);border-color:rgba(255,179,0,.15);}
+.highlight-box.amber .hb-tag{color:var(--amber);}
+.highlight-box.violet{border-right-color:var(--violet);background:rgba(123,97,255,.04);border-color:rgba(123,97,255,.18);}
+.highlight-box.violet .hb-tag{color:var(--violet);}
+.highlight-box.green{border-right-color:var(--green);background:rgba(0,230,118,.03);border-color:rgba(0,230,118,.15);}
+.highlight-box.green .hb-tag{color:var(--green);}
+
+.hb-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--cyan);
+  margin-bottom:12px;display:block;
+}
+.hb-text{font-size:.9rem;line-height:2;color:var(--text);}
+
+/* ── POSTULATE BOX — the big ones ── */
+.postulate-box{
+  border-radius:4px;
+  padding:0;
+  margin:36px 0;
+  overflow:hidden;
+  position:relative;
+}
+.postulate-header{
+  display:flex;align-items:center;gap:18px;
+  padding:18px 28px;
+  background:rgba(0,229,255,.06);
+  border-bottom:1px solid rgba(0,229,255,.15);
+}
+.postulate-num{
+  font-family:'Exo 2',sans-serif;
+  font-size:2.2rem;font-weight:900;
+  color:rgba(0,229,255,.12);
+  line-height:1;
+}
+.postulate-label-wrap .label-en{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--muted);margin-bottom:4px;
+}
+.postulate-label-wrap .label-ar{
+  font-family:'Exo 2',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--cyan);
+}
+.postulate-body{
+  padding:28px;
+  background:rgba(0,10,25,.7);
+  border:1px solid rgba(0,229,255,.1);
+  border-top:none;
+}
+.postulate-statement{
+  font-size:1.05rem;
+  line-height:2.1;
+  color:var(--white);
+  font-weight:500;
+  margin-bottom:18px;
+}
+.postulate-detail{
+  font-size:.85rem;line-height:2;color:var(--muted);
+}
+
+/* second postulate gets amber tones */
+.postulate-box.p2 .postulate-header{background:rgba(255,179,0,.05);border-bottom-color:rgba(255,179,0,.15);}
+.postulate-box.p2 .postulate-num{color:rgba(255,179,0,.12);}
+.postulate-box.p2 .postulate-label-wrap .label-ar{color:var(--amber);}
+.postulate-box.p2 .postulate-body{border-color:rgba(255,179,0,.1);}
+
+/* ── FORMULA DISPLAY ── */
+.formula-block{
+  background:rgba(0,5,15,.8);
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:4px;
+  padding:28px;
+  margin:28px 0;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.formula-block::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(0,229,255,.05),transparent);
+}
+.formula-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.48rem;letter-spacing:4px;
+  color:var(--muted);margin-bottom:16px;display:block;
+}
+.formula-main{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(1.2rem,3vw,2rem);
+  color:var(--cyan);
+  direction:ltr;
+  letter-spacing:3px;
+  text-shadow:0 0 20px rgba(0,229,255,.4);
+  position:relative;z-index:1;
+}
+.formula-note{
+  font-size:.78rem;color:var(--muted);margin-top:14px;
+  font-style:italic;line-height:1.8;
+  position:relative;z-index:1;
+}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{
+  width:100%;border-collapse:collapse;
+  margin:28px 0;
+  font-size:.82rem;
+}
+.compare-table th{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:3px;
+  color:var(--cyan);
+  padding:12px 18px;
+  background:rgba(0,229,255,.05);
+  border:1px solid rgba(0,229,255,.1);
+  text-align:right;
+}
+.compare-table td{
+  padding:12px 18px;
+  border:1px solid rgba(0,229,255,.07);
+  color:var(--text);
+  line-height:1.8;
+  vertical-align:top;
+}
+.compare-table tr:nth-child(even) td{background:rgba(0,229,255,.02);}
+.compare-table .highlight-cell{color:var(--cyan);}
+
+/* ── THOUGHT EXPERIMENT ── */
+.thought-exp{
+  background:rgba(123,97,255,.05);
+  border:1px solid rgba(123,97,255,.2);
+  border-radius:4px;
+  padding:28px;
+  margin:32px 0;
+  position:relative;
+}
+.thought-exp::before{
+  content:'💭';
+  position:absolute;top:-14px;right:20px;
+  font-size:1.2rem;
+  background:var(--bg);
+  padding:0 8px;
+}
+.te-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--violet);
+  margin-bottom:14px;display:block;
+}
+.te-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--white);margin-bottom:14px;
+}
+.te-body{font-size:.88rem;line-height:2.1;color:var(--text);}
+.te-conclusion{
+  margin-top:16px;
+  padding:14px 18px;
+  background:rgba(123,97,255,.07);
+  border-right:2px solid var(--violet);
+  font-size:.85rem;line-height:1.9;
+  color:var(--text);
+}
+
+/* ── CONSEQUENCE CARDS ── */
+.consequence-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+  margin:28px 0;
+}
+.cons-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:22px;
+  transition:.3s;
+  position:relative;overflow:hidden;
+}
+.cons-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:scaleX(0);transition:.35s;
+}
+.cons-card:hover::before{transform:scaleX(1);}
+.cons-card:hover{border-color:rgba(0,229,255,.25);transform:translateY(-3px);}
+.cons-icon{font-size:1.5rem;margin-bottom:12px;}
+.cons-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.85rem;font-weight:700;
+  color:var(--white);margin-bottom:8px;
+}
+.cons-desc{font-size:.77rem;color:var(--muted);line-height:1.9;}
+.cons-eq{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;color:rgba(0,229,255,.45);
+  margin-top:12px;direction:ltr;
+}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-right:32px;margin:32px 0;}
+.timeline::before{
+  content:'';
+  position:absolute;right:0;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,var(--cyan),rgba(0,229,255,.1));
+}
+.tl-item{
+  position:relative;
+  padding-right:28px;
+  padding-bottom:32px;
+}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{
+  position:absolute;right:-5px;top:4px;
+  width:10px;height:10px;
+  background:var(--bg);
+  border:1px solid var(--cyan);
+  border-radius:50%;
+  box-shadow:0 0 10px rgba(0,229,255,.4);
+}
+.tl-year{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:3px;
+  color:var(--cyan);margin-bottom:7px;
+}
+.tl-event{font-size:.85rem;color:var(--text);line-height:1.9;}
+.tl-event strong{color:var(--white);}
+
+/* ── SUMMARY BOX ── */
+.summary-box{
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.2);
+  border-radius:4px;
+  padding:36px;
+  margin-top:56px;
+  position:relative;
+  overflow:hidden;
+}
+.summary-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(0,229,255,.04),transparent);
+}
+.summary-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.8rem;font-weight:700;
+  letter-spacing:5px;color:var(--cyan);
+  margin-bottom:24px;
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:14px;
+}
+.summary-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.25),transparent);}
+.summary-list{
+  list-style:none;display:flex;flex-direction:column;gap:10px;
+  position:relative;z-index:1;
+}
+.summary-list li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:.88rem;line-height:1.9;
+  color:var(--text);
+}
+.summary-list li::before{
+  content:'→';color:var(--cyan);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;flex-shrink:0;margin-top:4px;
+}
+
+/* ── DIVIDER ── */
+.div-line{height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,.2),transparent);margin:48px 0;}
+
+/* ── NAV FOOTER ── */
+.lesson-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:28px 0;
+  border-top:1px solid rgba(0,229,255,.08);
+  margin-top:72px;
+}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--muted);
+  font-family:'Tajawal',sans-serif;font-size:.85rem;
+  padding:10px 20px;
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:3px;transition:.25s;
+}
+.nav-btn:hover{color:var(--cyan);border-color:rgba(0,229,255,.3);}
+.nav-btn .code{
+  font-family:'Share Tech Mono',monospace;font-size:.5rem;
+  color:var(--cyan);letter-spacing:2px;
+}
+
+/* ── QUIZ SECTION ── */
+.quiz-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:36px;
+  margin-top:72px;
+}
+.quiz-header{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;letter-spacing:5px;
+  color:var(--cyan);
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.quiz-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.2),transparent);}
+.quiz-q{
+  background:rgba(0,229,255,.03);
+  border:1px solid rgba(0,229,255,.08);
+  border-radius:3px;
+  padding:20px 24px;
+  margin-bottom:14px;
+  cursor:pointer;
+  transition:.25s;
+  position:relative;
+}
+.quiz-q:hover{border-color:rgba(0,229,255,.2);}
+.quiz-q .q-text{font-size:.9rem;color:var(--text);line-height:1.9;margin-bottom:12px;}
+.quiz-q .q-answer{
+  font-size:.82rem;color:var(--muted);line-height:1.9;
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+  border-top:0px solid transparent;
+  padding-top:0;
+}
+.quiz-q.open .q-answer{max-height:300px;border-top:1px solid rgba(0,229,255,.08);padding-top:12px;}
+.q-toggle{
+  position:absolute;top:18px;left:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;color:rgba(0,229,255,.4);
+  transition:.25s;
+}
+.quiz-q.open .q-toggle{color:var(--cyan);}
+
+/* ── INTERACTIVE DEMO ── */
+.demo-box{
+  background:rgba(0,5,15,.9);
+  border:1px solid rgba(0,229,255,.15);
+  border-radius:4px;
+  padding:32px;
+  margin:32px 0;
+}
+.demo-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--cyan);margin-bottom:20px;display:block;
+}
+.demo-controls{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:20px;}
+.demo-slider-wrap{flex:1;min-width:200px;}
+.demo-slider-label{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:2px;margin-bottom:8px;display:block;}
+.demo-slider{
+  -webkit-appearance:none;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--cyan) var(--val,50%),rgba(0,229,255,.15) var(--val,50%));
+  border-radius:2px;outline:none;
+}
+.demo-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;
+  background:var(--cyan);border-radius:50%;cursor:pointer;
+  box-shadow:0 0 10px rgba(0,229,255,.6);
+}
+.demo-output{
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:3px;
+  padding:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.8rem;
+  direction:ltr;
+  line-height:2;
+}
+.demo-val{color:var(--cyan);font-size:1.1rem;}
+.demo-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,229,255,.05);}
+.demo-row:last-child{border-bottom:none;}
+.demo-key{color:var(--muted);}
+.demo-result{color:var(--white);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .wrapper{padding:0 18px 80px;}
+  header{padding:10px 14px;}
+  .header-tag{display:none;}
+  .consequence-grid{grid-template-columns:1fr;}
+  .compare-table{font-size:.75rem;}
+  .compare-table th,.compare-table td{padding:9px 12px;}
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:rgba(0,229,255,.2);border-radius:2px;}
+
+/* ── MathJax overrides ── */
+mjx-container{
+  color: var(--cyan) !important;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+}
+mjx-container[display="true"]{
+  margin: 8px auto !important;
+  overflow-x: auto;
+}
+.cons-eq mjx-container,
+.formula-main mjx-container{
+  font-size: 1.05em !important;
+}
+.formula-note mjx-container{
+  color: rgba(0,229,255,.75) !important;
+  font-size: .92em !important;
+}
+.hb-text mjx-container,
+.postulate-detail mjx-container,
+.te-body mjx-container,
+.summary-list mjx-container,
+.q-answer mjx-container{
+  color: var(--cyan2) !important;
+  font-size: .95em !important;
+}
+.compare-table mjx-container{
+  color: var(--cyan) !important;
+  font-size: .88em !important;
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUNDS -->
+<canvas id="sr-canvas"></canvas>
+<div class="noise"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<!-- READING PROGRESS -->
+<div id="progress-bar"></div>
+
+<!-- CORNERS -->
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- HEADER -->
+<header>
+  <a class="back-btn" href="../special_relativity.html">← رجوع</a>
+  <div class="header-tag">FOUNDATIONS · CHAPTER 01</div>
+  <div class="header-code">SR-01</div>
+</header>
+
+<!-- CONTENT -->
+<div class="wrapper">
+
+  <!-- ══ HERO ══ -->
+  <section class="lesson-hero">
+    <div class="lesson-eyebrow">ALBERT EINSTEIN · 1905 · SPECIAL RELATIVITY</div>
+    <div class="lesson-code-badge">SR-01 · POSTULATES</div>
+
+    <div class="lesson-title">
+      <span class="ar">مسلّمتا آينشتاين</span>
+      <span class="en">EINSTEIN'S TWO POSTULATES</span>
+    </div>
+
+    <p class="lesson-intro">
+      في عام 1905، كتب آينشتاين ورقةً بحثية لا تحتوي على أي مرجع تجريبي تقريباً.
+      بدأها بمسلّمتين — أي بافتراضات يقبلها العقل مباشرةً — واشتقّ منهما نظرية
+      غيّرت مفهوم الكون بالكامل. هذا الدرس يشرح هاتين المسلّمتين بعمق تام.
+    </p>
+
+    <div class="lesson-meta">
+      <div class="meta-pill"><span class="dot"></span>الباب الأول</div>
+      <div class="meta-pill"><span class="dot"></span>أسس النظرية</div>
+      <div class="meta-pill"><span class="dot"></span>مستوى أكاديمي</div>
+      <div class="meta-pill"><span class="dot"></span>نقطة البداية الإلزامية</div>
+    </div>
+
+    <a href="#toc" class="toc-btn"><span>📋 محتويات الدرس</span></a>
+
+    <div class="scroll-beam-wrap">
+      <span>SCROLL</span>
+      <div class="scroll-beam"></div>
+    </div>
+  </section>
+
+  <!-- ══ TABLE OF CONTENTS ══ -->
+  <div class="toc-section reveal" id="toc">
+    <div class="toc-title">CONTENTS · محتويات الدرس</div>
+    <ul class="toc-list">
+      <li class="toc-item" onclick="scrollTo('sec1')"><span class="toc-num">01</span><span class="toc-text">السياق التاريخي — لماذا احتجنا نظرية جديدة؟</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec2')"><span class="toc-num">02</span><span class="toc-text">ما هي المسلّمة؟ — الأساس المنطقي</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec3')"><span class="toc-num">03</span><span class="toc-text">المسلّمة الأولى — مبدأ النسبية</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec4')"><span class="toc-num">04</span><span class="toc-text">المسلّمة الثانية — ثبات سرعة الضوء</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec5')"><span class="toc-num">05</span><span class="toc-text">التوتر بين المسلّمتين — لماذا هذا ثوري؟</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec6')"><span class="toc-num">06</span><span class="toc-text">النتائج الحتمية — ما الذي يترتب على المسلّمتين؟</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec7')"><span class="toc-num">07</span><span class="toc-text">آلة حساب عامل لورنتز التفاعلية</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec9')"><span class="toc-num">08</span><span class="toc-text">الحدث والإطار المرجعي — البناء الدقيق</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec10')"><span class="toc-num">09</span><span class="toc-text">تجربة القطار والبرق — نسبية التزامن</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec11')"><span class="toc-num">10</span><span class="toc-text">اشتقاق تحويلات لورنتز من المسلّمتين</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec12')"><span class="toc-num">11</span><span class="toc-text">حدود النسبية الخاصة والجسر للنسبية العامة</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollTo('sec8')"><span class="toc-num">12</span><span class="toc-text">أسئلة المراجعة والتثبيت</span><span class="toc-arrow">↑</span></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 1 — السياق التاريخي
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec1">
+    <div class="sec-label">SECTION 01 · CONTEXT</div>
+    <h2 class="sec-heading">السياق التاريخي<br>لماذا احتجنا نظرية جديدة؟</h2>
+
+    <div class="sec-body">
+      <p>
+        لفهم مسلّمات آينشتاين، علينا أن نفهم الأزمة التي كانت الفيزياء تعيشها
+        عام 1905. كانت الفيزياء الكلاسيكية — فيزياء نيوتن وغاليليو — تصف الكون
+        بطريقة متسقة لمئتي سنة. لكن ظهرت مشكلة عميقة في القرن التاسع عشر
+        حين طوّر ماكسويل نظريته في الكهرومغناطيسية.
+      </p>
+
+      <div class="highlight-box amber">
+        <span class="hb-tag">المشكلة الأساسية</span>
+        <div class="hb-text">
+          معادلات ماكسويل تتنبأ بأن الضوء يسير بسرعة ثابتة تساوي <strong style="color:var(--amber)">c = 299,792,458 م/ث</strong>.
+          لكنها لا تقول: ثابتة بالنسبة لماذا؟ بالنسبة لمن؟ في أي إطار مرجعي؟
+          هذا التناقض مع فيزياء نيوتن القائمة على الجمع الاعتيادي للسرعات
+          كان يمثّل أزمةً حقيقية.
+        </div>
+      </div>
+
+      <p>
+        وفقاً لنيوتن وغاليليو، إذا كنت في قطار يسير بسرعة 100 كم/ساعة
+        ورميت كرة بسرعة 100 كم/ساعة إلى الأمام، يرى الراصد الخارجي
+        الكرة تسير بـ 200 كم/ساعة. هذا ما يُسمى <strong>تحويلات غاليليو</strong>
+        وهو يعمل بشكل رائع لكل الأجسام اليومية.
+      </p>
+      <p>
+        السؤال: هل يُطبَّق هذا على الضوء أيضاً؟
+        هل لو سرت بنصف سرعة الضوء وأضأت مصباحاً أمامك، يرى الراصد
+        الخارجي الضوء يسير بـ 1.5c ؟
+      </p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1864</div>
+          <div class="tl-event"><strong>جيمس كلارك ماكسويل</strong> ينشر معادلات الكهرومغناطيسية الأربع. تنبأت بأن الضوء موجة كهرومغناطيسية وسرعتها c. لكن: بالنسبة لأي إطار؟</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1887</div>
+          <div class="tl-event"><strong>تجربة مايكلسون-مورلي</strong> — صُمِّمت للكشف عن "الأثير" الوسط الذي يُفترض أن الضوء يسير فيه. <strong>النتيجة الصادمة:</strong> لم يُعثر على أي أثير. سرعة الضوء ثابتة بغض النظر عن اتجاه القياس أو حركة الأرض.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1895–1904</div>
+          <div class="tl-event"><strong>لورنتز وبوانكاريه</strong> يحاولان إنقاذ فيزياء نيوتن بإضافة "عوامل تصحيح" رياضية. نجحوا رياضياً لكن التفسير الفيزيائي كان مصطنعاً وغير مُقنع.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1905</div>
+          <div class="tl-event"><strong>آينشتاين</strong> يختار المسار الجذري: بدلاً من إنقاذ الفيزياء القديمة، يُعيد بناءها من الأساس على مسلّمتين بسيطتين. "عام المعجزات".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 2 — ما هي المسلّمة؟
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec2">
+    <div class="sec-label">SECTION 02 · EPISTEMOLOGY</div>
+    <h2 class="sec-heading">ما هي المسلّمة؟<br>الأساس المنطقي للنظرية</h2>
+
+    <div class="sec-body">
+      <p>
+        قبل أن نقرأ المسلّمتين، يجب أن نفهم ما معنى "مسلّمة" في الفيزياء النظرية.
+        المسلّمة — أو <em>Postulate</em> أو <em>Axiom</em> — هي جملة نقبلها كنقطة
+        بداية دون أن نُثبتها من مبادئ أعمق. إنها الأرضية التي نبني عليها.
+      </p>
+
+      <div class="highlight-box">
+        <span class="hb-tag">التمييز الجوهري</span>
+        <div class="hb-text">
+          المسلّمة ≠ حقيقة بديهية بالضرورة.<br>
+          المسلّمة = افتراض نختاره لأن النتائج المشتقة منه تتوافق مع التجربة.<br><br>
+          آينشتاين لم يقل "هذا حق". قال: "لنفترض هذا، وسنرى إلى أين يقودنا".
+          المسلّمتان "صحيحتان" لأن ما يترتب عليهما يتطابق مع الواقع المُرصد.
+        </div>
+      </div>
+
+      <p>
+        الفرق بين آينشتاين وسابقيه مهم هنا:
+        لورنتز وصل إلى نفس المعادلات رياضياً، لكن آينشتاين وضع
+        <strong>تفسيراً فيزيائياً</strong> جديداً كلياً. المعادلات ليست مجرد
+        تصحيحات تقريبية — إنها تعبّر عن طبيعة الزمان والمكان أنفسهما.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 3 — المسلّمة الأولى
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec3">
+    <div class="sec-label">SECTION 03 · FIRST POSTULATE</div>
+    <h2 class="sec-heading">المسلّمة الأولى<br>مبدأ النسبية</h2>
+
+    <div class="postulate-box p1">
+      <div class="postulate-header">
+        <div class="postulate-num">I</div>
+        <div class="postulate-label-wrap">
+          <div class="label-en">THE PRINCIPLE OF RELATIVITY</div>
+          <div class="label-ar">مبدأ النسبية</div>
+        </div>
+      </div>
+      <div class="postulate-body">
+        <div class="postulate-statement">
+          قوانين الفيزياء لها نفس الصيغة الرياضية في جميع الأطر المرجعية القصورية.
+        </div>
+        <div class="postulate-detail">
+          The laws of physics are the same in all inertial reference frames.<br>
+          لا يوجد إطار مرجعي "مميّز" أو "مطلق". لا يمكنك من خلال أي تجربة فيزيائية
+          محلية أن تُحدد ما إذا كنت ساكناً أم تتحرك بسرعة ثابتة.
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p>
+        هذه المسلّمة ليست جديدة تماماً — فكرتها الأساسية موجودة في فيزياء غاليليو.
+        لكن آينشتاين وسّعها لتشمل <strong>جميع</strong> قوانين الفيزياء،
+        وليس فقط ميكانيكا نيوتن. التوسيع هنا حاسم: الآن معادلات ماكسويل
+        الكهرومغناطيسية يجب أن تكون أيضاً متطابقة في كل الأطر.
+      </p>
+
+      <div class="thought-exp">
+        <span class="te-label">THOUGHT EXPERIMENT · تجربة فكرية</span>
+        <div class="te-title">🚀 سفينة الفضاء المنعزلة</div>
+        <div class="te-body">
+          تخيّل أنك مُقفل داخل سفينة فضاء بلا نوافذ. السفينة تسير بسرعة ثابتة
+          في خط مستقيم في الفضاء الخارجي. هل يمكنك بأي تجربة فيزيائية —
+          رمي كرة، قياس تيار كهربائي، مراقبة بندول، فحص مغناطيس —
+          أن تُثبت أنك تتحرك؟
+          <div class="te-conclusion">
+            <strong style="color:var(--cyan)">الإجابة: لا.</strong> جميع التجارب ستُعطيك نفس النتائج تماماً
+            كما لو كنت ساكناً. هذه هي جوهر المسلّمة الأولى.
+            الحركة المنتظمة لا وجود لها "في ذاتها" — هي دائماً نسبية بالنسبة لشيء آخر.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        لكن ماذا يعني هذا تحديداً بالنسبة لمعادلات ماكسويل؟
+        معادلات ماكسويل تتضمن سرعة الضوء c. إذا كانت هذه المعادلات
+        <em>نفسها</em> في كل الأطر، إذن c يجب أن تكون <em>نفسها</em>
+        في كل الأطر. وهذا هو الجسر المنطقي للمسلّمة الثانية.
+      </p>
+
+      <div class="highlight-box green">
+        <span class="hb-tag">الإطار القصوري — تعريف دقيق</span>
+        <div class="hb-text">
+          الإطار القصوري <em>(Inertial Reference Frame)</em> هو إطار لا يتسارع —
+          أي يسير بسرعة ثابتة في خط مستقيم (أو ساكن). فيه تنطبق قوانين نيوتن
+          بصيغتها المباشرة \(\vec{F} = m\vec{a}\). السيارة المتسارعة <strong>ليست</strong> إطاراً
+          قصورياً. كوكب الأرض تقريباً قصوري لأغراض معظم التجارب.
+        </div>
+      </div>
+
+      <p>
+        المسلّمة الأولى تُلغي فكرة "الحركة المطلقة" و"الزمن المطلق" اللذين
+        كانا ركيزتَي فيزياء نيوتن. بالنسبة لنيوتن كان هناك ساعة كونية واحدة
+        تدق لكل الكون في نفس اللحظة — هذا ما ستهدمه النسبية الخاصة.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 4 — المسلّمة الثانية
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec4">
+    <div class="sec-label">SECTION 04 · SECOND POSTULATE</div>
+    <h2 class="sec-heading">المسلّمة الثانية<br>ثبات سرعة الضوء</h2>
+
+    <div class="postulate-box p2">
+      <div class="postulate-header">
+        <div class="postulate-num">II</div>
+        <div class="postulate-label-wrap">
+          <div class="label-en">CONSTANCY OF THE SPEED OF LIGHT</div>
+          <div class="label-ar">ثبات سرعة الضوء</div>
+        </div>
+      </div>
+      <div class="postulate-body">
+        <div class="postulate-statement">
+          سرعة الضوء في الفراغ ثابتة وتساوي c لجميع المراقبين في الأطر القصورية،
+          بصرف النظر عن حركة المصدر أو المراقب.
+        </div>
+        <div class="postulate-detail">
+          The speed of light in vacuum is the same for all inertial observers,
+          regardless of the motion of the light source or the observer.<br>
+          \(c = 299{,}792{,}458 \ \text{m/s} \approx 3 \times 10^8 \ \text{m/s}\)
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-block">
+      <span class="formula-tag">THE INVARIANT SPEED · السرعة الثابتة</span>
+      <div class="formula-main">\[ c = 299{,}792{,}458 \ \frac{\text{m}}{\text{s}} \]</div>
+      <div class="formula-note">
+        هذه السرعة لا تتغير مهما كانت سرعة مصدر الضوء أو سرعة المراقب.<br>
+        لا تُجمع مع سرعات أخرى. لا تُطرح. هي c دائماً وأبداً.
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p>
+        هذه المسلّمة هي الأكثر إثارةً للدهشة وخروجاً عن الحدس المعتاد.
+        دعنا نفهمها بدقة شديدة.
+      </p>
+
+      <div class="thought-exp">
+        <span class="te-label">THOUGHT EXPERIMENT · تجربة فكرية</span>
+        <div class="te-title">🔦 مصباح في سفينة مسرعة</div>
+        <div class="te-body">
+          <strong>السيناريو الكلاسيكي (غاليليو):</strong><br>
+          سفينة تسير بسرعة 0.5c. رائد فضاء يُضيء مصباحاً إلى الأمام.
+          بحسب منطق الجمع الغاليلي، يُفترض أن يرى الراصد الخارجي الضوء
+          بسرعة \(0.5c + c = 1.5c\).<br><br>
+          <strong>ما يقوله آينشتاين (والتجربة تؤكده):</strong><br>
+          الراصد الخارجي يرى الضوء بسرعة c فقط. وكذلك رائد الفضاء في السفينة
+          يرى نفس الضوء بسرعة c. كلاهما يقيسان نفس السرعة: c.
+          <div class="te-conclusion">
+            هذا يعني أن قانون جمع السرعات الغاليلي <strong style="color:var(--amber)">لا ينطبق على الضوء</strong>.
+            والأكثر من ذلك: إذا كان الضوء بسرعة c بالنسبة للجميع، إذن
+            الزمان والمكان أنفسهم يجب أن يكونا <strong style="color:var(--cyan)">نسبيّين</strong> — مختلفَين
+            من إطار لآخر — حتى تنسجم الأرقام.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        لماذا c تحديداً ثابتة ولا يمكن تجاوزها؟ آينشتاين لا يعطي سبباً
+        ميتافيزيقياً — إنه فقط يُسلّم بها كحقيقة مُستخلصة من معادلات
+        ماكسويل والتجربة. لكن النظرية تُبيّن لاحقاً أن c ليست فقط سرعة الضوء،
+        بل هي <strong>الحد الأقصى الكوني لنقل المعلومات والتأثير</strong>.
+      </p>
+
+      <div class="highlight-box">
+        <span class="hb-tag">ملاحظة دقيقة — سرعة الضوء في الوسط</span>
+        <div class="hb-text">
+          المسلّمة تتحدث عن الضوء في <strong>الفراغ</strong> (vacuum).
+          في الوسط المادي (كالزجاج أو الماء) يتباطأ الضوء فعلاً —
+          الزجاج مثلاً يُبطئه إلى حوالي 0.67c. لكن فوتونات الضوء في الفراغ
+          دائماً بسرعة c. الثبات يخص الفراغ.
+        </div>
+      </div>
+
+      <p>
+        هناك أيضاً تساؤل شائع: ماذا لو كنت "تُلاحق" موجة الضوء وسرت بسرعة
+        مقاربة لـ c، هل ستراه يسير ببطء أو يبدو ثابتاً؟
+        آينشتاين طرح هذا السؤال على نفسه وهو في السادسة عشرة من عمره.
+        الجواب: لا — ستراه دائماً بسرعة c. هذا الإدراك كان نقطة
+        الانطلاق الحقيقية لرحلته نحو النسبية الخاصة.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 5 — التوتر بين المسلّمتين
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec5">
+    <div class="sec-label">SECTION 05 · THE TENSION</div>
+    <h2 class="sec-heading">التوتر بين المسلّمتين<br>لماذا هذا ثوري؟</h2>
+
+    <div class="sec-body">
+      <p>
+        عند قراءة المسلّمتين لأول وهلة، قد تبدوان بريئتين وعاديتين.
+        لكن حين تُدرك التعارض الحاد بينهما وبين الفيزياء الكلاسيكية،
+        يتضح لماذا كانتا ثوريتين تماماً.
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>البند</th>
+            <th>فيزياء نيوتن (الكلاسيكية)</th>
+            <th>نسبية آينشتاين</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>الزمن</strong></td>
+            <td>مطلق، يدق بنفس المعدل للجميع</td>
+            <td class="highlight-cell">نسبي، يتمدد بحسب السرعة</td>
+          </tr>
+          <tr>
+            <td><strong>الطول</strong></td>
+            <td>مطلق، لا يتغير بالحركة</td>
+            <td class="highlight-cell">نسبي، ينكمش في اتجاه الحركة</td>
+          </tr>
+          <tr>
+            <td><strong>الكتلة</strong></td>
+            <td>ثابتة لا تتغير</td>
+            <td class="highlight-cell">تزداد مع اقتراب الجسم من c</td>
+          </tr>
+          <tr>
+            <td><strong>جمع السرعات</strong></td>
+            <td>\(v_\text{total} = v_1 + v_2\)</td>
+            <td class="highlight-cell">\(v_\text{total} = \dfrac{v_1+v_2}{1+\frac{v_1 v_2}{c^2}}\)</td>
+          </tr>
+          <tr>
+            <td><strong>الحد الأقصى للسرعة</strong></td>
+            <td>لا يوجد حد نظرياً</td>
+            <td class="highlight-cell">c هو الحد الكوني المطلق</td>
+          </tr>
+          <tr>
+            <td><strong>المكان والزمان</strong></td>
+            <td>مستقلان تماماً</td>
+            <td class="highlight-cell">متشابكان في "الزمكان" 4D</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        المشكلة الجوهرية التي تحلّها المسلّمتان معاً هي:
+        إذا كانت قوانين الفيزياء نفسها في كل الأطر (<strong>م١</strong>)،
+        وكانت معادلات ماكسويل من ضمن قوانين الفيزياء،
+        وكانت معادلات ماكسويل تُعطي سرعة الضوء c،
+        إذن c يجب أن تكون نفسها في كل الأطر (<strong>م٢</strong>).
+      </p>
+
+      <div class="highlight-box violet">
+        <span class="hb-tag">الثمن المدفوع</span>
+        <div class="hb-text">
+          للحفاظ على ثبات c في كل الأطر، كان لا بد من التخلي عن ثوابت
+          أخرى كانت فيزياء نيوتن تأخذها كمسلّمات خفية:
+          التزامن المطلق، الزمن المطلق، والفضاء المطلق.
+          آينشتاين لم يُضِف شيئاً — هو أسقط افتراضات قديمة غير ضرورية.
+        </div>
+      </div>
+
+      <p>
+        المثير للدهشة حقاً أن المسلّمتين في حد ذاتهما لا تبدوان متعارضتين
+        مع بعضهما. التعارض يظهر حين تُضيف إليهما افتراض نيوتن الضمني:
+        أن الزمان والمكان مطلقان. آينشتاين رأى أن الحل ليس رفض إحدى
+        المسلّمتين، بل رفض الافتراض الضمني.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 6 — النتائج الحتمية
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec6">
+    <div class="sec-label">SECTION 06 · CONSEQUENCES</div>
+    <h2 class="sec-heading">النتائج الحتمية<br>ما الذي يترتب على المسلّمتين؟</h2>
+
+    <div class="sec-body">
+      <p>
+        من هاتين المسلّمتين البسيطتين فقط، يشتق آينشتاين بالرياضيات البحتة
+        نتائج مذهلة. هذه النتائج ليست تخمينات — إنها لازم منطقي حتمي
+        للمسلّمتين. ستُدرس كل نتيجة منها بالتفصيل في دروس لاحقة.
+      </p>
+
+      <div class="consequence-grid">
+        <div class="cons-card">
+          <div class="cons-icon">⏱️</div>
+          <div class="cons-title">تمدد الزمن</div>
+          <div class="cons-desc">الساعة المتحركة تدق أبطأ من الساعة الساكنة. كلما زادت السرعة، زاد التمدد. ساعة على صاروخ بـ 0.9c تدق بمعدل 44% فقط من ساعة ساكنة.</div>
+          <div class="cons-eq">\(\Delta t' = \gamma \, \Delta t_0\)</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">📏</div>
+          <div class="cons-title">انكماش الطول</div>
+          <div class="cons-desc">الأجسام المتحركة تبدو أقصر في اتجاه الحركة. صاروخ بطول 100م يبدو طوله 44م لراصد ساكن إذا كان يسير بـ 0.9c.</div>
+          <div class="cons-eq">\(L' = \dfrac{L_0}{\gamma}\)</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">⚡</div>
+          <div class="cons-title">تكافؤ الكتلة والطاقة</div>
+          <div class="cons-desc">الكتلة والطاقة وجهان لعملة واحدة. كمية ضئيلة من الكتلة تُحوَّل لطاقة هائلة — هذا هو مبدأ القنبلة النووية والشمس.</div>
+          <div class="cons-eq">\(E = mc^2\)</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">🔄</div>
+          <div class="cons-title">نسبية التزامن</div>
+          <div class="cons-desc">حدثان يبدوان متزامنَين لراصد قد لا يبدوان كذلك لراصد آخر. لا وجود لـ "الآن المطلق" في الكون — هو نسبي أيضاً.</div>
+          <div class="cons-eq">\(\Delta t' = \gamma\!\left(\Delta t - \dfrac{v\,\Delta x}{c^2}\right)\)</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">🔀</div>
+          <div class="cons-title">قانون جمع السرعات النسبي</div>
+          <div class="cons-desc">لا يمكن تجاوز c بجمع سرعتين. صاروخ بـ 0.8c يُطلق مقذوفاً بـ 0.8c — النتيجة 0.976c وليس 1.6c.</div>
+          <div class="cons-eq">\(u = \dfrac{v+w}{1+\frac{vw}{c^2}}\)</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">🌀</div>
+          <div class="cons-title">تحويلات لورنتز</div>
+          <div class="cons-desc">الإطار الرياضي الكامل الذي يربط قياسات إطارين قصوريين مختلفين. يحلّ محل تحويلات غاليليو البسيطة.</div>
+          <div class="cons-eq">\(x' = \gamma(x - vt)\)</div>
+        </div>
+      </div>
+
+      <p>
+        كل هذه النتائج تبدو "غير طبيعية" لأننا نعيش في سرعات ضئيلة جداً
+        مقارنة بـ c. عند السرعات اليومية، تُعطي النسبية الخاصة نفس نتائج
+        نيوتن تقريباً — وهذا مطلوب، إذ نيوتن صحيح في نطاقه.
+      </p>
+
+      <div class="formula-block">
+        <span class="formula-tag">عامل لورنتز · THE LORENTZ FACTOR</span>
+        <div class="formula-main">\[ \gamma = \frac{1}{\sqrt{1 - \dfrac{v^2}{c^2}}} \]</div>
+        <div class="formula-note">
+          هذا العامل يظهر في كل معادلات النسبية الخاصة.<br>
+          عند \(v \ll c\): \(\gamma \approx 1\) (نتائج نيوتن تقريباً)<br>
+          عند \(v \to c\): \(\gamma \to \infty\) (التأثيرات النسبية تصبح هائلة)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 7 — آلة حساب تفاعلية
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec7">
+    <div class="sec-label">SECTION 07 · INTERACTIVE</div>
+    <h2 class="sec-heading">آلة حساب تفاعلية<br>عامل لورنتز والتأثيرات النسبية</h2>
+
+    <div class="demo-box">
+      <span class="demo-label">LORENTZ FACTOR CALCULATOR · احسب بنفسك</span>
+      <div class="demo-controls">
+        <div class="demo-slider-wrap">
+          <span class="demo-slider-label">السرعة كنسبة من c</span>
+          <input type="range" class="demo-slider" id="velSlider" min="0" max="99.9" step="0.1" value="50">
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--cyan);min-width:60px;text-align:center;" id="velDisplay">0.500c</div>
+      </div>
+      <div class="demo-output" id="demoOutput">
+        <div class="demo-row"><span class="demo-key">السرعة v</span><span class="demo-result" id="d-v">0.500c = 1.499 × 10⁸ m/s</span></div>
+        <div class="demo-row"><span class="demo-key">عامل لورنتز γ</span><span class="demo-result demo-val" id="d-g">1.1547</span></div>
+        <div class="demo-row"><span class="demo-key">تمدد الزمن (ساعة 1 ثانية)</span><span class="demo-result" id="d-t">1.1547 ثانية بالنسبة للراصد الساكن</span></div>
+        <div class="demo-row"><span class="demo-key">انكماش الطول (1 متر)</span><span class="demo-result" id="d-l">0.8660 متر بالنسبة للراصد الساكن</span></div>
+        <div class="demo-row"><span class="demo-key">الطاقة الحركية النسبية</span><span class="demo-result" id="d-e">0.1547 mc²</span></div>
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p>
+        لاحظ أنه حتى عند 0.5c (نصف سرعة الضوء!)، عامل لورنتز هو 1.15 فقط —
+        أي التأثيرات النسبية حوالي 15%. لكن عند 0.9c تصبح التأثيرات 229%،
+        وعند 0.99c تصل إلى 707%. النسبية الخاصة تُصبح حاسمة جداً عند السرعات
+        العالية جداً.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 9 — الحدث والإطار المرجعي
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec9">
+    <div class="sec-label">SECTION 08 · SPACETIME EVENTS</div>
+    <h2 class="sec-heading">الحدث والإطار المرجعي<br>البناء الدقيق للنسبية</h2>
+
+    <div class="sec-body">
+      <p>
+        قبل أن نشتق أي معادلة، يجب أن نبني المفردات الأساسية التي تقوم عليها
+        النسبية الخاصة كلها. أهم هذه المفردات على الإطلاق: <strong>الحدث</strong>.
+      </p>
+
+      <div class="highlight-box">
+        <span class="hb-tag">تعريف — الحدث (Event)</span>
+        <div class="hb-text">
+          الحدث هو نقطة محددة في الزمان <em>والمكان معاً</em>. يُعرَّف بأربع إحداثيات:
+          \((t,\, x,\, y,\, z)\). مثال: "انفجار صاروخ في موضع \(x=3\text{ م}\) في اللحظة \(t=2\text{ ث}\)" هذا حدث واحد.
+          الحدث لا يعتمد على الراصد — لكن <em>إحداثياته</em> تختلف من راصد لآخر.
+        </div>
+      </div>
+
+      <p>
+        هذا التمييز بالغ الأهمية: <strong>الحدث موضوعي</strong> (objective) —
+        الانفجار إما وقع أو لم يقع — لكن متى وأين يختلفان بحسب الراصد.
+        النسبية الخاصة تصف كيف تتحوّل الإحداثيات بين الأطر، لا كيف تختلف الأحداث نفسها.
+      </p>
+
+      <div class="highlight-box green">
+        <span class="hb-tag">بناء الإطار المرجعي — كيف يُنشئ المراقب إطاره؟</span>
+        <div class="hb-text">
+          الإطار المرجعي ليس مجرد "الراصد" — إنه <strong>نظام قياس كامل</strong> يتكوّن من:<br><br>
+          <strong>١. شبكة مساطر صلبة</strong> تملأ الفضاء وتُعطي كل نقطة إحداثيات \((x, y, z)\).<br><br>
+          <strong>٢. ساعة في كل نقطة</strong> من الشبكة — ليس ساعة واحدة مركزية. كل نقطة لها ساعتها الخاصة.<br><br>
+          <strong>٣. مزامنة الساعات</strong> (Einstein Synchronization): نُرسل ضوءاً من نقطة \(A\) إلى نقطة \(B\) وبالعكس،
+          ونضبط ساعة \(B\) بحيث يكون وقت انعكاس الضوء منتصف الفترة بين الإرسال والاستقبال عند \(A\).
+          هذه الطريقة تستخدم ثبات \(c\) مباشرةً.<br><br>
+          الزمن في إطار ما هو قراءة <em>الساعة المحلية</em> في موضع الحدث — لا وقت إرسال الإشارة للراصد.
+        </div>
+      </div>
+
+      <p>
+        لماذا هذا مهم؟ لأن خطأ شائعاً جداً هو الخلط بين <em>وقت رصد الحدث</em>
+        (متى تصل إشارته للراصد) و<em>وقت وقوع الحدث</em> في الإطار.
+        الفيزياء النسبية تتحدث دائماً عن الثاني.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 10 — تجربة القطار والبرق
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec10">
+    <div class="sec-label">SECTION 09 · SIMULTANEITY</div>
+    <h2 class="sec-heading">تجربة القطار والبرق<br>نسبية التزامن — الاشتقاق الحقيقي</h2>
+
+    <div class="sec-body">
+      <p>
+        هذه التجربة الفكرية هي أكثر أدوات آينشتاين التعليمية وضوحاً وتأثيراً.
+        تُثبت مباشرةً — من المسلّمة الثانية وحدها — أن التزامن ليس مطلقاً.
+      </p>
+
+      <div class="thought-exp">
+        <span class="te-label">THOUGHT EXPERIMENT · تجربة القطار والبرق</span>
+        <div class="te-title">⚡ قطار يسير بسرعة \(v\) على سكة مستقيمة</div>
+        <div class="te-body">
+          <strong>الإعداد:</strong><br>
+          قطار يسير بسرعة \(v\) نحو اليمين. في منتصفه بالضبط يجلس مراقب \(M'\).
+          على الرصيف يقف مراقب \(M\). في لحظة ما، تكون \(M\) و\(M'\) متقابلتين تماماً.<br><br>
+
+          في تلك اللحظة يضرب البرق في نقطتين: مقدمة القطار \((A)\) ومؤخرته \((B)\)،
+          تاركاً علامتين محروقتين على الرصيف عند \(A'\) و\(B'\).<br><br>
+
+          <strong>ما يرصده \(M\) على الرصيف:</strong><br>
+          \(M\) في منتصف \(A'B'\) بالضبط، وسرعة الضوء ثابتة من كلا الاتجاهين ← تصله موجتا الضوء <em>في نفس اللحظة</em>.<br>
+          <strong>استنتاج \(M\):</strong> الصاعقتان تزامنتا.
+          <div class="te-conclusion" style="margin-top:14px;">
+            <strong style="color:var(--amber)">ما يرصده \(M'\) في القطار:</strong><br>
+            \(M'\) أيضاً في منتصف \(AB\) — لكن القطار يتحرك نحو \(A\).
+            وبما أن سرعة الضوء ثابتة \(c\) في كل الأطر (م٢)، يرى \(M'\) موجة
+            الضوء القادمة من \(A\) <em>قبل</em> تلك القادمة من \(B\).<br><br>
+            <strong>استنتاج \(M'\):</strong> صاعقة \(A\) وقعت <em>أولاً</em>. الصاعقتان لم تتزامنا!<br><br>
+            <strong style="color:var(--cyan)">الخلاصة:</strong> حدثان متزامنان في إطار \(M\) ليسا متزامنَين في إطار \(M'\).
+            <strong>التزامن نسبي</strong> — لا وجود لـ "الآن" الكوني المطلق.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        هذه النتيجة صادمة لأنها تعني أن ترتيب بعض الأحداث الزمني يختلف بين الأطر.
+        لكن — وهذا دقيق — لا يمكن أن يختلف الترتيب الزمني لحدثين بينهما علاقة
+        سببية (أحدهما يُسبّب الآخر). هذا مضمون بشرط أن لا شيء يسرع أكثر من \(c\).
+      </p>
+
+      <div class="highlight-box amber">
+        <span class="hb-tag">الكمّ الرياضي لنسبية التزامن</span>
+        <div class="hb-text">
+          إذا كان حدثان في الإطار \(S\) متزامنَين \((\Delta t = 0)\) لكن مفصولَين
+          مكانياً بمسافة \(\Delta x\)، فإن الفارق الزمني بينهما في الإطار \(S'\)
+          المتحرك بسرعة \(v\) هو:
+          \[ \Delta t' = \gamma \cdot \frac{v \, \Delta x}{c^2} \]
+          كلما زاد \(\Delta x\) أو \(v\)، زاد عدم التزامن المُرصَد. لو \(\Delta x = 0\)
+          (الحدثان في نفس المكان) فالتزامن مطلق — لا خلاف.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 11 — اشتقاق تحويلات لورنتز
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec11">
+    <div class="sec-label">SECTION 10 · DERIVATION</div>
+    <h2 class="sec-heading">اشتقاق تحويلات لورنتز<br>مباشرةً من المسلّمتين</h2>
+
+    <div class="sec-body">
+      <p>
+        هذا هو قلب الدرس الأكاديمي. سنشتق تحويلات لورنتز من الصفر باستخدام
+        المسلّمتين فقط — لا افتراضات إضافية.
+      </p>
+
+      <div class="highlight-box">
+        <span class="hb-tag">الإعداد</span>
+        <div class="hb-text">
+          إطاران: \(S\) ساكن، و\(S'\) يتحرك بسرعة \(v\) في اتجاه \(+x\).
+          في اللحظة \(t = t' = 0\) يتطابق أصلا الإطارين. نريد إيجاد علاقة
+          الإحداثيات \((t', x')\) بـ \((t, x)\).
+        </div>
+      </div>
+
+      <p><strong style="color:var(--cyan)">الخطوة ١ — خطية التحويل:</strong></p>
+      <p>
+        نفترض أن التحويل خطي (الفضاء متجانس ومتشابه الخواص في كل الاتجاهات).
+        الصيغة الأعم الممكنة هي:
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">الصيغة الخطية العامة</span>
+        <div class="formula-main">\[ x' = Ax + Bt \qquad t' = Cx + Dt \]</div>
+        <div class="formula-note">نريد إيجاد الثوابت \(A, B, C, D\) من الشروط الفيزيائية.</div>
+      </div>
+
+      <p><strong style="color:var(--cyan)">الخطوة ٢ — الشرط الأول (أصل \(S'\) يتحرك بسرعة \(v\)):</strong></p>
+      <p>
+        أصل \(S'\) يقع عند \(x' = 0\) دائماً، وهو يتحرك بحيث \(x = vt\).
+        بالتعويض: \(0 = Avt + Bt\) ← \(B = -Av\). إذن:
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">بعد الشرط الأول</span>
+        <div class="formula-main">\[ x' = A(x - vt) \]</div>
+      </div>
+
+      <p><strong style="color:var(--cyan)">الخطوة ٣ — التناظر (أصل \(S\) يتحرك بسرعة \(-v\) بالنسبة لـ \(S'\)):</strong></p>
+      <p>
+        بالمنطق ذاته، يجب أن يكون:
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">التحويل العكسي بالتناظر</span>
+        <div class="formula-main">\[ x = A(x' + vt') \]</div>
+        <div class="formula-note">نفس المعامل \(A\) بالتناظر — لأن الحركة بـ \(-v\) لا تختلف فيزيائياً عن \(+v\) إلا في الاتجاه.</div>
+      </div>
+
+      <p><strong style="color:var(--cyan)">الخطوة ٤ — تطبيق المسلّمة الثانية (ثبات \(c\)):</strong></p>
+      <p>
+        في اللحظة \(t=t'=0\) ينطلق ومضة ضوء من الأصل. في \(S\): \(x = ct\).
+        في \(S'\): \(x' = ct'\). نُعوِّض في معادلتَي التحويل:
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">تطبيق x = ct وx' = ct'</span>
+        <div class="formula-main">\[ ct' = A(c - v)t \qquad ct = A(c + v)t' \]</div>
+      </div>
+      <p>
+        نضرب المعادلتين في بعضهما:
+        \(c^2 t t' = A^2 (c^2 - v^2) t t'\)، نقسم على \(tt'\):
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">نتيجة ضرب المعادلتين</span>
+        <div class="formula-main">\[ A^2 = \frac{c^2}{c^2 - v^2} = \frac{1}{1 - v^2/c^2} \implies A = \gamma \]</div>
+      </div>
+
+      <p><strong style="color:var(--cyan)">الخطوة ٥ — إيجاد \(t'\):</strong></p>
+      <p>
+        من \(x = A(x'+vt')\) نعزل \(t'\):
+        \(x = \gamma(x'+vt')\) ← \(x' = \gamma(x-vt)\) ← نعوض:
+        \(\frac{x}{\gamma} + \frac{x'}{\gamma^2 \cdot \gamma} \ldots\) نكتفي بالنتيجة المباشرة:
+      </p>
+      <div class="formula-block">
+        <span class="formula-tag">تحويلات لورنتز الكاملة — النتيجة النهائية</span>
+        <div class="formula-main">
+          \[
+            \boxed{x' = \gamma(x - vt)}
+            \qquad
+            \boxed{t' = \gamma\!\left(t - \frac{vx}{c^2}\right)}
+          \]
+        </div>
+        <div class="formula-note">
+          \(y' = y\) و \(z' = z\) (الأبعاد العمودية لا تتأثر)<br>
+          هذا ما يُسمى بـ Lorentz Boost في اتجاه \(x\).
+        </div>
+      </div>
+
+      <div class="highlight-box green">
+        <span class="hb-tag">التحقق — حدود نيوتن</span>
+        <div class="hb-text">
+          عند \(v \ll c\): \(\gamma \approx 1\) و \(\frac{vx}{c^2} \approx 0\)، فتُصبح:
+          \[x' \approx x - vt \qquad t' \approx t\]
+          هذه بالضبط تحويلات غاليليو — أي نيوتن هو حالة خاصة من النسبية عند سرعات صغيرة. ✓
+        </div>
+      </div>
+
+      <div class="highlight-box violet">
+        <span class="hb-tag">الثابت الكوني — فترة الزمكان</span>
+        <div class="hb-text">
+          تحويلات لورنتز تحفظ الكمية التالية بين أي حدثين:
+          \[ \Delta s^2 = c^2\Delta t^2 - \Delta x^2 - \Delta y^2 - \Delta z^2 = \text{Constant in all frameworks} \]
+          هذه "فترة الزمكان" \(\Delta s^2\) هي الكمية المطلقة الحقيقية في النسبية —
+          تختلف \(\Delta t\) و\(\Delta x\) بين الأطر، لكن \(\Delta s^2\) لا تتغير أبداً.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 12 — حدود النسبية الخاصة
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec12">
+    <div class="sec-label">SECTION 11 · LIMITS & BRIDGE</div>
+    <h2 class="sec-heading">حدود النسبية الخاصة<br>والجسر إلى النسبية العامة</h2>
+
+    <div class="sec-body">
+      <p>
+        النسبية الخاصة نظرية عظيمة — لكنها ليست الكلمة الأخيرة. فهم حدودها
+        ضروري لأنه يُريك بالضبط لماذا احتجنا النسبية العامة.
+      </p>
+
+      <div class="highlight-box amber">
+        <span class="hb-tag">الافتراض المخفي في النسبية الخاصة</span>
+        <div class="hb-text">
+          النسبية الخاصة تعمل فقط في <strong>الأطر القصورية</strong> — أي في غياب
+          التسارع والجاذبية. الكون الحقيقي مليء بالجاذبية، والجاذبية تُسبّب تسارعاً.
+          لذا تحويلات لورنتز تصف الواقع تماماً فقط في مناطق صغيرة بما يكفي
+          لأن تكون الجاذبية مهملة — أو في الفضاء البعيد عن أي كتلة.
+        </div>
+      </div>
+
+      <div class="thought-exp">
+        <span class="te-label">BRIDGE · الجسر بين النظريتين</span>
+        <div class="te-title">🌉 مبدأ التكافؤ — بذرة النسبية العامة</div>
+        <div class="te-body">
+          آينشتاين لاحظ: رجل يسقط حراً في مجال جاذبية لا يشعر بوزنه —
+          وهو بالضبط ما يشعر به رجل في الفضاء بعيداً عن أي جاذبية.
+          وبالعكس: رجل في صاروخ يتسارع بتسارع \(g\) لا يستطيع تمييز ذلك
+          عن الوقوف على سطح الأرض.<br><br>
+          <div class="te-conclusion">
+            <strong style="color:var(--cyan)">مبدأ التكافؤ:</strong> الجاذبية والتسارع متكافئان محلياً.
+            هذا يعني أن الجاذبية ليست قوة بالمعنى النيوتوني —
+            بل هي <strong>انحناء في الزمكان</strong> نفسه. هذا هو قلب النسبية العامة.
+          </div>
+        </div>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>البند</th>
+            <th>النسبية الخاصة (SR)</th>
+            <th>النسبية العامة (GR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>نطاق التطبيق</strong></td>
+            <td>أطر قصورية فقط (بلا جاذبية)</td>
+            <td class="highlight-cell">جميع الأطر بما فيها المتسارعة</td>
+          </tr>
+          <tr>
+            <td><strong>الزمكان</strong></td>
+            <td>مسطّح (Minkowski)</td>
+            <td class="highlight-cell">منحنٍ بفعل الكتلة والطاقة</td>
+          </tr>
+          <tr>
+            <td><strong>الجاذبية</strong></td>
+            <td>غائبة أو مهملة</td>
+            <td class="highlight-cell">انحناء هندسي للزمكان</td>
+          </tr>
+          <tr>
+            <td><strong>المعادلة المحورية</strong></td>
+            <td>\(\Delta s^2 = c^2\Delta t^2 - \Delta x^2\)</td>
+            <td class="highlight-cell">\(G_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}\)</td>
+          </tr>
+          <tr>
+            <td><strong>حدود نيوتن</strong></td>
+            <td>عند \(v \ll c\)</td>
+            <td class="highlight-cell">عند \(v \ll c\) وجاذبية ضعيفة</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box">
+        <span class="hb-tag">ملاحظة مهمة للدارس</span>
+        <div class="hb-text">
+          في معظم مسائل فيزياء الجسيمات، المسرّعات، والفيزياء النووية —
+          النسبية الخاصة كافية تماماً لأن الجاذبية فيها مهملة بالمقارنة مع
+          القوى النووية والكهرومغناطيسية. النسبية العامة تصبح ضرورية عند
+          التعامل مع الثقوب السوداء، التوسع الكوني، والنجوم النيوترونية.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 8 — أسئلة المراجعة
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec8">
+    <div class="sec-label">SECTION 12 · REVIEW</div>
+    <h2 class="sec-heading">أسئلة المراجعة<br>اختبر فهمك</h2>
+
+    <div class="quiz-section">
+      <div class="quiz-header">SELF-ASSESSMENT · أسئلة المراجعة الذاتية</div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">١. ما الفرق الجوهري بين المسلّمة الأولى كما صاغها آينشتاين وكما فهمها غاليليو؟</div>
+        <div class="q-answer">
+          غاليليو طبّق مبدأ النسبية على ميكانيكا الأجسام فقط (رمي كرة، حركة أجسام). آينشتاين وسّعه ليشمل <strong>جميع</strong> قوانين الفيزياء بما فيها الكهرومغناطيسية. هذا التوسيع هو الذي يستلزم حتماً المسلّمة الثانية (ثبات c)، لأن c تظهر في معادلات ماكسويل الكهرومغناطيسية.
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٢. سفينة فضاء تسير بـ 0.8c وتُطلق ضوءاً نحو الأمام. ما سرعة الضوء كما يقيسها (أ) الطيار في السفينة، (ب) الراصد الساكن؟</div>
+        <div class="q-answer">
+          كلاهما يقيس <strong>c</strong>. هذا هو جوهر المسلّمة الثانية. لا تُضاف سرعة السفينة إلى سرعة الضوء. الطيار يرى الضوء يبتعد عنه بسرعة c، والراصد الساكن يرى الضوء يمر أمامه بسرعة c أيضاً.
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٣. لماذا يُقال إن مسلّمات آينشتاين "ألغت" الزمن المطلق؟</div>
+        <div class="q-answer">
+          لأن الاحتفاظ بثبات c في كل الأطر القصورية يستوجب رياضياً أن تختلف قياسات الزمن من إطار لآخر. إذا كان الزمن مطلقاً كما افترض نيوتن، فستتعارض المعادلات مع ثبات c. آينشتاين أسقط الافتراض الأضعف (الزمن المطلق) بدلاً من المسلّمة المدعومة تجريبياً (ثبات c).
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٤. ما قيمة عامل لورنتز \(\gamma\) عند \(v = 0.6c\)؟ وماذا يعني هذا عملياً؟</div>
+        <div class="q-answer">
+          \(\gamma = \dfrac{1}{\sqrt{1 - 0.36}} = \dfrac{1}{\sqrt{0.64}} = \dfrac{1}{0.8} = \mathbf{1.25}\). عملياً: ساعة في صاروخ يسير بـ \(0.6c\) ستدق ببطء أكثر بمعدل 25% (تمر ثانية واحدة عليها في حين تمر 1.25 ثانية للراصد الساكن). متر في الصاروخ سيبدو للراصد الساكن طوله 0.8م.
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٥. ما علاقة تجربة مايكلسون-مورلي بمسلّمة آينشتاين الثانية؟</div>
+        <div class="q-answer">
+          التجربة أثبتت تجريبياً أن سرعة الضوء ثابتة بغض النظر عن اتجاه الأرض في مدارها حول الشمس (أي بغض النظر عن سرعة المراقب "المتحرك" مع الأرض). هذا تأكيد تجريبي مباشر للمسلّمة الثانية — وإن كان آينشتاين لم يذكرها صراحةً في ورقته البحثية.
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٦. في تجربة القطار والبرق، لماذا يرى \(M'\) الصاعقتين غير متزامنتين رغم أنه في منتصف القطار تماماً؟</div>
+        <div class="q-answer">
+          لأن المسلّمة الثانية تقول إن سرعة الضوء \(c\) ثابتة في إطار \(M'\) أيضاً — لا تتأثر بحركة القطار. بما أن \(M'\) يتحرك نحو مقدمة القطار، يقترب من موجة الضوء القادمة من \(A\) ويبتعد عن الموجة من \(B\). بما أن \(c\) ثابتة (لا تزداد بسبب الحركة)، تصله موجة \(A\) أولاً، فيستنتج أن \(A\) وقعت قبل \(B\).
+        </div>
+      </div>
+
+      <div class="quiz-q" onclick="this.classList.toggle('open')">
+        <div class="q-toggle">▶ اضغط للإجابة</div>
+        <div class="q-text">٧. ما الكمية المحفوظة (الثابتة) في كل الأطر في النسبية الخاصة؟ وما أهميتها؟</div>
+        <div class="q-answer">
+          فترة الزمكان: \(\Delta s^2 = c^2\Delta t^2 - \Delta x^2 - \Delta y^2 - \Delta z^2\). هذه الكمية ثابتة في جميع الأطر القصورية رغم أن \(\Delta t\) و\(\Delta x\) تتغيران كلٌّ منهما على حدة. أهميتها: إنها تُعطينا المعنى الهندسي الحقيقي للزمكان — مثلما يُعطي \(\Delta r^2 = \Delta x^2 + \Delta y^2\) المسافة الثابتة في الفضاء الإقليدي بغض النظر عن الدوران.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUMMARY ══ -->
+  <div class="summary-box reveal">
+    <div class="summary-title">LESSON SUMMARY · ملخص الدرس</div>
+    <ul class="summary-list">
+      <li>المسلّمة الأولى: قوانين الفيزياء متطابقة في كل الأطر القصورية — لا يوجد إطار "مطلق" مميّز</li>
+      <li>المسلّمة الثانية: سرعة الضوء \(c\) ثابتة لجميع المراقبين القصوريين بصرف النظر عن حركة المصدر أو المراقب</li>
+      <li>الحدث هو نقطة في الزمكان \((t,x,y,z)\) — موضوعي، لكن إحداثياته تختلف بين الأطر</li>
+      <li>تجربة القطار والبرق تُثبت أن التزامن نسبي — لا وجود لـ"الآن" الكوني المطلق</li>
+      <li>تحويلات لورنتز مشتقة من المسلّمتين: \(x' = \gamma(x-vt)\) و \(t' = \gamma\!\left(t - \frac{vx}{c^2}\right)\)</li>
+      <li>فترة الزمكان \(\Delta s^2 = c^2\Delta t^2 - \Delta x^2\) ثابتة في كل الأطر — هي المطلق الحقيقي</li>
+      <li>النسبية الخاصة تفترض غياب الجاذبية — النسبية العامة تُعالج الجاذبية كانحناء في الزمكان</li>
+      <li>عند \(v \ll c\): \(\gamma \approx 1\) وتُعطي النسبية نفس نتائج نيوتن تقريباً</li>
+    </ul>
+  </div>
+
+  <!-- ══ NAV ══ -->
+  <div class="lesson-nav">
+    <a class="nav-btn" href="special_relativity.html">
+      ← الرجوع للبوابة
+    </a>
+    <div style="text-align:center;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:3px;color:var(--muted);margin-bottom:4px;">NEXT LESSON</div>
+      <div style="font-size:.8rem;color:var(--text);">SR-02 · فشل تحويلات غاليليو</div>
+    </div>
+    <a class="nav-btn" href="#">
+      SR-02 →
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid rgba(0,229,255,.07);padding:28px 32px;text-align:center;position:relative;z-index:10;">
+  <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:5px;color:rgba(0,229,255,.22);">SR-01 · مسلّمتا آينشتاين · بوابة المعرفة · 1905</div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     CANVAS ANIMATION
+═══════════════════════════════════════ -->
+<script>
+/* ── CANVAS ── */
+const canvas = document.getElementById('sr-canvas');
+const ctx = canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();
+window.addEventListener('resize',resize);
+
+const photons=[];
+for(let i=0;i<80;i++){
+  photons.push({
+    x:Math.random(),y:Math.random(),
+    r:Math.random()*.9+.1,
+    op:Math.random()*.5+.04,
+    pulse:Math.random()*Math.PI*2,
+    sp:Math.random()*.003+.001,
+    hue:Math.random()>.75?200:185,
+  });
+}
+
+let frame=0;
+function draw(){
+  frame++;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const bg=ctx.createRadialGradient(canvas.width*.5,canvas.height*.3,0,canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.9);
+  bg.addColorStop(0,'rgba(0,12,28,1)');
+  bg.addColorStop(.4,'rgba(0,6,18,1)');
+  bg.addColorStop(1,'rgba(2,4,12,1)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const cx=canvas.width*.5,cy=canvas.height*.2;
+  for(let l=0;l<20;l++){
+    const angle=(l/20)*Math.PI*2;
+    const len=Math.min(canvas.width,canvas.height)*.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len*.45);
+    ctx.strokeStyle=`rgba(0,200,230,${0.012-l*.0002})`;ctx.lineWidth=.3;ctx.stroke();
+  }
+  for(let ring=1;ring<12;ring++){
+    const r=ring*Math.min(canvas.width,canvas.height)/28;
+    const warp=Math.sin(frame*.006+ring*.4)*3;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,r+warp,r*.35+warp*.15,0,0,Math.PI*2);
+    const a=Math.max(.003,.03-ring*.002);
+    ctx.strokeStyle=`rgba(0,229,255,${a})`;ctx.lineWidth=.4;ctx.stroke();
+  }
+  photons.forEach(p=>{
+    p.pulse+=p.sp;
+    const op=p.op*(0.65+0.35*Math.sin(p.pulse));
+    ctx.beginPath();ctx.arc(p.x*canvas.width,p.y*canvas.height,p.r,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${p.hue},100%,75%,${op})`;ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ── PROGRESS BAR ── */
+const bar=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  bar.style.width=pct+'%';
+});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*40);obs.unobserve(e.target);}
+  });
+},{threshold:.05});
+document.querySelectorAll('.reveal,.lesson-section').forEach(r=>obs.observe(r));
+
+/* ── SMOOTH SCROLL ── */
+function scrollTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+/* ── SLIDER ── */
+const slider=document.getElementById('velSlider');
+const velDisp=document.getElementById('velDisplay');
+
+function updateSlider(){
+  const v=parseFloat(slider.value)/100;
+  const pct=parseFloat(slider.value)/99.9*100;
+  slider.style.setProperty('--val',pct+'%');
+
+  const gamma=1/Math.sqrt(1-v*v);
+  const vms=v*299792458;
+
+  velDisp.textContent=v.toFixed(3)+'c';
+  document.getElementById('d-v').textContent=v.toFixed(3)+'c = '+vms.toExponential(3)+' m/s';
+  document.getElementById('d-g').textContent=gamma.toFixed(4);
+  document.getElementById('d-t').textContent=(gamma).toFixed(4)+' ثانية بالنسبة للراصد الساكن';
+  document.getElementById('d-l').textContent=(1/gamma).toFixed(4)+' متر بالنسبة للراصد الساكن';
+  const ke=(gamma-1);
+  document.getElementById('d-e').textContent=ke.toFixed(4)+' mc²';
+}
+slider.addEventListener('input',updateSlider);
+updateSlider();
+</script>
+</body>
+</html>
