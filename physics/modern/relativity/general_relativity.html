@@ -7,18 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #00040f;
-  --deep: #000208;
-  --gold: #c9a84c;
-  --gold2: #f0d080;
-  --gold3: #7a5c1e;
+  --bg: #020714;
+  --deep: #010510;
+  --gold: #d4b05a;
+  --gold2: #f5dc90;
+  --gold3: #8a6a28;
   --blue: #0ea5e9;
   --blue2: #38bdf8;
   --purple: #818cf8;
-  --text: #e8e0d0;
-  --muted: #6b6355;
-  --card: rgba(10,14,28,0.92);
-  --border: rgba(201,168,76,0.15);
+  --text: #ede8dc;
+  --muted: #7a7060;
+  --card: rgba(14,20,40,0.94);
+  --border: rgba(201,168,76,0.22);
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -44,7 +44,7 @@ body{
 /* ═══════════ VIGNETTE ═══════════ */
 .vignette{
   position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,2,8,.85) 100%);
+  background:radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,2,8,.65) 100%);
 }
 
 /* ═══════════ GRID ═══════════ */
@@ -445,22 +445,22 @@ footer{
 .topic-card[data-status="locked"]{
   cursor:not-allowed;
   pointer-events:none;
-  border-color:rgba(255,255,255,.04) !important;
-  background:rgba(6,9,20,0.85);
-  filter:saturate(0.15);
+  border-color:rgba(201,168,76,.12) !important;
+  background:rgba(14,20,38,0.92);
+  filter:saturate(0.45);
 }
 .topic-card[data-status="locked"] .card-title,
 .topic-card[data-status="locked"] .card-en,
 .topic-card[data-status="locked"] .card-desc{
-  opacity:.35;
+  opacity:.65;
 }
 .topic-card[data-status="locked"] .card-icon{
-  background:rgba(255,255,255,.03);
-  border-color:rgba(255,255,255,.06);
-  opacity:.4;
+  background:rgba(201,168,76,.06);
+  border-color:rgba(201,168,76,.15);
+  opacity:.7;
 }
 .topic-card[data-status="locked"] .card-eq{
-  opacity:.15;
+  opacity:.4;
 }
 
 /* Lock badge — قريباً */
@@ -474,9 +474,9 @@ footer{
   font-family:'Share Tech Mono',monospace;
   font-size:.58rem;
   letter-spacing:2px;
-  color:rgba(180,160,100,.45);
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.06);
+  color:rgba(200,175,110,.7);
+  background:rgba(201,168,76,.06);
+  border:1px solid rgba(201,168,76,.18);
   padding:5px 12px;
   border-radius:20px;
 }
@@ -485,7 +485,7 @@ footer{
 }
 .lock-icon{
   font-size:.75rem;
-  opacity:.6;
+  opacity:.8;
 }
 
 /* Locked card overlay shimmer */
@@ -496,8 +496,8 @@ footer{
     -45deg,
     transparent,
     transparent 8px,
-    rgba(255,255,255,.008) 8px,
-    rgba(255,255,255,.008) 9px
+    rgba(255,255,255,.013) 8px,
+    rgba(255,255,255,.013) 9px
   );
   pointer-events:none;
   transform:scaleX(1) !important;
@@ -516,9 +516,9 @@ footer{
 
 /* --- Coming soon tag on badge --- */
 .topic-card[data-status="locked"] .card-badge{
-  color:rgba(150,130,80,.3);
-  background:rgba(255,255,255,.02);
-  border-color:rgba(255,255,255,.05);
+  color:rgba(200,175,110,.55);
+  background:rgba(201,168,76,.05);
+  border-color:rgba(201,168,76,.15);
 }
 </style>
 </head>
@@ -567,7 +567,7 @@ footer{
 
     <div class="scroll-indicator">
       <span>SCROLL</span>
-      <div class="scroll-line"></div>
+      <div class=""></div>
     </div>
   </section>
 
@@ -1364,9 +1364,9 @@ function draw(){
     canvas.width/2,canvas.height/2,0,
     canvas.width/2,canvas.height/2,Math.max(canvas.width,canvas.height)*0.8
   );
-  gradient.addColorStop(0,'rgba(5,10,30,1)');
-  gradient.addColorStop(0.5,'rgba(2,5,15,1)');
-  gradient.addColorStop(1,'rgba(0,2,8,1)');
+  gradient.addColorStop(0,'rgba(8,15,40,1)');
+  gradient.addColorStop(0.5,'rgba(4,9,24,1)');
+  gradient.addColorStop(1,'rgba(1,4,14,1)');
   ctx.fillStyle=gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
@@ -1419,8 +1419,8 @@ function draw(){
 
   // Central glow (mass)
   const glow = ctx.createRadialGradient(cx,cy,0,cx,cy,200);
-  glow.addColorStop(0,'rgba(201,168,76,0.06)');
-  glow.addColorStop(0.3,'rgba(14,165,233,0.025)');
+  glow.addColorStop(0,'rgba(201,168,76,0.10)');
+  glow.addColorStop(0.3,'rgba(14,165,233,0.04)');
   glow.addColorStop(1,'transparent');
   ctx.fillStyle=glow;
   ctx.fillRect(0,0,canvas.width,canvas.height);
