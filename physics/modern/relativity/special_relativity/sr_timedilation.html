@@ -152,17 +152,24 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
 /* BG */
 const bgC=document.getElementById('bg-canvas'),bgX=bgC.getContext('2d');let bW,bH,orbs;
 function ib(){bW=bgC.width=window.innerWidth;bH=bgC.height=window.innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(0,212,255,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(124,58,237,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(0,212,255,',s:.0003,p:4}];}
-function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(db);}
-window.addEventListener('resize',ib);ib();requestAnimationFrame(db);
+let bgRaf=null;
+function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}bgRaf=requestAnimationFrame(db);}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
+window.addEventListener('resize',()=>{ib();rsz();if(!running)idleLC();});ib();requestAnimationFrame(db);
 
 /* KATEX */
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
-window.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('main-eq').innerHTML=K('t = \\gamma\\, t_0 = \\dfrac{t_0}{\\sqrt{1-v^2/c^2}}',true);
-  document.getElementById('gamma-eq').innerHTML=K('\\gamma = \\dfrac{1}{\\sqrt{1-\\beta^2}}, \\quad \\beta=\\dfrac{v}{c} \\qquad \\gamma\\geq 1',true);
-});
 function fmt(n,d=5){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e6||(Math.abs(n)<1e-4&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
-function parseV(s){if(!s)return null;s=s.trim();if(s.toLowerCase().endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f*3e8;}return parseFloat(s)||null;}
+function parseV(s){
+  if(s===null||s===undefined)return null;
+  s=s.trim();
+  if(s==='')return null;
+  if(s.toLowerCase().endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f*3e8;}
+  const n=parseFloat(s);
+  if(isNaN(n))return null;
+  // رقم بدون c: ≤1 نسبة (يُحوَّل لـ m/s)، >1 يُعامَل كـ m/s مباشرة
+  return Math.abs(n)<=1?n*3e8:n;
+}
 
 function calc(){
   const c=3e8;
@@ -192,44 +199,72 @@ function errHtml(m){return`<div class="err">⚠️ ${m}</div>`;}
 
 /* LIGHT CLOCK SIM */
 const lcc=document.getElementById('lc-canvas'),lcx=lcc.getContext('2d');
-let running=false,raf=null,phA=0,phB=0,dirA=1,dirB=1,mX=0,tick=0;
-function rsz(){lcc.width=lcc.offsetWidth;lcc.height=260;}
-window.addEventListener('resize',rsz);rsz();
-function onSlide(){const v=parseInt(document.getElementById('sv').value)/100;document.getElementById('sv-val').textContent=v.toFixed(2)+'c';const g=1/Math.sqrt(1-v*v);document.getElementById('g-disp').textContent=g.toFixed(4);}
-function toggle(){running=!running;document.getElementById('tog').textContent=running?'⏸ إيقاف':'▶ تشغيل';if(running){phA=0;phB=0;dirA=1;dirB=1;mX=0;requestAnimationFrame(animLC);}else{cancelAnimationFrame(raf);idleLC();}}
-function idleLC(){const W=lcc.width,H=lcc.height;lcx.fillStyle='#000d1a';lcx.fillRect(0,0,W,H);lcx.fillStyle='rgba(0,212,255,.35)';lcx.font='14px Tajawal';lcx.textAlign='center';lcx.fillText('اضغط ▶ تشغيل لمشاهدة الساعة الضوئية',W/2,H/2);lcx.textAlign='start';}
+let running=false,raf=null,phA=0,phB=0,dirA=1,dirB=1,mX=0;
+let lcOff=null,lcOffCtx=null;
+
+function buildLcOff(W,H){
+  lcOff=document.createElement('canvas');lcOff.width=W;lcOff.height=H;
+  lcOffCtx=lcOff.getContext('2d');
+  lcOffCtx.fillStyle='#000d1a';lcOffCtx.fillRect(0,0,W,H);
+  lcOffCtx.strokeStyle='rgba(0,212,255,.05)';lcOffCtx.lineWidth=1;
+  for(let i=0;i<W;i+=40){lcOffCtx.beginPath();lcOffCtx.moveTo(i,0);lcOffCtx.lineTo(i,H);lcOffCtx.stroke();}
+  for(let j=0;j<H;j+=40){lcOffCtx.beginPath();lcOffCtx.moveTo(0,j);lcOffCtx.lineTo(W,j);lcOffCtx.stroke();}
+}
+
+function rsz(){
+  lcc.width=lcc.offsetWidth;lcc.height=260;
+  buildLcOff(lcc.width,lcc.height);
+}
+
+function onSlide(){
+  const v=parseInt(document.getElementById('sv').value)/100;
+  document.getElementById('sv-val').textContent=v.toFixed(2)+'c';
+  const g=1/Math.sqrt(1-v*v);
+  document.getElementById('g-disp').textContent=g.toFixed(4);
+}
+
+function toggle(){
+  running=!running;
+  document.getElementById('tog').textContent=running?'⏸ إيقاف':'▶ تشغيل';
+  if(running){phA=0;phB=0;dirA=1;dirB=1;mX=0;requestAnimationFrame(animLC);}
+  else{cancelAnimationFrame(raf);idleLC();}
+}
+
+function idleLC(){
+  const W=lcc.width,H=lcc.height;
+  if(lcOff)lcx.drawImage(lcOff,0,0);
+  else{lcx.fillStyle='#000d1a';lcx.fillRect(0,0,W,H);}
+  lcx.fillStyle='rgba(0,212,255,.35)';lcx.font='14px Tajawal';lcx.textAlign='center';
+  lcx.fillText('اضغط ▶ تشغيل لمشاهدة الساعة الضوئية',W/2,H/2);lcx.textAlign='start';
+}
+
 function animLC(){
   if(!running)return;
   const W=lcc.width,H=lcc.height;
   const vf=parseInt(document.getElementById('sv').value)/100;
   const g=1/Math.sqrt(1-vf*vf);
-  lcx.clearRect(0,0,W,H);lcx.fillStyle='#000d1a';lcx.fillRect(0,0,W,H);
-  // grid
-  lcx.strokeStyle='rgba(0,212,255,.05)';lcx.lineWidth=1;
-  for(let i=0;i<W;i+=40){lcx.beginPath();lcx.moveTo(i,0);lcx.lineTo(i,H);lcx.stroke();}
-  for(let j=0;j<H;j+=40){lcx.beginPath();lcx.moveTo(0,j);lcx.lineTo(W,j);lcx.stroke();}
+  // نسخ الشبكة من الـ offscreen
+  if(lcOff)lcx.drawImage(lcOff,0,0);
+  else{lcx.fillStyle='#000d1a';lcx.fillRect(0,0,W,H);}
   // === LEFT: stationary clock ===
   const lx=W*.22,topY=40,botY=H-40,mirH=H-80;
   lcx.strokeStyle='rgba(0,212,255,.6)';lcx.lineWidth=2;
-  // mirrors
   lcx.beginPath();lcx.moveTo(lx-18,topY);lcx.lineTo(lx+18,topY);lcx.stroke();
   lcx.beginPath();lcx.moveTo(lx-18,botY);lcx.lineTo(lx+18,botY);lcx.stroke();
-  // photon A (stationary)
   phA+=dirA*2.5;if(phA>=mirH){phA=mirH;dirA=-1;}if(phA<=0){phA=0;dirA=1;}
-  const pyA=topY+phA;
   lcx.fillStyle='#00d4ff';lcx.shadowColor='#00d4ff';lcx.shadowBlur=16;
-  lcx.beginPath();lcx.arc(lx,pyA,5,0,Math.PI*2);lcx.fill();lcx.shadowBlur=0;
-  // label
+  lcx.beginPath();lcx.arc(lx,topY+phA,5,0,Math.PI*2);lcx.fill();lcx.shadowBlur=0;
   lcx.fillStyle='rgba(0,212,255,.8)';lcx.font='bold 11px Orbitron';
   lcx.textAlign='center';lcx.fillText('ساكنة',lx,topY-10);
   lcx.fillStyle='rgba(0,212,255,.5)';lcx.font='10px Share Tech Mono';
   lcx.fillText('t₀',lx,botY+18);lcx.textAlign='start';
   // === RIGHT: moving clock ===
-  mX=(mX+vf*2)%(W*.45);
-  const rx=W*.52+mX,speed2=2.5; // photon speed same, but diagonal
-  phB+=dirB*speed2;if(phB>=mirH){phB=mirH;dirB=-1;}if(phB<=0){phB=0;dirB=1;}
+  // Fix: نحسب الحد الأقصى لـ mX قبل خروج rx عن حدود الـ canvas
+  const maxMX=W*.45;
+  mX=(mX+vf*2)%maxMX;
+  const rx=W*.52+mX;
+  phB+=dirB*2.5;if(phB>=mirH){phB=mirH;dirB=-1;}if(phB<=0){phB=0;dirB=1;}
   const pyB=topY+phB;
-  // draw moving mirrors
   lcx.strokeStyle='rgba(245,158,11,.55)';lcx.lineWidth=2;
   lcx.beginPath();lcx.moveTo(rx-18,topY);lcx.lineTo(rx+18,topY);lcx.stroke();
   lcx.beginPath();lcx.moveTo(rx-18,botY);lcx.lineTo(rx+18,botY);lcx.stroke();
@@ -237,10 +272,8 @@ function animLC(){
   lcx.strokeStyle='rgba(245,158,11,.2)';lcx.lineWidth=1;lcx.setLineDash([4,4]);
   lcx.beginPath();lcx.moveTo(rx-30,topY);lcx.lineTo(rx,pyB);lcx.stroke();
   lcx.setLineDash([]);
-  // photon B (moving)
   lcx.fillStyle='#f59e0b';lcx.shadowColor='#f59e0b';lcx.shadowBlur=16;
   lcx.beginPath();lcx.arc(rx,pyB,5,0,Math.PI*2);lcx.fill();lcx.shadowBlur=0;
-  // label
   lcx.fillStyle='rgba(245,158,11,.8)';lcx.font='bold 11px Orbitron';
   lcx.textAlign='center';lcx.fillText('متحركة v='+vf.toFixed(2)+'c',rx,topY-10);
   lcx.fillStyle='rgba(245,158,11,.6)';lcx.font='10px Share Tech Mono';
@@ -250,7 +283,16 @@ function animLC(){
   lcx.fillText('γ = '+g.toFixed(4)+'   v = '+vf.toFixed(2)+'c',10,20);
   raf=requestAnimationFrame(animLC);
 }
-idleLC();
+
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('main-eq').innerHTML=K('t = \\gamma\\, t_0 = \\dfrac{t_0}{\\sqrt{1-v^2/c^2}}',true);
+  document.getElementById('gamma-eq').innerHTML=K('\\gamma = \\dfrac{1}{\\sqrt{1-\\beta^2}}, \\quad \\beta=\\dfrac{v}{c} \\qquad \\gamma\\geq 1',true);
+  // Fix: تهيئة بعد اكتمال DOM
+  rsz();
+  idleLC();
+  // Fix: sv-val و g-disp محسوبتان من الـ slider الفعلي
+  onSlide();
+});
 </script>
 </body>
 </html>

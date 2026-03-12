@@ -199,8 +199,10 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 /* BG */
 const bgC=document.getElementById('bg-canvas'),bgX=bgC.getContext('2d');let W,H,orbs;
 function initBg(){W=bgC.width=window.innerWidth;H=bgC.height=window.innerHeight;orbs=[{x:W*.15,y:H*.3,r:360,color:'rgba(124,58,237,',speed:.00028,phase:0},{x:W*.82,y:H*.6,r:400,color:'rgba(0,212,255,',speed:.00034,phase:2},{x:W*.5,y:H*.88,r:260,color:'rgba(124,58,237,',speed:.0003,phase:4}];}
-function drawBg(){bgX.clearRect(0,0,W,H);bgX.fillStyle='#020817';bgX.fillRect(0,0,W,H);for(const o of orbs){o.phase+=o.speed;const ox=o.x+Math.sin(o.phase)*65,oy=o.y+Math.cos(o.phase*.7)*50;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.022)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(drawBg);}
-window.addEventListener('resize',initBg);initBg();requestAnimationFrame(drawBg);
+let bgRaf=null;
+function drawBg(){bgX.clearRect(0,0,W,H);bgX.fillStyle='#020817';bgX.fillRect(0,0,W,H);for(const o of orbs){o.phase+=o.speed;const ox=o.x+Math.sin(o.phase)*65,oy=o.y+Math.cos(o.phase*.7)*50;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.022)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}bgRaf=requestAnimationFrame(drawBg);}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(drawBg);}});
+window.addEventListener('resize',()=>{initBg();resizeSim();});initBg();requestAnimationFrame(drawBg);
 
 /* KATEX */
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
@@ -208,11 +210,21 @@ function KEl(id,l,b=false){const e=document.getElementById(id);if(e)katex.render
 
 /* RENDER EQUATIONS */
 window.addEventListener('DOMContentLoaded',()=>{
-  KEl('eq1','\\text{قوانين الفيزياء:}\\; F=ma,\\; \\nabla\\cdot E,\\ldots \\text{ متطابقة في كل الأطر القصورية}');
-  KEl('eq2','c = 2.998\\times10^8\\,m/s = \\text{ثابتة دائماً}');
+  // eq1: العربية في HTML، المعادلة في KaTeX منفصلة — تجنّب تحذيرات "No character metrics"
+  document.getElementById('eq1').innerHTML=
+    '<span style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:6px;">قوانين الفيزياء متطابقة في كل الأطر القصورية:</span>'+
+    K('F=ma,\\quad \\nabla\\cdot\\vec{E}=\\tfrac{\\rho}{\\varepsilon_0},\\quad \\ldots',true);
+  // eq2: العربية في HTML، القيمة العددية في KaTeX
+  document.getElementById('eq2').innerHTML=
+    '<span style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:6px;">سرعة الضوء ثابتة دائماً بغض النظر عن المصدر أو المراقب:</span>'+
+    K('c = 2.998\\times10^8\\,\\text{m/s} = \\text{const}',true);
   KEl('gal1',"x'=x-vt"); KEl('gal2',"y'=y"); KEl('gal3',"z'=z"); KEl('gal4',"t'=t");
   KEl('lor1',"x'=\\gamma(x-vt)"); KEl('lor2',"y'=y"); KEl('lor3',"z'=z");
   KEl('lor4',"t'=\\gamma\\!\\left(t-\\tfrac{vx}{c^2}\\right)");
+  // تهيئة المحاكاة بعد اكتمال DOM
+  resizeSim();
+  // تهيئة قيمة الـ slider المعروضة من القيمة الفعلية
+  document.getElementById('sim-v-val').textContent=(parseInt(document.getElementById('sim-v').value)/100).toFixed(2)+'c';
 });
 
 /* HELPERS */
@@ -223,12 +235,11 @@ function resultBox(vals){const h=vals.map(v=>`<div class="result-val"><div class
 function errBox(m){return`<div class="error-box">⚠️ ${m}</div>`;}
 
 /* CALCULATOR */
+function parseField(id){const s=document.getElementById(id).value.trim();if(s==='')return null;const n=parseFloat(s);return isNaN(n)?null:n;}
 function calcLorentz(){
   const c=3e8;
-  const x=parseFloat(document.getElementById('inp-x').value)||null;
-  const t=parseFloat(document.getElementById('inp-t').value)||null;
-  const v=parseFloat(document.getElementById('inp-v').value)||null;
-  if(x===null||t===null||v===null)return show('result-lorentz','result-content-lorentz',errBox('أدخل جميع المعطيات'));
+  const x=parseField('inp-x'),t=parseField('inp-t'),v=parseField('inp-v');
+  if(x===null||t===null||v===null)return show('result-lorentz','result-content-lorentz',errBox('أدخل جميع المعطيات (القيمة صفر مقبولة)'));
   if(Math.abs(v)>=c)return show('result-lorentz','result-content-lorentz',errBox('السرعة يجب أن تكون أقل من سرعة الضوء'));
   const gamma=1/Math.sqrt(1-(v/c)**2);
   const xp=gamma*(x-v*t);
@@ -248,72 +259,88 @@ function calcLorentz(){
 function show(secId,contentId,html){document.getElementById(contentId).innerHTML=html;const el=document.getElementById(secId);el.classList.add('show');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 
 /* SIMULATION */
-const simC=document.getElementById('sim-canvas'),simX=simC.getContext('2d');
-let simRunning=false,simAnim=null,photonS=0,photonSp=0,frameX=0,t=0;
-function resizeSim(){simC.width=simC.offsetWidth;simC.height=220;}
-window.addEventListener('resize',resizeSim);resizeSim();
+let simC,simX,simOffscreen,simOffCtx;
+let simRunning=false,simAnim=null,photonS=0,photonSp=0,frameX=0;
+
+function buildSimOffscreen(W,H){
+  simOffscreen=document.createElement('canvas');
+  simOffscreen.width=W;simOffscreen.height=H;
+  simOffCtx=simOffscreen.getContext('2d');
+  simOffCtx.fillStyle='#000d1a';simOffCtx.fillRect(0,0,W,H);
+  simOffCtx.strokeStyle='rgba(124,58,237,.1)';simOffCtx.lineWidth=1;
+  for(let i=0;i<W;i+=50){simOffCtx.beginPath();simOffCtx.moveTo(i,0);simOffCtx.lineTo(i,H);simOffCtx.stroke();}
+  for(let j=0;j<H;j+=40){simOffCtx.beginPath();simOffCtx.moveTo(0,j);simOffCtx.lineTo(W,j);simOffCtx.stroke();}
+}
+
+function resizeSim(){
+  simC=document.getElementById('sim-canvas');
+  simX=simC.getContext('2d');
+  simC.width=simC.offsetWidth;simC.height=220;
+  buildSimOffscreen(simC.width,simC.height);
+  if(!simRunning)drawSimIdle();
+}
 
 function updateSim(){
   const val=document.getElementById('sim-v').value;
   document.getElementById('sim-v-val').textContent=(val/100).toFixed(2)+'c';
+  if(!simRunning)drawSimIdle();
 }
+
 function toggleSim(){
   simRunning=!simRunning;
   document.getElementById('sim-toggle').textContent=simRunning?'⏸ إيقاف':'▶ تشغيل';
-  if(simRunning){t=0;photonS=60;photonSp=60;frameX=60;requestAnimationFrame(animSim);}
-  else if(simAnim){cancelAnimationFrame(simAnim);drawSimIdle();}
+  if(simRunning){photonS=0;photonSp=0;frameX=0;requestAnimationFrame(animSim);}
+  else{if(simAnim)cancelAnimationFrame(simAnim);drawSimIdle();}
 }
+
 function animSim(){
   if(!simRunning)return;
-  const W=simC.width,H=simC.height,c=3e8;
+  const W=simC.width,H=simC.height;
   const vFrac=parseInt(document.getElementById('sim-v').value)/100;
   const gamma=1/Math.sqrt(1-vFrac*vFrac);
-  simX.clearRect(0,0,W,H);
-  // bg
-  simX.fillStyle='#000d1a';simX.fillRect(0,0,W,H);
-  // grid lines
-  simX.strokeStyle='rgba(124,58,237,.1)';simX.lineWidth=1;
-  for(let i=0;i<W;i+=50){simX.beginPath();simX.moveTo(i,0);simX.lineTo(i,H);simX.stroke();}
-  for(let j=0;j<H;j+=40){simX.beginPath();simX.moveTo(0,j);simX.lineTo(W,j);simX.stroke();}
+  // نسخ الشبكة الجاهزة دفعة واحدة
+  simX.drawImage(simOffscreen,0,0);
   // labels
   simX.fillStyle='rgba(255,255,255,.5)';simX.font='11px Orbitron';
+  simX.textAlign='start';
   simX.fillText('إطار S (ثابت)',10,20);
   simX.fillStyle='rgba(245,158,11,.8)';
   simX.fillText("إطار S' (v="+vFrac.toFixed(2)+'c)',10,38);
-  // moving frame indicator
-  frameX=(frameX+(vFrac*4))%(W-60)+60;
+  // الإطار المتحرك — wrap سلس بدون قفز
+  frameX=(frameX+vFrac*4)%W;
   simX.strokeStyle='rgba(245,158,11,.35)';simX.lineWidth=1;simX.setLineDash([6,4]);
   simX.beginPath();simX.moveTo(frameX,0);simX.lineTo(frameX,H);simX.stroke();
   simX.setLineDash([]);
   simX.fillStyle='rgba(245,158,11,.8)';simX.font='10px Share Tech Mono';
   simX.fillText("S'",frameX+4,H-8);
-  // photon in S (white) — always at c, no matter v
+  // فوتون في S (أبيض) — يتحرك دائماً بنفس السرعة البكسلية
   photonS=(photonS+4)%W;
   simX.fillStyle='#ffffff';simX.shadowColor='#ffffff';simX.shadowBlur=14;
   simX.beginPath();simX.arc(photonS,H/2-20,5,0,Math.PI*2);simX.fill();
   simX.shadowBlur=0;
-  simX.fillStyle='rgba(255,255,255,.5)';simX.font='10px Share Tech Mono';
-  simX.fillText('c',photonS-4,H/2-34);
-  // photon in S' (orange) — also c! (Postulate 2)
+  simX.fillStyle='rgba(255,255,255,.6)';simX.font='10px Share Tech Mono';simX.textAlign='center';
+  simX.fillText('c (ثابتة)',photonS,H/2-34);
+  // فوتون في S' (برتقالي) — أيضاً c بغض النظر عن v (المسلّمة الثانية)
   photonSp=(photonSp+4)%W;
   simX.fillStyle='#f59e0b';simX.shadowColor='#f59e0b';simX.shadowBlur=14;
   simX.beginPath();simX.arc(photonSp,H/2+20,5,0,Math.PI*2);simX.fill();
   simX.shadowBlur=0;
-  simX.fillStyle='rgba(245,158,11,.7)';
-  simX.fillText('c (ثابتة!)',photonSp-24,H/2+40);
-  // gamma display
-  simX.fillStyle='rgba(124,58,237,.9)';simX.font='bold 12px Share Tech Mono';
-  simX.fillText('γ = '+gamma.toFixed(4),W-110,22);
-  t++;
+  simX.fillStyle='rgba(245,158,11,.8)';
+  simX.fillText('c (ثابتة!)',photonSp,H/2+40);
+  // HUD
+  simX.fillStyle='rgba(124,58,237,.9)';simX.font='bold 12px Share Tech Mono';simX.textAlign='start';
+  simX.fillText('γ = '+gamma.toFixed(4),W-115,22);
   simAnim=requestAnimationFrame(animSim);
 }
+
 function drawSimIdle(){
+  if(!simC||!simX)return;
   const W=simC.width,H=simC.height;
-  simX.fillStyle='#000d1a';simX.fillRect(0,0,W,H);
+  if(simOffscreen)simX.drawImage(simOffscreen,0,0);
+  else{simX.fillStyle='#000d1a';simX.fillRect(0,0,W,H);}
   simX.fillStyle='rgba(124,58,237,.4)';simX.font='14px Tajawal';simX.textAlign='center';
   simX.fillText('اضغط ▶ تشغيل للمحاكاة',W/2,H/2);simX.textAlign='start';
 }
-drawSimIdle();
 </script>
 </body>
 </html>

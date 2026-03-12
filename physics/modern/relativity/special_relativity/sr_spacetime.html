@@ -146,14 +146,26 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
 <script>
 const bgC=document.getElementById('bgc'),bgX=bgC.getContext('2d');let bW,bH,orbs;
 function ib(){bW=bgC.width=innerWidth;bH=bgC.height=innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(6,182,212,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(124,58,237,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(6,182,212,',s:.0003,p:4}];}
-function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(db);}
+let bgRaf=null;
+function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}bgRaf=requestAnimationFrame(db);}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
 addEventListener('resize',()=>{ib();rsz();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
 addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('eq1').innerHTML=K('s^2=(c\\Delta t)^2-(\\Delta x)^2-(\\Delta y)^2-(\\Delta z)^2=\\text{ثابتة في كل الأطر}',true);
+  // Fix: فصل العربية عن KaTeX لتجنّب تحذيرات "No character metrics"
+  document.getElementById('eq1').innerHTML=
+    '<span style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:4px;">الصيغة العامة (ثلاثية الأبعاد):</span>'+
+    K('s^2=(c\\Delta t)^2-(\\Delta x)^2-(\\Delta y)^2-(\\Delta z)^2=\\text{const}',true)+
+    '<span style="font-size:.75rem;color:var(--muted);display:block;margin-top:6px;">الحاسبة أدناه تحسب الحالة الأحادية (Δy=Δz=0):</span>'+
+    K('s^2=(c\\Delta t)^2-(\\Delta x)^2',true);
   document.getElementById('r1').innerHTML=K('s^2>0');
   document.getElementById('r2').innerHTML=K('s^2=0');
   document.getElementById('r3').innerHTML=K('s^2<0');
+  // تهيئة بعد اكتمال DOM
+  rsz();
+  // تهيئة sv-val من قيمة الـ slider الفعلية
+  const sv=document.getElementById('sv');
+  document.getElementById('sv-val').textContent=(parseInt(sv.value)/100).toFixed(2)+'c';
 });
 function fmt(n,d=4){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e10||(Math.abs(n)<1e-4&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
 function lc(b,l){return`<div class="lc"><span class="lb">${b}</span><div class="ll">${K(l)}</div></div>`;}
@@ -182,65 +194,89 @@ function calc(){
 }
 function show(h){document.getElementById('rc').innerHTML=h;const e=document.getElementById('res');e.classList.add('show');e.scrollIntoView({behavior:'smooth',block:'nearest'});}
 /* MINKOWSKI DIAGRAM */
-const mk=document.getElementById('mk'),mx=mk.getContext('2d');
-let events=[],dragging=null;
-function rsz(){mk.width=mk.offsetWidth;mk.height=380;redraw();}
-rsz();
+let mk,mx,mkOff,mkOffCtx;
+let events=[];
+const MAX_EVENTS=8; // حد أقصى لتجنّب التراكم اللانهائي
+
+function buildMkOff(W,H){
+  mkOff=document.createElement('canvas');mkOff.width=W;mkOff.height=H;
+  mkOffCtx=mkOff.getContext('2d');
+  const ox=W/2,oy=H/2,sc=Math.min(W,H)*0.35;
+  mkOffCtx.fillStyle='#000d1a';mkOffCtx.fillRect(0,0,W,H);
+  // شبكة ثابتة
+  mkOffCtx.strokeStyle='rgba(6,182,212,.07)';mkOffCtx.lineWidth=1;
+  for(let i=-5;i<=5;i++){
+    mkOffCtx.beginPath();mkOffCtx.moveTo(ox+i*sc/2,0);mkOffCtx.lineTo(ox+i*sc/2,H);mkOffCtx.stroke();
+    mkOffCtx.beginPath();mkOffCtx.moveTo(0,oy-i*sc/2);mkOffCtx.lineTo(W,oy-i*sc/2);mkOffCtx.stroke();
+  }
+  // fill مخروطَي المستقبل/الماضي
+  mkOffCtx.fillStyle='rgba(16,185,129,.04)';mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox-W,oy-W);mkOffCtx.lineTo(ox+W,oy-W);mkOffCtx.closePath();mkOffCtx.fill();
+  mkOffCtx.fillStyle='rgba(255,71,87,.04)';mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox-W,oy+W);mkOffCtx.lineTo(ox+W,oy+W);mkOffCtx.closePath();mkOffCtx.fill();
+  // المحاور الثابتة S
+  mkOffCtx.strokeStyle='rgba(255,255,255,.35)';mkOffCtx.lineWidth=1.5;
+  mkOffCtx.beginPath();mkOffCtx.moveTo(0,oy);mkOffCtx.lineTo(W,oy);mkOffCtx.stroke();
+  mkOffCtx.beginPath();mkOffCtx.moveTo(ox,0);mkOffCtx.lineTo(ox,H);mkOffCtx.stroke();
+  mkOffCtx.fillStyle='rgba(255,255,255,.6)';mkOffCtx.font='11px Orbitron';
+  mkOffCtx.fillText('x',W-20,oy-8);mkOffCtx.fillText('ct',ox+6,16);
+  // مخروط الضوء
+  mkOffCtx.strokeStyle='rgba(245,158,11,.6)';mkOffCtx.lineWidth=2;mkOffCtx.setLineDash([6,4]);
+  mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox+sc,oy-sc);mkOffCtx.stroke();
+  mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox-sc,oy-sc);mkOffCtx.stroke();
+  mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox+sc,oy+sc);mkOffCtx.stroke();
+  mkOffCtx.beginPath();mkOffCtx.moveTo(ox,oy);mkOffCtx.lineTo(ox-sc,oy+sc);mkOffCtx.stroke();
+  mkOffCtx.setLineDash([]);
+  // تسميات المخروط
+  mkOffCtx.fillStyle='rgba(16,185,129,.7)';mkOffCtx.font='10px Tajawal';mkOffCtx.textAlign='center';
+  mkOffCtx.fillText('مستقبل',ox,oy-sc*.85);
+  mkOffCtx.fillStyle='rgba(255,71,87,.7)';mkOffCtx.fillText('ماضٍ',ox,oy+sc*.9);
+  mkOffCtx.fillStyle='rgba(245,158,11,.7)';mkOffCtx.fillText('مخروط الضوء',ox+sc*.7,oy-sc*.6);
+  mkOffCtx.textAlign='start';
+}
+
+function rsz(){
+  mk=document.getElementById('mk');mx=mk.getContext('2d');
+  mk.width=mk.offsetWidth;mk.height=380;
+  buildMkOff(mk.width,mk.height);
+  redraw();
+}
+
 function getOrigin(){return{x:mk.width/2,y:mk.height/2};}
 function getScale(){return Math.min(mk.width,mk.height)*0.35;}
 function resetDiag(){events=[];redraw();}
+
+mk=document.getElementById('mk');
 mk.addEventListener('click',e=>{
+  if(events.length>=MAX_EVENTS)return; // حد أقصى 8 أحداث
   const r=mk.getBoundingClientRect(),ox=getOrigin().x,oy=getOrigin().y,sc=getScale();
   const cx=(e.clientX-r.left-ox)/sc,cy=-(e.clientY-r.top-oy)/sc;
   events.push({x:cx,t:cy});redraw();
 });
+
 function redraw(){
+  if(!mk||!mx)return;
   const W=mk.width,H=mk.height,{x:ox,y:oy}=getOrigin(),sc=getScale();
   const vf=parseInt(document.getElementById('sv').value)/100;
   document.getElementById('sv-val').textContent=vf.toFixed(2)+'c';
-  mx.clearRect(0,0,W,H);mx.fillStyle='#000d1a';mx.fillRect(0,0,W,H);
-  // grid
-  mx.strokeStyle='rgba(6,182,212,.07)';mx.lineWidth=1;
-  for(let i=-5;i<=5;i++){mx.beginPath();mx.moveTo(ox+i*sc/2,0);mx.lineTo(ox+i*sc/2,H);mx.stroke();mx.beginPath();mx.moveTo(0,oy-i*sc/2);mx.lineTo(W,oy-i*sc/2);mx.stroke();}
-  // S axes
-  mx.strokeStyle='rgba(255,255,255,.35)';mx.lineWidth=1.5;
-  mx.beginPath();mx.moveTo(0,oy);mx.lineTo(W,oy);mx.stroke(); // x axis
-  mx.beginPath();mx.moveTo(ox,0);mx.lineTo(ox,H);mx.stroke(); // ct axis
-  // axis labels
-  mx.fillStyle='rgba(255,255,255,.6)';mx.font='11px Orbitron';
-  mx.fillText('x',W-20,oy-8);mx.fillText('ct',ox+6,16);
-  // Light cone
-  mx.strokeStyle='rgba(245,158,11,.6)';mx.lineWidth=2;mx.setLineDash([6,4]);
-  mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox+sc,oy-sc);mx.stroke();
-  mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox-sc,oy-sc);mx.stroke();
-  mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox+sc,oy+sc);mx.stroke();
-  mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox-sc,oy+sc);mx.stroke();
-  mx.setLineDash([]);
-  // fill future/past cones
-  mx.fillStyle='rgba(16,185,129,.04)';mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox-W,oy-W);mx.lineTo(ox+W,oy-W);mx.closePath();mx.fill();
-  mx.fillStyle='rgba(255,71,87,.04)';mx.beginPath();mx.moveTo(ox,oy);mx.lineTo(ox-W,oy+W);mx.lineTo(ox+W,oy+W);mx.closePath();mx.fill();
-  // S' axes (boosted)
+  // نسخ الخلفية الجاهزة (شبكة + مخروط + محاور S)
+  if(mkOff)mx.drawImage(mkOff,0,0);
+  else{mx.fillStyle='#000d1a';mx.fillRect(0,0,W,H);}
+  // محاور S' المتحركة (تتغير مع الـ slider — لا تُخزَّن في offscreen)
   if(vf!==0){
-    const g=1/Math.sqrt(1-vf*vf);
     mx.strokeStyle='rgba(6,182,212,.5)';mx.lineWidth=1.5;mx.setLineDash([4,4]);
-    // x' axis: t'=0 → t = v/c * x → slope = v/c in ct-x space
-    const xpSlope=vf;
-    mx.beginPath();mx.moveTo(ox-sc*2,oy+sc*2*xpSlope);mx.lineTo(ox+sc*2,oy-sc*2*xpSlope);mx.stroke();
-    // ct' axis: x'=0 → x = v/c * ct → slope ct = x/v*c
-    const ctpSlope=vf;
-    mx.beginPath();mx.moveTo(ox-sc*2*ctpSlope,oy+sc*2);mx.lineTo(ox+sc*2*ctpSlope,oy-sc*2);mx.stroke();
+    const slope=vf;
+    // x' axis
+    mx.beginPath();mx.moveTo(ox-sc*2,oy+sc*2*slope);mx.lineTo(ox+sc*2,oy-sc*2*slope);mx.stroke();
+    // ct' axis
+    mx.beginPath();mx.moveTo(ox-sc*2*slope,oy+sc*2);mx.lineTo(ox+sc*2*slope,oy-sc*2);mx.stroke();
     mx.setLineDash([]);
+    // labels — نحافظ عليها داخل حدود الـ canvas
     mx.fillStyle='rgba(6,182,212,.7)';mx.font='10px Orbitron';
-    mx.fillText("x'",ox+sc*1.6,oy-sc*1.6*xpSlope-8);
-    mx.fillText("ct'",ox+sc*1.6*ctpSlope+4,oy-sc*1.6+4);
+    const xLabelX=Math.min(ox+sc*1.5,W-24),xLabelY=Math.max(oy-sc*1.5*slope-8,14);
+    mx.fillText("x'",xLabelX,xLabelY);
+    const ctLabelX=Math.min(ox+sc*1.5*slope+4,W-24),ctLabelY=Math.max(oy-sc*1.5+4,14);
+    mx.fillText("ct'",ctLabelX,ctLabelY);
   }
-  // cone labels
-  mx.fillStyle='rgba(16,185,129,.7)';mx.font='10px Tajawal';mx.textAlign='center';
-  mx.fillText('مستقبل',ox,oy-sc*.85);
-  mx.fillStyle='rgba(255,71,87,.7)';mx.fillText('ماضٍ',ox,oy+sc*.9);
-  mx.fillStyle='rgba(245,158,11,.7)';mx.fillText('مخروط الضوء',ox+sc*.7,oy-sc*.6);
-  mx.textAlign='start';
-  // events
+  // الأحداث والفواصل
   events.forEach((ev,i)=>{
     const px=ox+ev.x*sc,py=oy-ev.t*sc;
     mx.fillStyle='#06b6d4';mx.shadowColor='#06b6d4';mx.shadowBlur=12;
@@ -248,13 +284,21 @@ function redraw(){
     mx.fillStyle='rgba(6,182,212,.8)';mx.font='10px Share Tech Mono';
     mx.fillText(`E${i+1}(${ev.x.toFixed(1)},${ev.t.toFixed(1)})`,px+8,py-6);
     if(i>0){
-      // draw spacetime interval to first event
-      const e0=events[0];const dx=ev.x-e0.x;const dt=ev.t-e0.t;const s2=dt*dt-dx*dx;
+      const e0=events[0];
+      // Fix: s² بوحدات مينكوفسكي الطبيعية (c=1) — متسق مع المخطط
+      // الـ dx,dt هنا بوحدات المخطط حيث المحور الرأسي هو ct وليس t
+      // لذا: s² = dt² - dx² حيث dt هو ct/c (بنفس وحدة المسافة)
+      const ddx=ev.x-e0.x,ddt=ev.t-e0.t,s2=ddt*ddt-ddx*ddx;
       mx.strokeStyle=s2>0?'rgba(16,185,129,.5)':s2<0?'rgba(255,71,87,.5)':'rgba(245,158,11,.5)';
       mx.lineWidth=1;mx.setLineDash([3,3]);
       mx.beginPath();mx.moveTo(ox+e0.x*sc,oy-e0.t*sc);mx.lineTo(px,py);mx.stroke();mx.setLineDash([]);
     }
   });
+  // عداد الأحداث
+  if(events.length>0){
+    mx.fillStyle='rgba(6,182,212,.5)';mx.font='9px Share Tech Mono';mx.textAlign='start';
+    mx.fillText(`أحداث: ${events.length}/${MAX_EVENTS}`,8,H-8);
+  }
 }
 </script>
 </body>

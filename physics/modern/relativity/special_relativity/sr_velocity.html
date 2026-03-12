@@ -53,7 +53,7 @@ h1{font-size:clamp(1.7rem,4vw,2.9rem);font-weight:900;background:linear-gradient
 .cb{padding:22px;}
 .ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-bottom:14px;}
 .igrp{display:flex;flex-direction:column;gap:5px;}
-.igrp label{font-size:.72rem;color:#94a3b8;}.igrp label span{color:var(--acc);font-size:.68rem;margin-right:3px;}
+.igrp label{font-size:.72rem;color:#94a3b8;}.igrp label span{color:var(--acc);font-size:.68rem;margin-left:4px;margin-right:0;}
 .ifld{background:#020617;border:1.5px solid #1e293b;color:#fff;padding:11px 13px;border-radius:9px;outline:none;font-family:'Tajawal',sans-serif;font-size:.9rem;transition:.25s;width:100%;}
 .ifld:focus{border-color:var(--acc);box-shadow:0 0 10px rgba(245,158,11,.18);}
 .ifld::placeholder{color:#334155;font-size:.78rem;}
@@ -131,8 +131,8 @@ input[type=range]{flex:1;min-width:100px;accent-color:var(--acc);cursor:pointer;
     <div class="ch"><div class="ci">🚀</div><div class="ctt">احسب السرعة المجمّعة (نسبياً ونيوتونياً)</div></div>
     <div class="cb">
       <div class="ig">
-        <div class="igrp"><label><span>[xc]</span>سرعة الإطار v (الصاروخ)</label><input class="ifld" id="v" placeholder="مثال: 0.8c" autocomplete="off"></div>
-        <div class="igrp"><label><span>[xc]</span>سرعة الجسم u' (المسبار داخل الصاروخ)</label><input class="ifld" id="up" placeholder="مثال: 0.7c" autocomplete="off"></div>
+        <div class="igrp"><label>سرعة الإطار v (الصاروخ)<span>[xc]</span></label><input class="ifld" id="v" placeholder="مثال: 0.8c" autocomplete="off"></div>
+        <div class="igrp"><label>سرعة الجسم u' (المسبار داخل الصاروخ)<span>[xc]</span></label><input class="ifld" id="up" placeholder="مثال: 0.7c" autocomplete="off"></div>
       </div>
       <button class="sbtn" onclick="calc()">🚀 احسب السرعة المجمّعة</button>
       <div class="res" id="res"><div class="rdiv"></div><div id="rc"></div></div>
@@ -159,16 +159,27 @@ input[type=range]{flex:1;min-width:100px;accent-color:var(--acc);cursor:pointer;
 /* BG */
 const bgC=document.getElementById('bgc'),bgX=bgC.getContext('2d');let bW,bH,orbs;
 function ib(){bW=bgC.width=innerWidth;bH=bgC.height=innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(245,158,11,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(124,58,237,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(245,158,11,',s:.0003,p:4}];}
-function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(db);}
-addEventListener('resize',ib);ib();requestAnimationFrame(db);
+let bgRaf=null;
+function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}bgRaf=requestAnimationFrame(db);}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
+addEventListener('resize',()=>{ib();rsz();if(!run)idle();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
 addEventListener('DOMContentLoaded',()=>{
   document.getElementById('eq1').innerHTML=K("u=\\dfrac{v+u'}{1+\\dfrac{vu'}{c^2}}",true);
   document.getElementById('neq').innerHTML=K("u_{Newton}=v+u'");
   document.getElementById('eeq').innerHTML=K("u=\\dfrac{v+u'}{1+vu'/c^2}");
 });
-function pv(s){if(!s)return null;s=s.trim().toLowerCase();if(s.endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f;}return parseFloat(s)/3e8||null;}
-function fmt(n,d=5){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';return parseFloat(n.toFixed(d)).toString();}
+function pv(s){
+  if(s===null||s===undefined)return null;
+  s=s.trim().toLowerCase();
+  if(s==='')return null;
+  if(s.endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f;}
+  const n=parseFloat(s);
+  if(isNaN(n))return null;
+  // رقم بدون c: إذا كان بين 0 و1 → نسبة مباشرة، أكبر من 1 → m/s
+  return Math.abs(n)<=1?n:n/3e8;
+}
+function fmt(n,d=5){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e6||(Math.abs(n)<1e-4&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
 function calc(){
   const v=pv(document.getElementById('v').value);
   const up=pv(document.getElementById('up').value);
@@ -198,9 +209,36 @@ function rb(vals){return`<div class="rb"><div class="rbl">// النتائج</div
 function err(m){return`<div class="err">⚠️ ${m}</div>`;}
 /* SIM */
 const vc=document.getElementById('vc'),vx=vc.getContext('2d');
-let run=false,raf=null,rX=0,mX=0;
-function rsz(){vc.width=vc.offsetWidth;vc.height=250;}
-addEventListener('resize',rsz);rsz();
+let run=false,raf=null,rX=0,mX=0,eX=0;
+let vcOff=null,vcOffCtx=null;
+
+// Fix: roundRect fallback لـ Safari <15.4
+function rRect(ctx,x,y,w,h,r){
+  if(typeof ctx.roundRect==='function'){ctx.roundRect(x,y,w,h,r);return;}
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function buildVcOff(W,H){
+  vcOff=document.createElement('canvas');vcOff.width=W;vcOff.height=H;
+  vcOffCtx=vcOff.getContext('2d');
+  vcOffCtx.fillStyle='#000d1a';vcOffCtx.fillRect(0,0,W,H);
+  vcOffCtx.strokeStyle='rgba(245,158,11,.05)';vcOffCtx.lineWidth=1;
+  for(let i=0;i<W;i+=40){vcOffCtx.beginPath();vcOffCtx.moveTo(i,0);vcOffCtx.lineTo(i,H);vcOffCtx.stroke();}
+  for(let j=0;j<H;j+=40){vcOffCtx.beginPath();vcOffCtx.moveTo(0,j);vcOffCtx.lineTo(W,j);vcOffCtx.stroke();}
+  // حد c — ثابت في الـ offscreen
+  vcOffCtx.strokeStyle='rgba(255,71,87,.4)';vcOffCtx.lineWidth=1.5;vcOffCtx.setLineDash([8,5]);
+  vcOffCtx.beginPath();vcOffCtx.moveTo(W-40,0);vcOffCtx.lineTo(W-40,H);vcOffCtx.stroke();vcOffCtx.setLineDash([]);
+  vcOffCtx.fillStyle='rgba(255,71,87,.7)';vcOffCtx.font='10px Orbitron';vcOffCtx.fillText('c',W-36,16);
+}
+
+function rsz(){
+  vc.width=vc.offsetWidth;vc.height=250;
+  buildVcOff(vc.width,vc.height);
+}
+
 function onSlide(){
   const v=parseInt(document.getElementById('sv').value)/100;
   const u=parseInt(document.getElementById('su').value)/100;
@@ -209,42 +247,50 @@ function onSlide(){
   const uN=Math.min(v+u,1.99);
   const uR=(v+u)/(1+v*u);
   document.getElementById('vel-compare').innerHTML=
-    `u نيوتن = <span style="color:var(--c5)">${(uN).toFixed(3)}c${uN>=1?' ⚠️ فوق c':''}</span> &nbsp;|&nbsp; u آينشتاين = <span style="color:var(--acc)">${uR.toFixed(4)}c ✅</span>`;
+    `u نيوتن = <span style="color:var(--c5)">${uN.toFixed(3)}c${uN>=1?' ⚠️ فوق c':''}</span> &nbsp;|&nbsp; u آينشتاين = <span style="color:var(--acc)">${uR.toFixed(4)}c ✅</span>`;
 }
-function toggle(){run=!run;document.getElementById('tog').textContent=run?'⏸ إيقاف':'▶ تشغيل';if(run){rX=60;mX=60;requestAnimationFrame(anim);}else{cancelAnimationFrame(raf);idle();}}
-function idle(){const W=vc.width,H=vc.height;vx.fillStyle='#000d1a';vx.fillRect(0,0,W,H);vx.fillStyle='rgba(245,158,11,.35)';vx.font='14px Tajawal';vx.textAlign='center';vx.fillText('اضغط ▶ تشغيل لمشاهدة الفرق بين القانونين',W/2,H/2);vx.textAlign='start';}
+
+function toggle(){
+  run=!run;
+  document.getElementById('tog').textContent=run?'⏸ إيقاف':'▶ تشغيل';
+  if(run){rX=60;mX=60;eX=60;requestAnimationFrame(anim);}
+  else{cancelAnimationFrame(raf);idle();}
+}
+
+function idle(){
+  const W=vc.width,H=vc.height;
+  if(vcOff)vx.drawImage(vcOff,0,0);
+  else{vx.fillStyle='#000d1a';vx.fillRect(0,0,W,H);}
+  vx.fillStyle='rgba(245,158,11,.35)';vx.font='14px Tajawal';vx.textAlign='center';
+  vx.fillText('اضغط ▶ تشغيل لمشاهدة الفرق بين القانونين',W/2,H/2);vx.textAlign='start';
+}
+
 function anim(){
   if(!run)return;
   const W=vc.width,H=vc.height;
   const v=parseInt(document.getElementById('sv').value)/100;
   const u=parseInt(document.getElementById('su').value)/100;
   const uN=v+u,uR=(v+u)/(1+v*u);
-  vx.clearRect(0,0,W,H);vx.fillStyle='#000d1a';vx.fillRect(0,0,W,H);
-  // grid
-  vx.strokeStyle='rgba(245,158,11,.05)';vx.lineWidth=1;
-  for(let i=0;i<W;i+=40){vx.beginPath();vx.moveTo(i,0);vx.lineTo(i,H);vx.stroke();}
-  for(let j=0;j<H;j+=40){vx.beginPath();vx.moveTo(0,j);vx.lineTo(W,j);vx.stroke();}
-  // c boundary line
-  vx.strokeStyle='rgba(255,71,87,.4)';vx.lineWidth=1.5;vx.setLineDash([8,5]);
-  vx.beginPath();vx.moveTo(W-40,0);vx.lineTo(W-40,H);vx.stroke();vx.setLineDash([]);
-  vx.fillStyle='rgba(255,71,87,.7)';vx.font='10px Orbitron';vx.fillText('c',W-36,16);
+  // نسخ الشبكة من offscreen
+  if(vcOff)vx.drawImage(vcOff,0,0);
+  else{vx.fillStyle='#000d1a';vx.fillRect(0,0,W,H);}
   // rocket (top track)
   rX=(rX+v*3)%W;
   const rY=H*.33;
   vx.fillStyle='rgba(245,158,11,.15)';vx.strokeStyle='rgba(245,158,11,.7)';vx.lineWidth=2;
-  vx.beginPath();vx.roundRect(rX-25,rY-12,50,24,5);vx.fill();vx.stroke();
+  vx.beginPath();rRect(vx,rX-25,rY-12,50,24,5);vx.fill();vx.stroke();
   vx.fillStyle='rgba(245,158,11,.9)';vx.font='bold 9px Orbitron';vx.textAlign='center';
   vx.fillText('صاروخ v='+v.toFixed(2)+'c',rX,rY+25);
-  // newton missile (red - may exceed c)
+  // newton missile — يتحرك باستقلالية
   const nSpd=Math.min(uN,1.98);
   mX=(mX+nSpd*3)%W;
-  const nY=H*.58;
+  const nY=H*.55;
   vx.fillStyle='rgba(255,71,87,.15)';vx.strokeStyle=uN>=1?'rgba(255,71,87,.9)':'rgba(255,71,87,.5)';vx.lineWidth=2;
   vx.beginPath();vx.arc(mX,nY,8,0,Math.PI*2);vx.fill();vx.stroke();
   vx.fillStyle=uN>=1?'rgba(255,71,87,.9)':'rgba(255,71,87,.6)';vx.font='9px Share Tech Mono';vx.textAlign='center';
   vx.fillText('نيوتن '+uN.toFixed(3)+'c'+(uN>=1?' ⚠️':''),mX,nY+20);
-  // einstein missile (gold - always <c)
-  const eX=((mX-3+uR/nSpd*3+W)%W);
+  // Fix: einstein missile — متغير eX مستقل تماماً يتحرك بسرعة uR
+  eX=(eX+uR*3)%W;
   const eY=H*.78;
   vx.fillStyle='rgba(245,158,11,.2)';vx.strokeStyle='rgba(245,158,11,.9)';vx.lineWidth=2;
   vx.shadowColor='#f59e0b';vx.shadowBlur=10;
@@ -257,7 +303,12 @@ function anim(){
   vx.fillText('v='+v.toFixed(2)+'c  u\'='+u.toFixed(2)+'c',10,20);
   raf=requestAnimationFrame(anim);
 }
-onSlide();idle();
+
+addEventListener('DOMContentLoaded',()=>{
+  rsz();
+  idle();
+  onSlide(); // Fix: sv-val و su-val محسوبتان من الـ sliders الفعلية
+});
 </script>
 </body>
 </html>
