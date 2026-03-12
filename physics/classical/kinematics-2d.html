@@ -202,7 +202,7 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
   <!-- Hero -->
   <section class="page-hero">
     <div class="page-badge"><div class="badge-dot"></div>الحركة المستوية · KINEMATICS 2D</div>
-    <h1>🚀 الحركة ببُعدين</h1>
+    <h1> الحركة ببُعدين</h1>
     <p>الحركة في المستوى — متجهات الموضع والسرعة والتعجيل، المقذوفات، المنحدرات، والحركة الدائرية</p>
   </section>
 
@@ -221,10 +221,10 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
       <div class="input-group" style="margin-bottom:20px;">
         <label>نوع المسألة</label>
         <select class="input-select" id="subtype-2d" onchange="onSubtypeChange()">
-          <option value="2d_proj_full">🎯 حركة المقذوفات (تحليل كامل)</option>
-          <option value="2d_object">🚗 حركة الأجسام (منحدر / زاوية)</option>
-          <option value="2d_target">🎯 إصابة هدف محدد</option>
-          <option value="2d_circ">🔄 الحركة الدائرية</option>
+          <option value="2d_proj_full"> حركة المقذوفات (تحليل كامل)</option>
+          <option value="2d_object"> حركة الأجسام (منحدر / زاوية)</option>
+          <option value="2d_target"> إصابة هدف محدد</option>
+          <option value="2d_circ"> الحركة الدائرية</option>
         </select>
       </div>
 
@@ -342,9 +342,9 @@ const INPUTS = {
 };
 
 const BANNERS = {
-  '2d_proj_full': '🎯 التحليل الكامل لحركة المقذوفات: يحسب المركبتين، أقصى ارتفاع وزمنه، المدى الكلي، الزمن الكلي، والسرعة النهائية قبل الارتطام.',
-  '2d_object':    '🚗 حركة جسم على منحدر أو بزاوية: يحسب مركبتي السرعة، التسارع الفعلي مع الاحتكاك ومقاومة الهواء، السرعة النهائية، والمسافة.',
-  '2d_target':    '🎯 إصابة هدف محدد: أدخل السرعة والمسافة، سيعطيك الزوايا الممكنة للإصابة، أو يحسب السرعة المطلوبة إذا كانت السرعة غير كافية.',
+  '2d_proj_full': 'التحليل الكامل لحركة المقذوفات: يحسب المركبتين، أقصى ارتفاع وزمنه، المدى الكلي، الزمن الكلي، والسرعة النهائية قبل الارتطام.',
+  '2d_object':    ' حركة جسم على منحدر أو بزاوية: يحسب مركبتي السرعة، التسارع الفعلي مع الاحتكاك ومقاومة الهواء، السرعة النهائية، والمسافة.',
+  '2d_target':    ' إصابة هدف محدد: أدخل السرعة والمسافة، سيعطيك الزوايا الممكنة للإصابة، أو يحسب السرعة المطلوبة إذا كانت السرعة غير كافية.',
 };
 
 
@@ -693,7 +693,7 @@ function solve2D(sub) {
       lawCard('a_net', 'a=g\\sin\\theta-\\mu g\\cos\\theta') +
       lawCard('vf',    'v_f^2=v_0^2+2a_{net}d')
     ) +
-    `<div style="margin:14px 0 4px"><div class="laws-title">📐 تحليل السرعة الابتدائية</div>` +
+    `<div style="margin:14px 0 4px"><div class="laws-title"> تحليل السرعة الابتدائية</div>` +
     vecDisplay(vx0, vy0, v0, 'x', 'y', '|v₀|', 'm/s', 'm/s', 'm/s') +
     `</div>` +
     stepsSection(sH) +

@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الفيزياء الحديثة | البوابة التعليمية</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
 <style>
 :root {
@@ -25,103 +23,119 @@
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
 
 #bg-canvas{position:fixed;inset:0;z-index:0;}
-.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);background-size:50px 50px;}
-.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
+.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);
+  background-size:50px 50px;}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
 .corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
 .corner.tl{top:14px;left:14px;border-top:2px solid var(--c2);border-left:2px solid var(--c2);}
 .corner.tr{top:14px;right:14px;border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
 .corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
 .corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c4);border-right:2px solid var(--c4);}
 
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c2);letter-spacing:3px;text-shadow:0 0 10px rgba(124,58,237,.5);}
-.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c2);
+  letter-spacing:3px;text-shadow:0 0 10px rgba(124,58,237,.5);}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;
+  cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
 .back-btn:hover{color:var(--c2);border-color:var(--c2);}
 .header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
 
-.wrapper{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:40px 24px 80px;}
+/* ── WRAPPER ── */
+.wrapper{position:relative;z-index:5;max-width:960px;margin:0 auto;padding:48px 24px 100px;}
 
-.page-hero{text-align:center;margin-bottom:48px;animation:fadeUp .7s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.25);border-radius:100px;padding:5px 16px;font-size:.65rem;letter-spacing:3px;color:var(--c2);margin-bottom:20px;}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c2);animation:pulse 1.5s ease-in-out infinite;}
+/* ── HERO ── */
+.page-hero{text-align:center;margin-bottom:60px;animation:fadeUp .7s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.06);
+  border:1px solid rgba(124,58,237,.25);border-radius:100px;padding:5px 18px;
+  font-size:.65rem;letter-spacing:3px;color:var(--c2);margin-bottom:22px;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);
+  box-shadow:0 0 8px var(--c2);animation:pulse 1.5s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page-hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
-.page-hero p{color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.8;}
+.page-hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;
+  background:linear-gradient(135deg,#fff 25%,var(--c2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;}
+.page-hero p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto;line-height:1.9;}
 
-.topics-header h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:20px;}
-.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:36px;}
-.topic-btn{position:relative;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 16px;cursor:pointer;text-align:right;transition:all .25s ease;display:flex;align-items:center;gap:12px;backdrop-filter:blur(8px);}
-.topic-btn:hover{border-color:var(--c2);background:rgba(124,58,237,.06);transform:translateY(-2px);}
-.topic-btn.active{border-color:var(--c2);background:rgba(124,58,237,.1);box-shadow:0 0 20px rgba(124,58,237,.12);}
-.topic-icon{font-size:1.5rem;flex-shrink:0;}
-.topic-name{font-size:.88rem;font-weight:700;color:#f1f5f9;margin-bottom:3px;}
-.topic-sub{font-size:.65rem;color:var(--muted);}
-.topic-active-bar{position:absolute;bottom:0;right:0;left:0;height:2px;border-radius:0 0 14px 14px;background:var(--c2);transform:scaleX(0);transition:transform .3s ease;transform-origin:right;}
-.topic-btn.active .topic-active-bar{transform:scaleX(1);}
+/* ── SECTION LABEL ── */
+.section-label{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;
+  color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
 
-.solver-panel{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow:hidden;backdrop-filter:blur(12px);animation:fadeUp .7s .2s ease both;}
-.solver-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:14px;}
-.solver-topic-icon{font-size:1.5rem;}
-.solver-topic-name{font-weight:700;color:#f1f5f9;font-size:1rem;}
-.solver-topic-desc{font-size:.75rem;color:var(--muted);}
-.solver-body{padding:24px;}
+/* ── CARDS GRID ── */
+.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
 
-.inputs-label{font-size:.7rem;letter-spacing:2px;color:var(--muted);font-family:'Orbitron',sans-serif;margin-bottom:14px;}
-.inputs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
-.input-group{display:flex;flex-direction:column;gap:6px;}
-.input-group label{font-size:.75rem;color:#94a3b8;}
-.input-group label span{color:var(--c2);font-size:.7rem;margin-right:4px;}
-.input-field{background:#020617;border:1.5px solid #1e293b;color:white;padding:12px 14px;border-radius:10px;outline:none;font-family:'Tajawal',sans-serif;font-size:.9rem;transition:.25s;}
-.input-field:focus{border-color:var(--c2);box-shadow:0 0 10px rgba(124,58,237,.25);}
-.input-field::placeholder{color:#334155;font-size:.8rem;}
-.input-select{background:#020617;border:1.5px solid #1e293b;color:white;padding:12px 14px;border-radius:10px;outline:none;font-family:'Tajawal',sans-serif;font-size:.85rem;cursor:pointer;transition:.25s;}
-.input-select:focus{border-color:var(--c2);}
-.input-select option{background:#0f172a;}
-.solve-btn{width:100%;padding:16px;background:linear-gradient(90deg,var(--c2),var(--c1));color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;font-size:1rem;font-family:'Tajawal',sans-serif;letter-spacing:1px;transition:.3s ease;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;}
-.solve-btn:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,58,237,.25);}
-
-.result-section{margin-top:28px;display:none;animation:fadeUp .5s ease both;}
-.result-section.show{display:block;}
-.result-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.4),transparent);margin-bottom:24px;}
-
-.laws-section{margin-bottom:24px;}
-.laws-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--c2);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.laws-title::after{content:'';flex:1;height:1px;background:rgba(124,58,237,.25);}
-.law-card{background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.18);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;}
-.law-badge{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:2px;color:var(--c2);background:rgba(124,58,237,.12);padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.law-latex{flex:1;overflow-x:auto;direction:ltr;}
-.law-latex .katex{font-size:.95rem!important;}
-
-.steps-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--c4);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.steps-title::after{content:'';flex:1;height:1px;background:rgba(16,185,129,.2);}
-.step{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;}
-.step-num{font-family:'Orbitron',sans-serif;font-size:.65rem;color:var(--c4);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:6px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-label{font-size:.72rem;color:var(--muted);margin-bottom:6px;}
-.step-math{overflow-x:auto;direction:ltr;}
-.step-math .katex{font-size:.95rem!important;}
-
-.result-box{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.35);border-radius:12px;padding:20px 24px;margin-top:16px;box-shadow:0 0 20px rgba(124,58,237,.08);}
-.result-box-label{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;color:var(--c2);margin-bottom:12px;}
-.result-values{display:flex;flex-wrap:wrap;gap:12px;}
-.result-val{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:8px;padding:10px 16px;}
-.result-val-name{font-size:.65rem;color:var(--muted);margin-bottom:4px;}
-.result-val-num{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--c2);font-weight:700;}
-.error-box{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.3);border-radius:10px;padding:14px 16px;color:var(--c5);font-size:.82rem;margin-top:16px;}
-
-.topic-prompt{text-align:center;padding:48px 24px;color:var(--muted);}
-.topic-prompt-icon{font-size:2.5rem;margin-bottom:14px;opacity:.5;}
-.topic-prompt p{font-size:.85rem;line-height:1.7;}
-
-@media(max-width:768px){
-  .topics-grid{grid-template-columns:repeat(2,1fr);}
-  .inputs-grid{grid-template-columns:1fr;}
-  .result-values{flex-direction:column;}
+.nav-card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--card-border, rgba(255,255,255,.07));
+  border-radius:20px;
+  padding:32px 28px 28px;
+  text-decoration:none;
+  display:flex;flex-direction:column;gap:0;
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  animation:fadeUp .6s ease both;
+  cursor:pointer;
 }
-@media(max-width:480px){
-  .topics-grid{grid-template-columns:1fr;}
+.nav-card:nth-child(1){animation-delay:.05s;}
+.nav-card:nth-child(2){animation-delay:.12s;}
+.nav-card:nth-child(3){animation-delay:.19s;}
+.nav-card:nth-child(4){animation-delay:.26s;}
+
+/* glow layer */
+.nav-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 30%, var(--card-glow, rgba(124,58,237,.12)) 0%, transparent 65%);
+  opacity:0;transition:opacity .35s;pointer-events:none;
+}
+.nav-card:hover::before{opacity:1;}
+.nav-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--card-acc, var(--c2));
+  box-shadow:0 16px 48px var(--card-shadow, rgba(124,58,237,.18));
+}
+
+/* top accent bar */
+.card-bar{position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--card-acc,var(--c2)),transparent);
+  transform:scaleX(0);transition:transform .35s ease;transform-origin:center;}
+.nav-card:hover .card-bar{transform:scaleX(1);}
+
+.card-icon{font-size:2.8rem;margin-bottom:18px;filter:drop-shadow(0 0 12px var(--card-acc,var(--c2)));}
+.card-en{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;
+  color:var(--card-acc,var(--c2));margin-bottom:8px;}
+.card-title{font-size:1.25rem;font-weight:900;color:#f1f5f9;margin-bottom:10px;line-height:1.3;}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.8;flex:1;}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:24px;
+  padding-top:16px;border-top:1px solid rgba(255,255,255,.05);}
+.card-topics{display:flex;flex-wrap:wrap;gap:6px;}
+.topic-chip{font-size:.6rem;padding:3px 9px;border-radius:100px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);}
+.card-arrow{font-family:'Share Tech Mono',monospace;font-size:.75rem;
+  color:var(--card-acc,var(--c2));opacity:0;transform:translateX(6px);
+  transition:opacity .25s,transform .25s;}
+.nav-card:hover .card-arrow{opacity:1;transform:translateX(0);}
+
+/* ── per-card colours ── */
+.card-relativity{--card-acc:var(--c2);--card-glow:rgba(124,58,237,.14);--card-shadow:rgba(124,58,237,.2);--card-border:rgba(124,58,237,.15);}
+.card-quantum   {--card-acc:var(--c1);--card-glow:rgba(0,212,255,.12);  --card-shadow:rgba(0,212,255,.18);  --card-border:rgba(0,212,255,.15);}
+.card-nuclear   {--card-acc:var(--c4);--card-glow:rgba(16,185,129,.12); --card-shadow:rgba(16,185,129,.18); --card-border:rgba(16,185,129,.15);}
+.card-photon    {--card-acc:var(--c3);--card-glow:rgba(245,158,11,.12); --card-shadow:rgba(245,158,11,.18); --card-border:rgba(245,158,11,.15);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .cards-grid{grid-template-columns:1fr;}
   header{padding:10px 14px;}
-  .wrapper{padding:24px 14px 60px;}
+  .wrapper{padding:28px 14px 80px;}
+  .nav-card{padding:24px 20px 20px;}
 }
 </style>
 </head>
@@ -142,342 +156,122 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 <div class="wrapper">
 
   <section class="page-hero">
-    <div class="page-badge"><div class="badge-dot"></div>الفيزياء الحديثة · MODERN</div>
+    <div class="page-badge"><div class="badge-dot"></div>الفيزياء الحديثة · MODERN PHYSICS</div>
     <h1>⚛️ الفيزياء الحديثة</h1>
-    <p>النسبية الخاصة، ميكانيكا الكم، الفيزياء النووية والفوتونات</p>
+    <p>اختر الموضوع الذي تريد حلّه — كل قسم يحتوي على قوانين كاملة وخطوات مفصّلة</p>
   </section>
 
-  <div class="topics-header">
-    <h3>⚛️ اختر الموضوع</h3>
-  </div>
-  <div class="topics-grid">
-    <div class="topic-btn" id="topic-relativity" onclick="selectTopic('relativity')">
-      <div class="topic-icon">🌌</div>
-      <div class="topic-info">
-        <div class="topic-name">النسبية الخاصة</div>
-        <div class="topic-sub">SPECIAL RELATIVITY</div>
-      </div>
-      <div class="topic-active-bar"></div>
-    </div>
-    <div class="topic-btn" id="topic-quantum" onclick="selectTopic('quantum')">
-      <div class="topic-icon">🔬</div>
-      <div class="topic-info">
-        <div class="topic-name">ميكانيكا الكم</div>
-        <div class="topic-sub">QUANTUM MECHANICS</div>
-      </div>
-      <div class="topic-active-bar"></div>
-    </div>
-    <div class="topic-btn" id="topic-nuclear" onclick="selectTopic('nuclear')">
-      <div class="topic-icon">☢️</div>
-      <div class="topic-info">
-        <div class="topic-name">الفيزياء النووية</div>
-        <div class="topic-sub">NUCLEAR PHYSICS</div>
-      </div>
-      <div class="topic-active-bar"></div>
-    </div>
-    <div class="topic-btn" id="topic-photon" onclick="selectTopic('photon')">
-      <div class="topic-icon">💡</div>
-      <div class="topic-info">
-        <div class="topic-name">الفوتونات وكومبتون</div>
-        <div class="topic-sub">PHOTONS & COMPTON</div>
-      </div>
-      <div class="topic-active-bar"></div>
-    </div>
-  </div>
+  <div class="section-label">// اختر الموضوع</div>
 
-  <div class="solver-panel" id="solver-panel">
-    <div class="topic-prompt" id="topic-prompt">
-      <div class="topic-prompt-icon">⚛️</div>
-      <p>اختر موضوعاً من الأعلى للبدء في حل مسائل الفيزياء الحديثة</p>
-    </div>
-    <div id="solver-content"></div>
-  </div>
+  <div class="cards-grid">
 
+    <!-- النسبية الخاصة -->
+    <a class="nav-card card-relativity" href="modern/relativity.html">
+      <div class="card-bar"></div>
+      <div class="card-icon">🌌</div>
+      <div class="card-en">SPECIAL RELATIVITY</div>
+      <div class="card-title">النسبية لأينشتاين</div>
+      <div class="card-desc"> أن الزمان والمكان ليسا ثابتين، بل يتمددان وينكمشان حسب سرعة الجسم وعلاقة كتلته بتشويه نسيج الكون.</div>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-chip">تمدد الزمن</span>
+          <span class="topic-chip">انكماش الطول</span>
+          <span class="topic-chip">E=mc²</span>
+        </div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+
+    <!-- ميكانيكا الكم -->
+    <a class="nav-card card-quantum" href="modern/quantum.html">
+      <div class="card-bar"></div>
+      <div class="card-icon">🔬</div>
+      <div class="card-en">QUANTUM MECHANICS</div>
+      <div class="card-title">ميكانيكا الكم</div>
+      <div class="card-desc">موجة دي بروي للجسيمات، مبدأ عدم اليقين لهايزنبرغ، ومستويات طاقة بور</div>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-chip">دي بروي</span>
+          <span class="topic-chip">هايزنبرغ</span>
+          <span class="topic-chip">نموذج بور</span>
+        </div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+
+    <!-- الفيزياء النووية -->
+    <a class="nav-card card-nuclear" href="modern/nuclear.html">
+      <div class="card-bar"></div>
+      <div class="card-icon">☢️</div>
+      <div class="card-en">NUCLEAR PHYSICS</div>
+      <div class="card-title">الفيزياء النووية</div>
+      <div class="card-desc">الانحلال الإشعاعي، النشاط الإشعاعي بالبيكريل، وحساب عمر النصف t½</div>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-chip">قانون الانحلال</span>
+          <span class="topic-chip">عمر النصف</span>
+        </div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+
+    <!-- الفوتونات وكومبتون -->
+    <a class="nav-card card-photon" href="modern/photon.html">
+      <div class="card-bar"></div>
+      <div class="card-icon">💡</div>
+      <div class="card-en">PHOTONS & COMPTON</div>
+      <div class="card-title">الفوتونات وكومبتون</div>
+      <div class="card-desc">طاقة الفوتون E=hf، التأثير الكهروضوئي لآينشتاين، وتأثير كومبتون للتشتت</div>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-chip">E=hf</span>
+          <span class="topic-chip">كهروضوئي</span>
+          <span class="topic-chip">كومبتون</span>
+        </div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+
+  </div>
 </div>
 
 <script>
 /* ══ CANVAS BG ══ */
-const canvas=document.getElementById('bg-canvas');
-const ctx=canvas.getContext('2d');
-let W,H,orbs;
-function initCanvas(){
-  W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
-  orbs=[
-    {x:W*.15,y:H*.3,r:350,color:'rgba(124,58,237,',speed:.0003,phase:0},
-    {x:W*.85,y:H*.6,r:400,color:'rgba(0,212,255,',speed:.0004,phase:2},
-    {x:W*.5,y:H*.9,r:280,color:'rgba(124,58,237,',speed:.00035,phase:4},
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, orbs;
+function initCanvas() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  orbs = [
+    {x:W*.12, y:H*.25, r:380, color:'rgba(124,58,237,',  speed:.00028, phase:0},
+    {x:W*.88, y:H*.55, r:420, color:'rgba(0,212,255,',   speed:.00035, phase:2.1},
+    {x:W*.5,  y:H*.88, r:300, color:'rgba(16,185,129,',  speed:.0003,  phase:4.2},
+    {x:W*.25, y:H*.75, r:240, color:'rgba(245,158,11,',  speed:.00025, phase:1.1},
   ];
 }
-function drawCanvas(){
-  ctx.clearRect(0,0,W,H);ctx.fillStyle='#020817';ctx.fillRect(0,0,W,H);
-  for(const o of orbs){
-    o.phase+=o.speed;
-    const ox=o.x+Math.sin(o.phase)*70,oy=o.y+Math.cos(o.phase*.7)*50;
-    const g=ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
-    g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.025)');g.addColorStop(1,o.color+'0)');
-    ctx.fillStyle=g;ctx.beginPath();ctx.arc(ox,oy,o.r,0,Math.PI*2);ctx.fill();
+function drawCanvas() {
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#020817';
+  ctx.fillRect(0,0,W,H);
+  for (const o of orbs) {
+    o.phase += o.speed;
+    const ox = o.x + Math.sin(o.phase) * 60;
+    const oy = o.y + Math.cos(o.phase * .7) * 45;
+    const g  = ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
+    g.addColorStop(0,   o.color + '0.07)');
+    g.addColorStop(.5,  o.color + '0.025)');
+    g.addColorStop(1,   o.color + '0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
+    ctx.fill();
   }
   requestAnimationFrame(drawCanvas);
 }
-window.addEventListener('resize',initCanvas);
-initCanvas();requestAnimationFrame(drawCanvas);
-
-/* ══ NAVIGATION ══ */
-function selectTopic(topic) {
-  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('topic-'+topic).classList.add('active');
-  document.getElementById('topic-prompt').style.display = 'none';
-  document.getElementById('solver-content').innerHTML = buildSolverHTML(topic);
-  document.getElementById('solver-panel').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-/* ══ KATEX ══ */
-function K(latex, block=false) {
-  const el = document.createElement('span');
-  try { katex.render(latex, el, {throwOnError:false, displayMode:block, strict:false}); }
-  catch(e) { el.textContent = latex; }
-  return el.outerHTML;
-}
-
-/* ══ TOPICS CONFIG ══ */
-const TOPICS = {
-  'relativity': {
-    icon:'🌌', name:'النسبية الخاصة', desc:'تمدد الزمن، انكماش الطول، تكافؤ الكتلة والطاقة',
-    subtypes: [
-      {id:'rel_time',   label:'تمدد الزمن'},
-      {id:'rel_length', label:'انكماش الطول'},
-      {id:'rel_energy', label:'E=mc² وطاقة الجسيمات'},
-    ],
-    inputs: {
-      'rel_time':   [{id:'t0',label:'الزمن الصحيح t₀',unit:'s',placeholder:'مثال: 1'},{id:'v',label:'سرعة الإطار v',unit:'m/s',placeholder:'مثال: 2.4e8'}],
-      'rel_length': [{id:'L0',label:'الطول الصحيح L₀',unit:'m',placeholder:'مثال: 100'},{id:'v',label:'سرعة الإطار v',unit:'m/s',placeholder:'مثال: 2.4e8'}],
-      'rel_energy': [{id:'m',label:'الكتلة الساكنة m₀',unit:'kg',placeholder:'مثال: 1e-27 (بروتون)'},{id:'v',label:'سرعة الجسيم v',unit:'m/s',placeholder:'مثال: 0 للطاقة الساكنة'}],
-    },
-    solve: solveRelativity
-  },
-  'quantum': {
-    icon:'🔬', name:'ميكانيكا الكم', desc:'موجة دي بروي، مبدأ هايزنبرغ، طاقة مستويات بور',
-    subtypes: [
-      {id:'qm_debroglie', label:'طول موجة دي بروي'},
-      {id:'qm_heisenberg',label:'مبدأ عدم اليقين'},
-      {id:'qm_bohr',      label:'نموذج بور للهيدروجين'},
-    ],
-    inputs: {
-      'qm_debroglie': [{id:'m',label:'كتلة الجسيم m',unit:'kg',placeholder:'مثال: 9.11e-31 (إلكترون)'},{id:'v',label:'سرعة الجسيم v',unit:'m/s',placeholder:'مثال: 1e6'}],
-      'qm_heisenberg': [{id:'dx',label:'عدم دقة الموضع Δx',unit:'m',placeholder:'مثال: 1e-10'}],
-      'qm_bohr':       [{id:'n',label:'رقم الطبقة n',unit:'',placeholder:'مثال: 1,2,3...'}],
-    },
-    solve: solveQuantum
-  },
-  'nuclear': {
-    icon:'☢️', name:'الفيزياء النووية', desc:'الانحلال النووي، النشاط الإشعاعي',
-    subtypes: [
-      {id:'nuc_decay',   label:'قانون الانحلال الإشعاعي'},
-      {id:'nuc_halflife',label:'عمر النصف'},
-    ],
-    inputs: {
-      'nuc_decay':    [{id:'N0',label:'العدد الأولي N₀',unit:'ذرة',placeholder:'مثال: 1e20'},{id:'t',label:'الزمن t',unit:'s',placeholder:'مثال: 1000'},{id:'t_half',label:'عمر النصف t½',unit:'s',placeholder:'مثال: 500'}],
-      'nuc_halflife': [{id:'N0',label:'الكمية الأولية N₀',unit:'',placeholder:'مثال: 100'},{id:'N',label:'الكمية المتبقية N',unit:'',placeholder:'مثال: 12.5'}],
-    },
-    solve: solveNuclear
-  },
-  'photon': {
-    icon:'💡', name:'الفوتونات وكومبتون', desc:'طاقة الفوتون، التأثير الكهروضوئي وتأثير كومبتون',
-    subtypes: [
-      {id:'ph_energy',       label:'طاقة الفوتون E=hf'},
-      {id:'ph_photoelectric',label:'التأثير الكهروضوئي'},
-      {id:'ph_compton',      label:'تأثير كومبتون'},
-    ],
-    inputs: {
-      'ph_energy':       [{id:'f',label:'التردد f',unit:'Hz',placeholder:'مثال: 6e14'},{id:'lam',label:'الطول الموجي λ (بديل)',unit:'m',placeholder:'إذا لم يُعطَ التردد'}],
-      'ph_photoelectric':[{id:'phi',label:'دالة الشغل φ',unit:'eV',placeholder:'مثال: 2.3'},{id:'f',label:'تردد الضوء الساقط f',unit:'Hz',placeholder:'مثال: 8e14'}],
-      'ph_compton':      [{id:'lam0',label:'الطول الموجي الساقط λ₀',unit:'m',placeholder:'مثال: 0.0711e-9'},{id:'theta',label:'زاوية التشتت θ',unit:'درجة °',placeholder:'مثال: 90'}],
-    },
-    solve: solvePhoton
-  }
-};
-
-/* ══ BUILD SOLVER ══ */
-function buildInputsHTML(topicId, subtypeId, inputs) {
-  if (!inputs) return '';
-  let html = '<div class="inputs-grid">';
-  for (const inp of inputs) {
-    if (inp.isSelect) {
-      html += `<div class="input-group"><label><span>[${inp.unit||''}]</span>${inp.label}</label><select class="input-select" id="inp-${topicId}-${inp.id}">${inp.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
-    } else {
-      html += `<div class="input-group"><label><span>[${inp.unit}]</span>${inp.label}</label><input class="input-field" type="text" id="inp-${topicId}-${inp.id}" placeholder="${inp.placeholder}" autocomplete="off"></div>`;
-    }
-  }
-  html += '</div>';
-  return html;
-}
-
-function buildSolverHTML(topicId) {
-  const cfg = TOPICS[topicId];
-  if (!cfg) return '';
-  const firstSubtype = cfg.subtypes[0].id;
-  const subtypeOptions = cfg.subtypes.map((s,i)=>`<option value="${s.id}" ${i===0?'selected':''}>${s.label}</option>`).join('');
-  const inputsHTML = buildInputsHTML(topicId, firstSubtype, cfg.inputs[firstSubtype]);
-  return `
-  <div class="solver-header">
-    <div class="solver-topic-icon">${cfg.icon}</div>
-    <div><div class="solver-topic-name">${cfg.name}</div><div class="solver-topic-desc">${cfg.desc}</div></div>
-  </div>
-  <div class="solver-body">
-    <div class="input-group" style="margin-bottom:20px;">
-      <label>نوع المسألة</label>
-      <select class="input-select" id="subtype-${topicId}" onchange="onSubtypeChange('${topicId}')">
-        ${subtypeOptions}
-      </select>
-    </div>
-    <div class="inputs-label">// أدخل المعطيات المعروفة</div>
-    <div id="inputs-area-${topicId}">${inputsHTML}</div>
-    <button class="solve-btn" onclick="triggerSolve('${topicId}')">
-      <span>⚛️</span> احسب وأظهر الحل الكامل
-    </button>
-    <div class="result-section" id="result-${topicId}">
-      <div class="result-divider"></div>
-      <div id="result-content-${topicId}"></div>
-    </div>
-  </div>`;
-}
-
-function onSubtypeChange(topicId) {
-  const cfg = TOPICS[topicId];
-  const sub = document.getElementById('subtype-'+topicId).value;
-  document.getElementById('inputs-area-'+topicId).innerHTML = buildInputsHTML(topicId, sub, cfg.inputs[sub]);
-  const res = document.getElementById('result-'+topicId);
-  if (res) res.classList.remove('show');
-}
-
-function getVal(topicId, key) {
-  const el = document.getElementById('inp-'+topicId+'-'+key);
-  if (!el) return null;
-  if (el.tagName === 'SELECT') return el.value;
-  const v = el.value.trim();
-  if (v === '') return null;
-  return parseFloat(v.replace(/e/gi, 'e'));
-}
-
-function triggerSolve(topicId) {
-  const cfg = TOPICS[topicId];
-  const sub = document.getElementById('subtype-'+topicId).value;
-  const result = cfg.solve(topicId, sub);
-  const resEl = document.getElementById('result-'+topicId);
-  document.getElementById('result-content-'+topicId).innerHTML = result;
-  resEl.classList.add('show');
-  resEl.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-/* ══ HELPERS ══ */
-function fmt(n, decimals=4) {
-  if (n===null||n===undefined||isNaN(n)) return '؟';
-  if (!isFinite(n)) return n>0?'∞':'-∞';
-  if (Math.abs(n)>=1e6||(Math.abs(n)<1e-3&&n!==0)) return n.toExponential(3);
-  return parseFloat(n.toFixed(decimals)).toString();
-}
-function lawCard(badge, latex, desc='') {
-  return `<div class="law-card"><span class="law-badge">${badge}</span><div><div class="law-latex">${K(latex)}</div>${desc?`<div style="font-size:.72rem;color:var(--muted);margin-top:3px">${desc}</div>`:''}</div></div>`;
-}
-function step(num, label, latex, note='') {
-  return `<div class="step"><div class="step-num">${String(num).padStart(2,'0')}</div><div class="step-content"><div class="step-label">${label}</div><div class="step-math">${K(latex)}</div>${note?`<div style="font-size:.7rem;color:var(--c3);margin-top:6px;font-style:italic">${note}</div>`:''}</div></div>`;
-}
-function resultBox(values) {
-  const valsHtml=values.map(v=>`<div class="result-val"><div class="result-val-name">${v.name}</div><div class="result-val-num">${v.val} ${v.unit||''}</div></div>`).join('');
-  return `<div class="result-box"><div class="result-box-label">// النتائج النهائية</div><div class="result-values">${valsHtml}</div></div>`;
-}
-function errorBox(msg) { return `<div class="error-box">⚠️ ${msg}</div>`; }
-function lawsSection(cards) { return `<div class="laws-section"><div class="laws-title">القوانين المستخدمة</div>${cards}</div>`; }
-function stepsSection(steps) { return `<div><div class="steps-title">خطوات الحل</div>${steps}</div>`; }
-
-/* ══ SOLVER: RELATIVITY ══ */
-function solveRelativity(tid, sub) {
-  const c=3e8;
-  if(sub==='rel_time'){
-    const t0=getVal(tid,'t0'),v=getVal(tid,'v');
-    if(!t0||!v) return errorBox('أدخل t₀ والسرعة');
-    if(v>=c) return errorBox('السرعة يجب أن تكون أقل من سرعة الضوء');
-    const gamma=1/Math.sqrt(1-(v/c)**2),t=gamma*t0;
-    return lawsSection(lawCard('عامل لورنتز','\\gamma=\\frac{1}{\\sqrt{1-v^2/c^2}}')+lawCard('تمدد الزمن','t=\\gamma t_0'))+stepsSection(step(1,'المعطيات',`t_0=${t0}\\,s,\\;v=${fmt(v)}\\,m/s`)+step(2,'عامل لورنتز',`\\gamma=\\frac{1}{\\sqrt{1-(${fmt(v)}/3\\times10^8)^2}}=${fmt(gamma,5)}`)+step(3,'الزمن المتمدد',`t=\\gamma t_0=${fmt(gamma,4)}\\times${t0}=${fmt(t,4)}\\,s`))+resultBox([{name:'γ عامل لورنتز',val:fmt(gamma,5)},{name:'الزمن المتمدد t',val:fmt(t,4),unit:'s'}]);
-  }
-  if(sub==='rel_length'){
-    const L0=getVal(tid,'L0'),v=getVal(tid,'v');
-    if(!L0||!v) return errorBox('أدخل L₀ والسرعة');
-    if(v>=c) return errorBox('السرعة يجب أن تكون أقل من سرعة الضوء');
-    const gamma=1/Math.sqrt(1-(v/c)**2),L=L0/gamma;
-    return lawsSection(lawCard('انكماش الطول','L=\\frac{L_0}{\\gamma}=L_0\\sqrt{1-v^2/c^2}'))+stepsSection(step(1,'المعطيات',`L_0=${L0}\\,m,\\;v=${fmt(v)}\\,m/s`)+step(2,'γ',`\\gamma=${fmt(gamma,5)}`)+step(3,'الطول المنكمش',`L=\\frac{${L0}}{${fmt(gamma,4)}}=${fmt(L,4)}\\,m`))+resultBox([{name:'γ',val:fmt(gamma,5)},{name:'الطول المنكمش L',val:fmt(L,4),unit:'m'}]);
-  }
-  // E=mc²
-  const m=getVal(tid,'m'),v=getVal(tid,'v')??0;
-  if(!m) return errorBox('أدخل الكتلة الساكنة');
-  const E0=m*c*c;
-  let E_total=E0,stepsH='';
-  if(v>0&&v<c){const gamma=1/Math.sqrt(1-(v/c)**2);E_total=gamma*m*c*c;const KE=E_total-E0;stepsH=step(3,'طاقة الحركة',`\\gamma=${fmt(gamma,5)},\\;E=${fmt(E_total,4)}\\,J`)+step(4,'الطاقة الحركية',`KE=E-E_0=${fmt(KE,4)}\\,J`);}
-  return lawsSection(lawCard('طاقة سكون','E_0=m_0c^2')+(v>0?lawCard('الطاقة الكلية','E=\\gamma m_0c^2'):''))+stepsSection(step(1,'المعطيات',`m_0=${fmt(m)}\\,kg`)+step(2,'طاقة السكون',`E_0=${fmt(m)}\\times(3\\times10^8)^2=${fmt(E0,4)}\\,J`)+stepsH)+resultBox([{name:'E₀ طاقة السكون',val:fmt(E0,4),unit:'J'},...(v>0&&v<c?[{name:'E الكلية',val:fmt(E_total,4),unit:'J'}]:[])]);
-}
-
-/* ══ SOLVER: QUANTUM ══ */
-function solveQuantum(tid, sub) {
-  const h=6.626e-34,hbar=h/(2*Math.PI);
-  if(sub==='qm_debroglie'){
-    const m=getVal(tid,'m'),v=getVal(tid,'v');
-    if(!m||!v) return errorBox('أدخل الكتلة والسرعة');
-    const p=m*v,lambda=h/p;
-    return lawsSection(lawCard('دي بروي','\\lambda=\\frac{h}{mv}=\\frac{h}{p}'))+stepsSection(step(1,'المعطيات',`m=${fmt(m)}\\,kg,\\;v=${fmt(v)}\\,m/s`)+step(2,'الزخم',`p=mv=${fmt(p,4)}\\,kg\\cdot m/s`)+step(3,'الطول الموجي',`\\lambda=\\frac{h}{p}=\\frac{6.626\\times10^{-34}}{${fmt(p,4)}}=${fmt(lambda,4)}\\,m`))+resultBox([{name:'طول موجة دي بروي λ',val:fmt(lambda,4),unit:'m'}]);
-  }
-  if(sub==='qm_heisenberg'){
-    const dx=getVal(tid,'dx');
-    if(!dx) return errorBox('أدخل Δx');
-    const dp_min=hbar/(2*dx);
-    return lawsSection(lawCard('هايزنبرغ','\\Delta x\\cdot\\Delta p\\geq\\frac{\\hbar}{2}'))+stepsSection(step(1,'المعطيات',`\\Delta x=${fmt(dx)}\\,m`)+step(2,'أدنى Δp',`\\Delta p_{min}=\\frac{\\hbar}{2\\Delta x}=\\frac{1.055\\times10^{-34}}{2\\times${fmt(dx)}}=${fmt(dp_min,4)}\\,kg\\cdot m/s`))+resultBox([{name:'أدنى Δp',val:fmt(dp_min,4),unit:'kg·m/s'}]);
-  }
-  // Bohr
-  const n=getVal(tid,'n');
-  if(!n||n<1) return errorBox('أدخل رقم الطبقة n ≥ 1');
-  const E_n=-13.6/(n*n),r_n=0.0529*n*n;
-  return lawsSection(lawCard('طاقة بور',`E_n=\\frac{-13.6}{n^2}\\,eV`)+lawCard('نصف القطر','r_n=n^2\\times a_0,\\;a_0=0.0529\\,nm'))+stepsSection(step(1,'المعطيات',`n=${n}`)+step(2,'طاقة الطبقة',`E_n=\\frac{-13.6}{${n}^2}=${fmt(E_n,4)}\\,eV`)+step(3,'نصف القطر',`r_n=${n}^2\\times0.0529=${fmt(r_n,4)}\\,nm`))+resultBox([{name:`E_n طاقة n=${n}`,val:fmt(E_n,4),unit:'eV'},{name:'r_n نصف القطر',val:fmt(r_n,4),unit:'nm'}]);
-}
-
-/* ══ SOLVER: NUCLEAR ══ */
-function solveNuclear(tid, sub) {
-  if(sub==='nuc_halflife'){
-    const N0=getVal(tid,'N0'),N=getVal(tid,'N');
-    if(!N0||!N) return errorBox('أدخل الكميتين');
-    const t_half=Math.log(N0/N)/Math.log(2);
-    return lawsSection(lawCard('عمر النصف','t_{1/2}=\\frac{\\ln(N_0/N)}{\\ln 2}'))+stepsSection(step(1,'المعطيات',`N_0=${fmt(N0)},\\;N=${fmt(N)}`)+step(2,'عدد الفترات',`n=\\frac{\\ln(${fmt(N0)}/${fmt(N)})}{\\ln 2}=${fmt(t_half,3)}`))+resultBox([{name:'عدد فترات t½',val:fmt(t_half,3)}]);
-  }
-  const N0=getVal(tid,'N0'),t=getVal(tid,'t'),t_half=getVal(tid,'t_half');
-  if(!N0||!t||!t_half) return errorBox('أدخل N₀ والزمن وعمر النصف');
-  const lambda=Math.LN2/t_half,N=N0*Math.exp(-lambda*t),activity=lambda*N;
-  return lawsSection(lawCard('الانحلال','N(t)=N_0 e^{-\\lambda t}')+lawCard('ثابت الانحلال','\\lambda=\\frac{\\ln 2}{t_{1/2}}')+lawCard('النشاط','A=\\lambda N'))+stepsSection(step(1,'المعطيات',`N_0=${fmt(N0)},\\;t=${t}\\,s,\\;t_{1/2}=${t_half}\\,s`)+step(2,'ثابت الانحلال',`\\lambda=\\frac{\\ln 2}{${t_half}}=${fmt(lambda,6)}\\,s^{-1}`)+step(3,'العدد المتبقي',`N=${fmt(N0)}\\times e^{-${fmt(lambda,4)}\\times${t}}=${fmt(N,4)}`)+step(4,'النشاط',`A=\\lambda N=${fmt(activity,4)}\\,Bq`))+resultBox([{name:'العدد المتبقي N',val:fmt(N,4),unit:'ذرة'},{name:'النشاط A',val:fmt(activity,4),unit:'Bq'},{name:'λ',val:fmt(lambda,6),unit:'s⁻¹'}]);
-}
-
-/* ══ SOLVER: PHOTON & COMPTON ══ */
-function solvePhoton(tid, sub) {
-  const h=6.626e-34,c=3e8,eV=1.602e-19;
-  if(sub==='ph_energy'){
-    let f=getVal(tid,'f'),lam=getVal(tid,'lam');
-    if(!f&&!lam) return errorBox('أدخل التردد أو الطول الموجي');
-    if(!f) f=c/lam;
-    if(!lam) lam=c/f;
-    const E=h*f,E_eV=E/eV;
-    return lawsSection(lawCard('طاقة الفوتون','E=hf=\\frac{hc}{\\lambda}')+lawCard('ثابت بلانك','h=6.626\\times10^{-34}\\,J\\cdot s'))+stepsSection(step(1,'المعطيات',`f=${fmt(f)}\\,Hz,\\;\\lambda=${fmt(lam)}\\,m`)+step(2,'الطاقة',`E=hf=${fmt(E,4)}\\,J`)+step(3,'بالإلكترون فولت',`E=${fmt(E_eV,4)}\\,eV`))+resultBox([{name:'طاقة الفوتون E',val:fmt(E,4),unit:'J'},{name:'E بالـ eV',val:fmt(E_eV,4),unit:'eV'},{name:'التردد f',val:fmt(f,4),unit:'Hz'},{name:'λ',val:fmt(lam,4),unit:'m'}]);
-  }
-  if(sub==='ph_photoelectric'){
-    const phi=getVal(tid,'phi'),f=getVal(tid,'f');
-    if(!phi||!f) return errorBox('أدخل دالة الشغل والتردد');
-    const E_photon=h*f/eV,f0=phi*eV/h,KE_max=E_photon-phi;
-    if(KE_max<0) return errorBox(`تردد الضوء أقل من التردد العتبي. التردد العتبي = ${fmt(f0,4)} Hz`);
-    return lawsSection(lawCard('آينشتاين','KE_{max}=hf-\\phi_0')+lawCard('التردد العتبي','f_0=\\phi_0/h'))+stepsSection(step(1,'المعطيات',`\\phi_0=${phi}\\,eV,\\;f=${fmt(f)}\\,Hz`)+step(2,'طاقة الفوتون',`E=${fmt(E_photon,4)}\\,eV`)+step(3,'التردد العتبي',`f_0=${fmt(f0,4)}\\,Hz`)+step(4,'KE_max',`KE_{max}=${fmt(KE_max,4)}\\,eV`))+resultBox([{name:'طاقة الفوتون',val:fmt(E_photon,4),unit:'eV'},{name:'أقصى KE',val:fmt(KE_max,4),unit:'eV'},{name:'التردد العتبي f₀',val:fmt(f0,4),unit:'Hz'}]);
-  }
-  // Compton
-  const lam0=getVal(tid,'lam0'),theta=getVal(tid,'theta');
-  if(!lam0||!theta) return errorBox('أدخل الطول الموجي الساقط والزاوية');
-  const me=9.109e-31,thRad=theta*Math.PI/180;
-  const delta_lam=(h/(me*c))*(1-Math.cos(thRad)),lam1=lam0+delta_lam;
-  const E0=h*c/lam0,E1=h*c/lam1,KE_electron=E0-E1;
-  return lawsSection(lawCard('كومبتون','\\Delta\\lambda=\\frac{h}{m_e c}(1-\\cos\\theta)')+lawCard('λ_C','\\lambda_C=\\frac{h}{m_e c}=2.426\\times10^{-12}\\,m'))+stepsSection(step(1,'المعطيات',`\\lambda_0=${fmt(lam0)}\\,m,\\;\\theta=${theta}°`)+step(2,'λ_C كومبتون',`\\lambda_C=2.426\\times10^{-12}\\,m`)+step(3,'الإزاحة',`\\Delta\\lambda=\\lambda_C(1-\\cos${theta}°)=${fmt(delta_lam,4)}\\,m`)+step(4,'λ₁ المبعثر',`\\lambda_1=\\lambda_0+\\Delta\\lambda=${fmt(lam1,4)}\\,m`)+step(5,'KE الإلكترون',`KE_e=E_0-E_1=${fmt(KE_electron,4)}\\,J`))+resultBox([{name:'Δλ الإزاحة',val:fmt(delta_lam,4),unit:'m'},{name:'λ₁ المبعثر',val:fmt(lam1,4),unit:'m'},{name:'KE الإلكترون',val:fmt(KE_electron,4),unit:'J'}]);
-}
+window.addEventListener('resize', initCanvas);
+initCanvas();
+requestAnimationFrame(drawCanvas);
 </script>
 </body>
 </html>
