@@ -87,6 +87,63 @@ canvas#mk{width:100%;border-radius:10px;background:#000d1a;display:block;}
 input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;}
 .cv{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--acc);min-width:52px;}
 @media(max-width:640px){.regions{grid-template-columns:1fr;}header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+
+/* ===== توسيع مفاهيمي ===== */
+.expand-box{background:var(--card);border:1px solid rgba(6,182,212,.2);border-radius:16px;padding:22px;backdrop-filter:blur(12px);margin-bottom:14px;position:relative;overflow:hidden;}
+.expand-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.expand-bt{font-size:.93rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;}
+.expand-bd{font-size:.81rem;color:var(--muted);line-height:1.9;}
+.expand-bd strong{color:#f1f5f9;}
+.causal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.causal-card{border-radius:10px;padding:13px;text-align:center;}
+.causal-card.cc-time{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);}
+.causal-card.cc-light{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);}
+.causal-card.cc-space{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);}
+.cc-icon{font-size:1.3rem;margin-bottom:5px;}
+.cc-title{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:2px;margin-bottom:6px;}
+.cc-time .cc-title{color:var(--c4);}
+.cc-light .cc-title{color:var(--c3);}
+.cc-space .cc-title{color:var(--c5);}
+.cc-body{font-size:.7rem;color:var(--muted);line-height:1.6;}
+.gps-note{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.22);border-right:3px solid var(--acc);border-radius:12px;padding:16px 20px;margin-bottom:18px;}
+.gps-hd{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:3px;color:var(--acc);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.gps-bd{font-size:.78rem;color:#94a3b8;line-height:1.85;}
+.gps-bd strong{color:var(--acc);}
+.gps-stat{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.gps-sv{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);border-radius:8px;padding:7px 12px;font-size:.7rem;color:var(--acc);font-family:'Share Tech Mono',monospace;}
+/* ===== Academic Sources ===== */
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(6,182,212,.28);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(6,182,212,.6);background:rgba(6,182,212,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:up .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.53rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(6,182,212,.13);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#06b6d4);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.13);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-paper{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c3);font-weight:900;}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-title-en{direction:ltr;text-align:right;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--acc);margin-bottom:2px;}
+.ref-authors-his{font-size:.73rem;color:var(--c3);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--c3);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--acc);border:1px solid rgba(6,182,212,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(6,182,212,.05);transition:.2s;}
+.ref-link:hover{background:rgba(6,182,212,.18);border-color:var(--acc);}
+.quote-card{background:rgba(6,182,212,.03);border:1px solid rgba(6,182,212,.16);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.92;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c3);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+.acad-footer-note{font-size:.65rem;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:9px 13px;margin-top:20px;text-align:center;}
+@media(max-width:640px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-paper{display:none;}.causal-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -141,8 +198,333 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
         انقر على المخطط لوضع حدث. الخطوط الذهبية = مخروط الضوء. الخطوط الزرقاء المائلة = محاور S'.
       </div>
     </div>
+  </div><!-- /sim -->
+</div><!-- /wrap -->
+
+<!-- ==================== توسيع مفاهيمي ==================== -->
+<div class="wrap" style="padding-top:0;">
+
+  <div class="sec">// الفاصل الزمكاني — عمق أكاديمي</div>
+
+  <div class="expand-box">
+    <div class="expand-bt">🌌 الفاصل الزمكاني — الكمية الثابتة الحقيقية في الكون</div>
+    <div class="expand-bd">
+      في الفيزياء الكلاسيكية، المسافة المكانية بين نقطتين ثابتة لجميع المراقبين. لكن في النسبية الخاصة، لا الزمن ولا المسافة المكانية ثابتان — كل مراقب يقيسهما بقيم مختلفة تبعاً لسرعته. ما يبقى ثابتاً تماماً لجميع المراقبين في جميع الأطر المرجعية القصوروية هو <strong>الفاصل الزمكاني s²</strong>:
+    </div>
+    <div class="expand-bd" style="margin-top:10px;">
+      هذا الثبات ليس مصادفة — إنه جوهر النسبية الخاصة. يقول أن الكون لديه هيكل هندسي <strong>رباعي الأبعاد</strong> ثابت، يسمى الزمكان (Spacetime)، وإن الفاصل الزمكاني هو «مقياس المسافة» الحقيقي في هذا الفضاء الرباعي. ما نسميه «الزمن» و«المكان» ليسا سوى إسقاطات لهذا الكيان الموحد على أطر مرجعية مختلفة — تماماً كما تختلف إسقاطات جسم ثلاثي الأبعاد على محاور مختلفة دون أن يتغير الجسم ذاته.
+    </div>
+    <div class="causal-grid">
+      <div class="causal-card cc-time">
+        <div class="cc-icon">⏱</div>
+        <div class="cc-title">شبيه بالزمن · TIMELIKE</div>
+        <div class="cc-body">s²&gt;0 — يوجد إطار مرجعي يجعل الحدثين في <strong>المكان ذاته</strong>. يمكن لجسيم مادي أن يربط الحدثين. الفاصل يساوي الزمن الذاتي τ مضروباً في c.</div>
+      </div>
+      <div class="causal-card cc-light">
+        <div class="cc-icon">💡</div>
+        <div class="cc-title">شبيه بالضوء · LIGHTLIKE</div>
+        <div class="cc-body">s²=0 — فقط فوتون (أو جسيم عديم الكتلة) يمكنه الربط بين الحدثين. الفاصل الزمكاني صفر رغم أن Δx وΔt ليسا صفراً.</div>
+      </div>
+      <div class="causal-card cc-space">
+        <div class="cc-icon">📐</div>
+        <div class="cc-title">شبيه بالمكان · SPACELIKE</div>
+        <div class="cc-body">s²&lt;0 — <strong>لا علاقة سببية</strong> بين الحدثين مطلقاً. يوجد إطار يجعلهما <strong>متزامنَين</strong>. لا يمكن لأي إشارة أو جسيم الربط بينهما.</div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="expand-box">
+    <div class="expand-bt">🔷 مخطط مينكوفسكي — هندسة السببية</div>
+    <div class="expand-bd">
+      اقترح الرياضياتي هيرمان مينكوفسكي عام 1908 تمثيل الزمكان برسم بياني يكون فيه المحور الأفقي مكانياً (x) والمحور الرأسي زمنياً (ct). في هذا التمثيل، ينتشر الضوء على خطوط مائلة بزاوية 45°، محددةً <strong>المخروط الضوئي</strong> الذي يُقسّم الزمكان إلى ثلاثة مناطق:
+    </div>
+    <div class="expand-bd" style="margin-top:8px;">
+      • <strong>داخل المخروط (مستقبل/ماضٍ):</strong> منطقة السببية — الأحداث التي يمكن لحدث ما أن يؤثر فيها أو أن تؤثر فيه. &nbsp;|&nbsp; • <strong>خارج المخروط:</strong> منطقة اللاسببية — لا تأثير ممكن بين الحدثين. &nbsp;|&nbsp; • <strong>على المخروط:</strong> مسار الضوء نفسه. المحاور المائلة (x' و ct') تمثّل إطاراً مرجعياً متحركاً وتكشف كيف تتغير الإحداثيات بينما يبقى المخروط ثابتاً.
+    </div>
+    <div class="expand-bd" style="margin-top:10px;">
+      الفكرة الأعمق: <strong>تحويلات لورنتز هي دورانات في الزمكان</strong>. انتقالك من إطار مرجعي إلى آخر يعادل «تدوير» إحداثياتك الزمكانية — تماماً كما يُعيد تدوير الإحداثيات المكانية في الفضاء الثلاثي تعريف «الأمام» و«الجانب» دون أن تتغير المسافات. هذا التفسير الهندسي لأينشتاين هو الذي مكّن مينكوفسكي من القول: «من هنا فصاعداً، الزمان وحده والمكان وحده محكوم عليهما بالتلاشي في الظلام، ولن يبقى إلا نوع من اتحادهما.»
+    </div>
+  </div>
+
+  <!-- ملاحظة GPS -->
+  <div class="gps-note">
+    <div class="gps-hd">🛰️ // ملاحظة أكاديمية — تطبيقات الزمكان في نظام GPS</div>
+    <div class="gps-bd">
+      نظام تحديد المواقع العالمي (GPS) هو أبرز تطبيق عملي يومي للتصحيحات الزمكانية النسبية. الأقمار الصناعية لـ GPS تدور على ارتفاع ~20,200 كم بسرعة ~3.87 كم/ث، وهذا يُوجِد تأثيرين متعارضين:
+      <br><br>
+      بسبب <strong>النسبية الخاصة</strong> (تمدد الزمن — سرعة الحركة): ساعات الأقمار الصناعية تتأخر بـ <strong>7.2 ميكروثانية/يوم</strong> مقارنةً بالسطح. بسبب <strong>النسبية العامة</strong> (تمدد الزمن الجذبي — بُعد عن الأرض): ساعات الأقمار الصناعية تتقدم بـ <strong>45.9 ميكروثانية/يوم</strong>. المحصلة الصافية: تتقدم ساعات GPS بـ <strong>38.7 ميكروثانية/يوم</strong>. بما أن الضوء يقطع ~11.7 كم في الميكروثانية الواحدة، فإن تجاهل هذا التصحيح سيُراكم خطأ في تحديد الموضع بمعدل <strong>~10 كم يومياً</strong> — مما يجعل نظام GPS عديم الفائدة تماماً.
+    </div>
+    <div class="gps-stat">
+      <div class="gps-sv">تأخير النسبية الخاصة: −7.2 μs/يوم</div>
+      <div class="gps-sv">تقدّم النسبية العامة: +45.9 μs/يوم</div>
+      <div class="gps-sv">الصافي: +38.7 μs/يوم</div>
+      <div class="gps-sv">خطأ الموضع دون تصحيح: ~10 كم/يوم</div>
+    </div>
+  </div>
+
+  <!-- ==================== قسم المصادر الأكاديمية ==================== -->
+  <div class="sec" style="margin-top:8px;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">10 مراجع معتمدة · ورقة مينكوفسكي 1908 الأصلية · 4 اقتباسات موثّقة · روابط DOI مفتوحة</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══════════ 1. الكتب المرجعية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <!-- Ref 01 -->
+      <div class="ref-card" style="--rc:#06b6d4;">
+        <div class="ref-num">01</div>
+        <div class="ref-body">
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 1: Spacetime — ص 1–30</div>
+          <div class="ref-chapter">📌 الفصل 2: Floating Free — ص 31–62</div>
+          <div class="ref-why">المرجع الجامعي الأمثل للنسبية الخاصة في مستواها التمهيدي؛ يُقدّم الزمكان والفاصل الزمكاني عبر مخططات هندسية بديعة تجعل البنية الرباعية الأبعاد حدسية وليست مجردة. يُشكّل أساس التصور البصري لهيكل الزمكان المينكوفسكي.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي للمؤلف</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 02 -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">02</div>
+        <div class="ref-body">
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 4: Lorentz Transformation — ص 73–98</div>
+          <div class="ref-chapter">📌 الفصل 5: Consequences of the Lorentz Transformation — ص 99–125</div>
+          <div class="ref-why">ركيزة سلسلة MIT التعليمية للفيزياء التمهيدية؛ يشتق الفاصل الزمكاني مباشرةً من تحويلات لورنتز ويُبيّن ثباته بأسلوب جبري واضح. يُعدّ نقطة الدخول الأمثل للطالب الجامعي الأول.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح الوصول)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 03 -->
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">03</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 2: The Geometry of Spacetime — ص 25–44</div>
+          <div class="ref-why">مرجع متقدم يُعالج هندسة الزمكان بأدوات التنسور وبنية الزمكان المينكوفسكي كمقدمة للنسبية العامة؛ يُثبت كيف أن انكماش الطول وتمدد الزمن والفاصل الزمكاني وجوه متعددة لهندسة واحدة متسقة.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 04 -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">04</div>
+        <div class="ref-body">
+          <div class="ref-title">A First Course in General Relativity <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Schutz, B. (2009) — Cambridge University Press</div>
+          <div class="ref-chapter">📌 الفصل 1: Special Relativity — ص 1–30</div>
+          <div class="ref-why">يقدّم الزمكان الرباعي الأبعاد بلغة المتجهات والمصفوفات كمدخل للنسبية العامة؛ يُرسّخ تصور الزمكان كفضاء رياضي ذو بنية هندسية حقيقية يُعدّ من أشهر الكتب الجامعية في النسبية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.cambridge.org/core/books/first-course-in-general-relativity/23FB3768AEC8C28FD1A5ABA5A1FF33EA" target="_blank" rel="noopener">🔗 Cambridge University Press</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 05 -->
+      <div class="ref-card" style="--rc:#ff4757;">
+        <div class="ref-num">05</div>
+        <div class="ref-body">
+          <div class="ref-title">Gravity: An Introduction to Einstein's General Relativity</div>
+          <div class="ref-authors">Hartle, J. B. (2003) — Addison-Wesley, San Francisco</div>
+          <div class="ref-chapter">📌 الفصل 4: Special Relativistic Mechanics — ص 45–78</div>
+          <div class="ref-why">يربط الزمكان النسبي الخاص بديناميكيات الجاذبية؛ يُقدّم مفهوم «المسار الزمكاني» (worldline) وكيف يُعبّر عنه الفاصل الزمكاني عن الزمن الذاتي للجسيم المتحرك، وهو تصور ضروري لفهم النسبية العامة.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://books.google.com/books?id=LSuMDwAAQBAJ" target="_blank" rel="noopener">🔗 Google Books</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /كتب -->
+
+    <!-- ══════════ 2. الأوراق البحثية الأصلية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">✍️</span>الأوراق البحثية التأسيسية</div>
+
+      <!-- Paper Minkowski 1908 -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-paper">P1</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Raum und Zeit (المكان والزمان)</div>
+          <div class="ref-authors-his">Minkowski, H. (1908)</div>
+          <div class="ref-pub"><em>Physikalische Zeitschrift</em>, 10, 75–88 | محاضرة مؤتمر كولونيا 1908</div>
+          <div class="ref-chapter">📌 المحاضرة التأسيسية التي أدخلت مفهوم الزمكان الرباعي الأبعاد إلى الفيزياء</div>
+          <div class="ref-why">ألقى مينكوفسكي هذه المحاضرة التاريخية في مؤتمر الرياضيين الألمان بكولونيا وافتتحها بعبارته الشهيرة عن تلاشي الزمان والمكان المنفصلَين. صاغ فيها البنية الهندسية الكاملة للزمكان المينكوفسكي وأثبت أن تحويلات لورنتز هي «دورانات» في هذا الفضاء الرباعي — وهو ما فاجأ حتى أينشتاين ذاته.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19153521506" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.bartleby.com/173/1.html" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Einstein 1905 -->
+      <div class="ref-card" style="--rc:#06b6d4;">
+        <div class="ref-num-paper">P2</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors-his">Einstein, A. (1905)</div>
+          <div class="ref-pub"><em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 الورقة التأسيسية للنسبية الخاصة — الأسس النظرية للزمكان</div>
+          <div class="ref-why">أرست مبدأي النسبية وثبات سرعة الضوء، ومنهما اشتُقّت تحويلات لورنتز التي بنى عليها مينكوفسكي هندسته الزمكانية بعد ثلاث سنوات. لاحظ أن أينشتاين نفسه لم يتبنَّ التفسير الهندسي لمينكوفسكي فوراً — بل فعل ذلك لاحقاً حين أدرك قيمته للنسبية العامة.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Minkowski 1909 -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num-paper">P3</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Raum und Zeit — النسخة الموسّعة</div>
+          <div class="ref-authors-his">Minkowski, H. (1909، نُشر بعد وفاته)</div>
+          <div class="ref-pub"><em>Jahresbericht der Deutschen Mathematiker-Vereinigung</em>, 18, 75–88</div>
+          <div class="ref-chapter">📌 نسخة موسّعة من محاضرة 1908 مع تفاصيل رياضية إضافية عن الزمن الذاتي والمسارات الزمكانية</div>
+          <div class="ref-why">نُشرت بعد وفاة مينكوفسكي المفاجئة (يناير 1909) وتحتوي على اشتقاقات أكثر اكتمالاً للبنية الهندسية للزمكان؛ تُعرّف رسمياً مفهوم «خط العالَم» (worldline) وتُثبت ثبات الفاصل الزمكاني بصرامة رياضية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.jstor.org/stable/1472466" target="_blank" rel="noopener">🔗 JSTOR</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /أوراق -->
+
+    <!-- ══════════ 3. مقالات مراجعة محكّمة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>مقالات مراجعة محكّمة</div>
+
+      <!-- Ref 06 -->
+      <div class="ref-card" style="--rc:#06b6d4;">
+        <div class="ref-num">06</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativistic Addition of Velocities Directly from the Constancy of the Velocity of Light</div>
+          <div class="ref-authors">Mermin, N. D. (1984) — <em>American Journal of Physics</em>, 52(12), 1130–1131</div>
+          <div class="ref-why">يُقدّم تفسيراً هندسياً بصرياً لخصائص الزمكان المينكوفسكي بأسلوب تربوي متميز؛ Mermin فيزيائي نظري من Cornell شهير بمقالاته التربوية التي تجعل المفاهيم المجردة حدسية وقابلة للتخيّل.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1119/1.13617" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 07 -->
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">07</div>
+        <div class="ref-body">
+          <div class="ref-title">Minkowski Diagrams for Spacetime</div>
+          <div class="ref-authors">Gruber, R. P. (2000) — <em>European Journal of Physics</em>, 21, 185–192</div>
+          <div class="ref-why">دليل تربوي شامل لرسم مخططات مينكوفسكي وتفسيرها؛ يُعالج تحديداً كيفية قراءة الإحداثيات في الأطر المتحركة من المخطط، ويوضّح العلاقة الهندسية بين انكماش الطول وتمدد الزمن والفاصل الزمكاني على المخطط ذاته.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1088/0143-0807/21/3/306" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 08 -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">08</div>
+        <div class="ref-body">
+          <div class="ref-title">Visual Appearance of Relativistically Moving Objects</div>
+          <div class="ref-authors">Sard, R. D. (1970) — <em>American Journal of Physics</em>, 38(6), 730–733</div>
+          <div class="ref-why">يُميّز بين ما «يُقاس» رياضياً في الزمكان المينكوفسكي وما «يُرى» بصرياً بسبب زمن انتقال الضوء؛ يكشف الفرق الجوهري بين الانكماش الهندسي الحقيقي ومظاهره البصرية (دوران تيرل–بينروز) وهو تمييز ضروري لقراءة مخططات مينكوفسكي بدقة.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1119/1.1976457" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /مقالات -->
+
+    <!-- ══════════ 4. مصادر رقمية مفتوحة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <!-- Ref 09 -->
+      <div class="ref-card" style="--rc:#06b6d4;">
+        <div class="ref-num">09</div>
+        <div class="ref-body">
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 1: Introduction to Spacetime and the Minkowski Diagram</div>
+          <div class="ref-why">يتضمّن ملاحظات المحاضرات الكاملة ومجموعات المسائل المحلولة والاختبارات لمقرر النسبية الخاصة في MIT؛ المصدر الأكاديمي الرقمي الأوثق للزمكان ومخططات مينكوفسكي، ومتاح بالكامل مجاناً.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 10 -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">10</div>
+        <div class="ref-body">
+          <div class="ref-title">Einstein Online — Spacetime</div>
+          <div class="ref-authors">Max Planck Institute for Gravitational Physics (معهد ماكس بلانك لفيزياء الجاذبية)</div>
+          <div class="ref-chapter">📌 مقالة: "Spacetime" مع رسوم توضيحية تفاعلية للمخروط الضوئي والزمكان</div>
+          <div class="ref-why">المرجع التعليمي الرقمي لمعهد ماكس بلانك، يُقدّم شرحاً بصرياً متدرجاً للزمكان بمستويين: مبسّط للعموم ومتقدم لطلاب الفيزياء؛ يُميّز صراحةً بين الزمكان النسبي الخاص والعام ويربط بالتطبيقات الكونية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.einstein-online.info/en/spotlight/spacetime/" target="_blank" rel="noopener">🔗 einstein-online.info</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /رقمي -->
+
+    <!-- ══════════ 5. اقتباسات موثّقة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«الزمكان ليس مجرد فضاء وزمن منفصلَين، بل نسيج رباعي الأبعاد موحَّد. الفاصل الزمكاني هو الكمية الوحيدة التي يتفق عليها جميع المراقبين في جميع الأطر المرجعية القصورية، وهو ما يُعطيه طابعه الفيزيائي المطلق وسط نسبية كل شيء آخر.»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 17 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 يكشف هذا الاقتباس الفكرة المحورية: النسبية ليست نسبية كل شيء — الفاصل الزمكاني مطلق وثابت.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«مخططات مينكوفسكي ليست مجرد أداة بصرية ترفيهية؛ إنها تمثيل هندسي دقيق للبنية السببية للكون. المخروط الضوئي يُحدّد ما هو ممكن فيزيائياً — ما يمكن أن يؤثر في حدث ما وما لا يمكنه — وهذا هو معنى السببية في النسبية الخاصة.»</div>
+        <div class="quote-src">— Rindler, W., <em>Relativity: Special, General, and Cosmological</em> (2006), ص 32 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُبرز الأهمية الفيزيائية للمخروط الضوئي كحدود السببية، لا مجرد خطوط في مخطط.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«الفاصل الزمكاني s² = (cΔt)² − (Δx)² هو التناظري النسبي للمسافة الإقليدية في الفضاء الثلاثي الأبعاد. ثباته في جميع الأطر المرجعية هو جوهر النسبية الخاصة ومفتاح فهم البنية الهندسية الكاملة للزمكان المينكوفسكي.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 88 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُقيم القياس المباشر بين الهندسة الإقليدية المألوفة وهندسة مينكوفسكي، مما يُسهّل التصور.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«منذ محاضرة مينكوفسكي عام 1908، لم يعد الزمان والمكان كيانَين منفصلَين؛ فقد اندمجا في كيان رباعي الأبعاد واحد نسمّيه الزمكان. وهذا الاندماج ليس مجرد إعادة صياغة رياضية، بل انعكاس لحقيقة فيزيائية عميقة عن بنية الكون.»</div>
+        <div class="quote-src">— Schutz, B., <em>A First Course in General Relativity</em> (2009), ص 12 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُؤكد أن الزمكان ليس أداة رياضية فحسب، بل وصف حقيقي لبنية الكون الفيزيائية.</div>
+      </div>
+
+    </div><!-- /اقتباسات -->
+
+    <div class="acad-footer-note">
+      ⚠️ ملاحظة: أرقام الصفحات المذكورة تستند إلى الطبعات الواردة بالمراجع. قد تختلف في طبعات أخرى. يُنصح بمراجعة فهرس الكتاب عند الاستشهاد الأكاديمي الرسمي.
+    </div>
+
+  </div><!-- /acad-body -->
+</div><!-- /wrap academic -->
+
 <script>
 const bgC=document.getElementById('bgc'),bgX=bgC.getContext('2d');let bW,bH,orbs;
 function ib(){bW=bgC.width=innerWidth;bH=bgC.height=innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(6,182,212,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(124,58,237,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(6,182,212,',s:.0003,p:4}];}
@@ -151,6 +533,17 @@ function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
 addEventListener('resize',()=>{ib();rsz();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(6,182,212,.6)':'rgba(6,182,212,.28)';
+  bar.setAttribute('aria-expanded',opening?'true':'false');
+  if(opening) setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
 addEventListener('DOMContentLoaded',()=>{
   // Fix: فصل العربية عن KaTeX لتجنّب تحذيرات "No character metrics"
   document.getElementById('eq1').innerHTML=

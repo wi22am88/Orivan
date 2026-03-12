@@ -84,6 +84,61 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
 .sbtn2{padding:8px 16px;border:1px solid var(--acc);border-radius:8px;background:rgba(0,212,255,.08);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
 .sbtn2:hover{background:rgba(0,212,255,.2);}
 @media(max-width:600px){header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+
+/* ===== توسيع مفاهيمي ===== */
+.exp-box{background:var(--card);border:1px solid rgba(0,212,255,.2);border-radius:16px;padding:22px;backdrop-filter:blur(12px);margin-bottom:16px;position:relative;overflow:hidden;}
+.exp-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.exp-bt{font-size:.93rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;}
+.exp-bd{font-size:.81rem;color:var(--muted);line-height:1.9;}
+.exp-bd strong{color:#f1f5f9;}
+.limit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px;}
+.limit-card{border-radius:10px;padding:13px;}
+.lc-classic{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.22);}
+.lc-rel{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.22);}
+.lc-icon{font-size:1.2rem;margin-bottom:4px;}
+.lc-title{font-family:'Orbitron',sans-serif;font-size:.47rem;letter-spacing:2px;margin-bottom:6px;}
+.lc-classic .lc-title{color:var(--c4);}.lc-rel .lc-title{color:var(--c3);}
+.lc-body{font-size:.7rem;color:var(--muted);line-height:1.65;}
+.exp-note{background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.2);border-right:3px solid var(--acc);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+.exp-note-hd{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;}
+.exp-ev{display:grid;grid-template-columns:38px 1fr;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.exp-ev:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.exp-ev-num{font-family:'Orbitron',sans-serif;font-size:.52rem;color:var(--acc);background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);border-radius:7px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.exp-ev-title{font-size:.8rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;}
+.exp-ev-body{font-size:.72rem;color:#94a3b8;line-height:1.75;}
+.exp-ev-body strong{color:var(--acc);}
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(0,212,255,.28);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(0,212,255,.6);background:rgba(0,212,255,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:up .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.53rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(0,212,255,.12);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#00d4ff);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.13);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-exp{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c3);font-weight:900;}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-title-en{direction:ltr;text-align:right;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--acc);margin-bottom:2px;}
+.ref-authors-exp{font-size:.73rem;color:var(--c3);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--c3);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--acc);border:1px solid rgba(0,212,255,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(0,212,255,.05);transition:.2s;}
+.ref-link:hover{background:rgba(0,212,255,.18);border-color:var(--acc);}
+.quote-card{background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.15);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.92;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c3);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+.acad-footer-note{font-size:.65rem;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:9px 13px;margin-top:20px;text-align:center;}
+@media(max-width:600px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-exp{display:none;}.limit-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -145,8 +200,314 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
         🔵 الفوتون الأزرق = الساعة الساكنة (مسار عمودي قصير) &nbsp;|&nbsp; 🟡 الفوتون الأصفر = الساعة المتحركة (مسار قطري أطول)
       </div>
     </div>
+  </div><!-- /sim -->
+</div><!-- /wrap -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!--   التوسيع المفاهيمي + الأدلة التجريبية     -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="wrap" style="padding-top:0;">
+
+  <div class="sec">// تمدد الزمن — عمق أكاديمي</div>
+
+  <!-- بطاقة 1: لماذا يتمدد الزمن؟ -->
+  <div class="exp-box">
+    <div class="exp-bt">⏱️ لماذا يتمدد الزمن؟ — الاشتقاق من الساعة الضوئية</div>
+    <div class="exp-bd">
+      تخيّل ساعة ضوئية: فوتون يرتد بين مرآتين متوازيتين مفصولتين بمسافة <strong>L</strong>. في الإطار الساكن يقطع الفوتون مسافة عمودية <strong>2L</strong> في كل دورة والزمن الصحيح <strong>Δt₀ = 2L/c</strong>. أما في الإطار المتحرك بسرعة <strong>v</strong> فيقطع الفوتون مساراً قطرياً أطول حيث D = √(L² + (vΔt/2)²). بما أن سرعة الضوء <strong>c ثابتة</strong> في جميع الأطر القصوروية — المبدأ الثاني لأينشتاين — يلزم أن يكون الزمن المقاس في الإطار المتحرك أطول <strong>Δt &gt; Δt₀</strong>.
+    </div>
+    <div class="exp-bd" style="margin-top:10px;">
+      بحلّ المعادلتين Δt = 2D/c و D² = L² + (vΔt/2)² نحصل على <strong>Δt = γΔt₀</strong>. هذه ليست خاصية الساعة الضوئية وحدها — بل هي خاصية <strong>الزمن نفسه</strong>. أي عملية فيزيائية أو كيميائية أو بيولوجية يمكن اعتبارها «ساعة»، وجميعها تتأثر بنفس عامل γ لأن الزمن هو الذي يتمدد.
+    </div>
+    <div class="limit-grid">
+      <div class="limit-card lc-classic">
+        <div class="lc-icon">🐢</div>
+        <div class="lc-title">الحدّ الكلاسيكي · v ≪ c</div>
+        <div class="lc-body">γ ≈ 1 ← Δt ≈ Δt₀ ← فيزياء نيوتن المألوفة. الانحراف عن الواحد ضئيل جداً حتى في أسرع طائراتنا، لكنه قابل للقياس بالساعات الذرية الفائقة الدقة.</div>
+      </div>
+      <div class="limit-card lc-rel">
+        <div class="lc-icon">⚡</div>
+        <div class="lc-title">الحدّ النسبي · v → c</div>
+        <div class="lc-body">γ → ∞ ← الزمن يتجمّد عند سرعة الضوء. الفوتون نفسه لا يمر بأي زمن؛ من وجهة نظره تُقطع المسافة فورياً بصرف النظر عن بُعدها في أي إطار مرجعي آخر.</div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- بطاقة 2: الزمن الصحيح والتماثل -->
+  <div class="exp-box">
+    <div class="exp-bt">🔁 الزمن الصحيح، التماثل، ومفارقة التوأمين</div>
+    <div class="exp-bd">
+      <strong>الزمن الصحيح (Proper Time) Δt₀</strong> هو الزمن المقاس بساعة تبقى ساكنة في إطارها الخاص — أي الساعة التي تحدث الحادثتان في نفس موضعها المكاني. إنه <strong>أقصر الأزمنة الممكنة</strong> لتلك الحادثتين، وكمية ثابتة يتفق عليها جميع المراقبين.
+    </div>
+    <div class="exp-bd" style="margin-top:8px;">
+      <strong>التماثل الظاهري:</strong> كل مراقب يرى ساعة الآخر أبطأ، وهذا ليس تناقضاً — بل هو خاصية متبادلة بين الإطارين في الحركة المنتظمة. <strong>مفارقة التوأمين</strong> تُحلّ لأن التوأم المسافر يُكسر التماثل حين ينعطف للعودة، والأدلة التجريبية كتجربة هافيلي-كيتنغ تُثبت أن المسافر الأسرع يعود أصغر سناً فعلاً.
+    </div>
+  </div>
+
+  <!-- لوحة الأدلة التجريبية -->
+  <div class="exp-note">
+    <div class="exp-note-hd">🧪 // ملاحظة أكاديمية — أدلة تجريبية على تمدد الزمن</div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">01</div>
+      <div>
+        <div class="exp-ev-title">تجربة هافيلي-كيتنغ (1971–72)</div>
+        <div class="exp-ev-body">طارت ساعات ذرية سيزيوم على طائرات تجارية حول العالم شرقاً وغرباً. النتائج توافقت مع تنبؤات النسبية الخاصة <em>والعامة</em> معاً في حدود الخطأ التجريبي. أول إثبات مباشر لتمدد الزمن على ساعات حقيقية في ظروف يومية. <strong>DOI: 10.1126/science.177.4044.166</strong></div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">02</div>
+      <div>
+        <div class="exp-ev-title">اضمحلال الميونات الكونية — روسي وهول (1941)</div>
+        <div class="exp-ev-body">الميونات المتكوّنة في الغلاف الجوي (~15 كم) عمرها الافتراضي ≈ 2.2 μs يكفي لقطع ~660 م فقط. لكنها تصل إلى سطح الأرض بوفرة لأن تمدد الزمن يُطيل عمرها بعامل <strong>γ ≈ 15–30</strong>. من أنظف وأدق الاختبارات التجريبية للنسبية. <strong>DOI: 10.1103/PhysRev.59.223</strong></div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">03</div>
+      <div>
+        <div class="exp-ev-title">تجربة CERN للميونات — بيلي وآخرون (1977)</div>
+        <div class="exp-ev-body">ميونات مخزّنة في حلقة مغناطيسية بسرعة ≈ 0.9994c (γ ≈ 29.3) عاشت أطول بمعامل 29.3× مقارنةً بإطارها الساكن. دقة القياس بلغت <strong>0.1%</strong> — من أدق اختبارات النسبية الخاصة في التاريخ. <strong>DOI: 10.1038/268301a0</strong></div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">04</div>
+      <div>
+        <div class="exp-ev-title">ساعات بصرية فائقة الدقة — تشاو وآخرون (2010)</div>
+        <div class="exp-ev-body">فريق NIST قاس تمدد الزمن عند سرعات ≈ 10 م/ث (سرعة المشي!) باستخدام ساعات بصرية بدقة 10⁻¹⁷. دليل ساحق على أن تمدد الزمن يحدث في العالم اليومي لا في المختبرات الفيزيائية وحدها. <strong>DOI: 10.1126/science.1192720</strong></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!--   قسم المصادر الأكاديمية       -->
+  <!-- ═══════════════════════════════ -->
+  <div class="sec" style="margin-top:8px;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">10 مراجع معتمدة · تجربتا هافيلي-كيتنغ وروسي-هول · 4 اقتباسات موثّقة · روابط DOI مفتوحة</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══ 1. الكتب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">01</div>
+        <div class="ref-body">
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 2: Floating Free — ص 31–62</div>
+          <div class="ref-chapter">📌 الفصل 3: Same Laws for All — ص 63–85</div>
+          <div class="ref-why">يشرح تمدد الزمن عبر مخططات الزمكان والساعات الضوئية بأسلوب هندسي فريد؛ يُبيّن أن الزمن الصحيح هو «طول المسار» على الزمكان مما يجعل التمدد بديهياً هندسياً لا مجرد نتيجة جبرية. أفضل كتاب تمهيدي لبناء الحدس الصحيح لتمدد الزمن.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">02</div>
+        <div class="ref-body">
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 3: The Lorentz Transformation — ص 48–72</div>
+          <div class="ref-chapter">📌 الفصل 4: Consequences of the Lorentz Transformation — ص 73–98</div>
+          <div class="ref-why">يقدّم اشتقاقاً رياضياً خطوة بخطوة لتمدد الزمن من تحويلات لورنتز مع نقاش معمّق للزمن الصحيح ومفارقة التوأمين. ركيزة سلسلة MIT التعليمية — الأكثر توازناً بين الصرامة الرياضية والوضوح التربوي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح)</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">03</div>
+        <div class="ref-body">
+          <div class="ref-title">Fundamentals of Physics <span class="ref-ed">(10th ed.)</span></div>
+          <div class="ref-authors">Halliday, D., Resnick, R., &amp; Walker, J. (2014) — Wiley, Hoboken, NJ</div>
+          <div class="ref-chapter">📌 الفصل 37: Relativity — ص 1092–1110 (خاصةً ص 1094–1098)</div>
+          <div class="ref-why">المرجع الجامعي الأكثر انتشاراً في العالم للفيزياء التمهيدية؛ يُقدّم تمدد الزمن بأمثلة حسابية مفصّلة مرتبطة بتجارب هافيلي-كيتنغ والميونات. يُستخدم في آلاف الجامعات ويُعدّ نقطة البداية المثالية للطالب الجامعي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://books.google.com/books?id=rAfB8Km0TIIC" target="_blank" rel="noopener">🔗 Google Books</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">04</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 2: The Geometry of Spacetime — ص 25–44</div>
+          <div class="ref-why">مرجع متقدم يربط تمدد الزمن بهندسة الزمكان الرباعية؛ يُثبت أن الزمن الصحيح هو اللاثغر الطبيعي في فضاء مينكوفسكي مما يُعطي التمدد أساساً هندسياً عميقاً لا يتوفر في الكتب التمهيدية. ضروري للمستوى المتقدم.</div>
+          <div class="ref-links"><a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#ff4757;">
+        <div class="ref-num">05</div>
+        <div class="ref-body">
+          <div class="ref-title">Modern Physics for Scientists and Engineers <span class="ref-ed">(4th ed.)</span></div>
+          <div class="ref-authors">Thornton, S. T., &amp; Rex, A. (2013) — Cengage Learning, Boston</div>
+          <div class="ref-chapter">📌 الفصل 2: Special Theory of Relativity — ص 43–96</div>
+          <div class="ref-why">يجمع النسبية الخاصة مع تطبيقاتها في الفيزياء الحديثة؛ يناقش تمدد الزمن في سياق فيزياء الجسيمات والمسرّعات مع أمثلة من تجارب CERN وأنظمة GPS. مثالي للمستوى الجامعي الثاني المتقدم.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.cengage.com/c/modern-physics-for-scientists-and-engineers-4e-thornton/" target="_blank" rel="noopener">🔗 Cengage Learning</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 2. الأوراق والتجارب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>الأوراق البحثية والتجارب التأسيسية</div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num-exp">P1</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors-exp">Einstein, A. (1905)</div>
+          <div class="ref-pub"><em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 القسم الرابع: «الحركة الفيزيائية للساعة المتحركة» — الاشتقاق الأصلي لتمدد الزمن</div>
+          <div class="ref-why">يشتق أينشتاين تمدد الزمن في القسم الرابع انطلاقاً من مبدأَي النسبية وثبات سرعة الضوء فقط، دون افتراضات إضافية. الورقة التي أعادت تعريف مفهوم الزمن في الفيزياء للأبد.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-exp">P2</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Around-the-World Atomic Clocks: Predicted Relativistic Time Gains</div>
+          <div class="ref-authors-exp">Hafele, J. C., &amp; Keating, R. E. (1972)</div>
+          <div class="ref-pub"><em>Science</em>, 177(4044), 166–168</div>
+          <div class="ref-chapter">📌 أول قياس مباشر لتمدد الزمن بساعات ذرية على طائرات تجارية</div>
+          <div class="ref-why">طارت 4 ساعات سيزيوم ذرية حول العالم ثم قُورنت بساعة أرضية. التوافق مع تنبؤات النسبيتين معاً رغم أن التأثير في نطاق النانوثانية يُثبت دقة النظرية ويُحوّل تمدد الزمن من «نتيجة نظرية» إلى «ظاهرة قابلة للقياس اليومي».</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1126/science.177.4044.166" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num-exp">P3</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Variation of the Rate of Decay of Mesotrons with Momentum</div>
+          <div class="ref-authors-exp">Rossi, B., &amp; Hall, D. B. (1941)</div>
+          <div class="ref-pub"><em>Physical Review</em>, 59(3), 223–228</div>
+          <div class="ref-chapter">📌 أول قياس كمي دقيق لتمدد الزمن في الجسيمات الكونية</div>
+          <div class="ref-why">قاس الباحثان معدل اضمحلال الميونات بسرعات مختلفة ووجدا أن الجسيمات الأسرع تعيش أطول بما يتوافق مع γ. غيّرت التجربة نظرة الفيزيائيين لتمدد الزمن من مجرد نتيجة رياضية إلى ظاهرة فيزيائية قابلة للقياس المباشر.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1103/PhysRev.59.223" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 3. مقالات محكّمة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📋</span>مقالات مراجعة محكّمة</div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">06</div>
+        <div class="ref-body">
+          <div class="ref-title">Measurements of Relativistic Time Dilatation for Positive and Negative Muons in a Circular Orbit</div>
+          <div class="ref-authors">Bailey, J. et al. (1977) — <em>Nature</em>, 268, 301–305</div>
+          <div class="ref-why">ميونات مخزّنة في حلقة CERN بـ γ ≈ 29.3 عاشت أطول بالضبط 29.3 مرة بدقة <strong>0.1%</strong>. من أدق اختبارات النسبية الخاصة في تاريخ الفيزياء التجريبية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1038/268301a0" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">07</div>
+        <div class="ref-body">
+          <div class="ref-title">Optical Clocks and Relativity</div>
+          <div class="ref-authors">Chou, C. W. et al. (2010) — <em>Science</em>, 329(5999), 1630–1633</div>
+          <div class="ref-why">قياس تمدد الزمن عند ≈ 10 م/ث بساعات بصرية بدقة 10⁻¹⁷. لأول مرة يصبح تمدد الزمن قابلاً للقياس عند سرعات إنسانية — دليل مذهل على عمق النسبية في العالم اليومي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1126/science.1192720" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">08</div>
+        <div class="ref-body">
+          <div class="ref-title">Some Recent Experimental Tests of the 'Clock Paradox'</div>
+          <div class="ref-authors">Sherwin, C. W. (1960) — <em>Physical Review</em>, 120(1), 17–21</div>
+          <div class="ref-why">مراجعة تاريخية للتجارب المبكرة التي اختبرت تمدد الزمن ومفارقة التوأمين؛ تُحلّل الفرق بين التجارب التي تقيس تأثيراً حقيقياً وتلك التي تقيس تأثير دوبلر نسبي. مرجع أساسي لفهم التاريخ الفكري للموضوع.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1103/PhysRev.120.17" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 4. مصادر رقمية ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">09</div>
+        <div class="ref-body">
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 1: Introduction to Spacetime &amp; Time Dilation</div>
+          <div class="ref-why">ملاحظات المحاضرات الكاملة ومجموعات المسائل المحلولة والاختبارات لمقرر النسبية في MIT؛ يُقدّم تمدد الزمن من منظور الزمكان المينكوفسكي بأسلوب أعمق من معظم الكتب التمهيدية، ومتاح مجاناً.</div>
+          <div class="ref-links"><a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">10</div>
+        <div class="ref-body">
+          <div class="ref-title">NIST — Time and Frequency Division</div>
+          <div class="ref-authors">National Institute of Standards and Technology (NIST), USA</div>
+          <div class="ref-chapter">📌 معلومات تقنية عن الساعات الذرية وتصحيحات النسبية في GPS</div>
+          <div class="ref-why">المصدر الرسمي لمعايير الوقت الأمريكية؛ يشرح كيف تُطبَّق تصحيحات تمدد الزمن النسبي في الساعات الذرية المستخدمة في GPS والبنية التحتية الرقمية العالمية — التطبيق الأكثر عملية لتمدد الزمن في حياتنا اليومية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.nist.gov/pml/time-and-frequency-division" target="_blank" rel="noopener">🔗 NIST Time &amp; Frequency</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 5. اقتباسات موثّقة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«الزمن الصحيح (Proper Time) هو الزمن المقاس بساعة تبقى في نفس الموضع في إطارها الخاص. أي ساعة تتحرك بالنسبة لهذا الإطار ستقيس زمناً أطول: Δt = γΔt₀ — وهذه ليست مشكلة في الساعة، بل في الزمن نفسه.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 82 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 التمييز الجوهري: ليس «الساعة تتباطأ» بل «الزمن يمر بمعدل مختلف في الإطار المتحرك» — وهو فرق فلسفي وفيزيائي بالغ الأهمية.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تمدد الزمن ليس تأثيراً ميكانيكياً يصيب الساعات وحدها، بل هو خاصية أساسية للزمكان نفسه. الساعات الذرية والبيولوجية والكيميائية جميعها تتأثر بنفس المعامل γ — لأن الزمن هو الذي يتمدد، وليس آلية الساعة.»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 45 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُرسّخ الفرق الجوهري بين «تأثير على الأجهزة» و«خاصية بنيوية للزمكان» — ضروري لتجنب سوء الفهم الشائع.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تجربة هافيلي-كيتنغ (1972) أثبتت تنبؤات النسبية الخاصة والعامة معاً: الساعات التي طارت شرقاً تأخرت، وتلك التي طارت غرباً تقدّمت، بمقدار متوافق مع الحسابات النظرية في حدود الخطأ التجريبي — أول تأكيد مباشر لتمدد الزمن في الظروف اليومية.»</div>
+        <div class="quote-src">— Halliday, Resnick &amp; Walker, <em>Fundamentals of Physics</em> (10th ed., 2014), ص 1096 [مُعرَّب]</div>
+        <div class="quote-note">💡 اتجاها الرحلة (شرقاً وغرباً) يُعطيان نتائج مختلفة لأن سرعة الطائرة تُجمع أو تُطرح من سرعة دوران الأرض — مما يختبر النسبيتين معاً في تجربة واحدة.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«اضمحلال الميونات الكونية من أنظف اختبارات تمدد الزمن؛ الميونات التي يجب نظرياً أن تتحلل قبل وصولها إلى سطح الأرض تصل فعلاً بكثافة عالية لأن زمنها يتمدد في إطار الأرض بمعامل γ = 15–30. لا تفسير آخر متاح غير تمدد الزمن النسبي.»</div>
+        <div class="quote-src">— Rindler, W., <em>Relativity: Special, General, and Cosmological</em> (2006), ص 38 [مُعرَّب]</div>
+        <div class="quote-note">💡 الميون مثال مثالي لأن عمره الافتراضي محدد بدقة بالغة (2.2 μs)، مما يجعل الفرق بين الكميات النظرية والتجريبية واضحاً وقياساً نظيفاً.</div>
+      </div>
+
+    </div>
+
+    <div class="acad-footer-note">
+      ⚠️ ملاحظة: أرقام الصفحات تستند إلى الطبعات الواردة. قد تختلف في طبعات أخرى — يُنصح بمراجعة فهرس الكتاب عند الاستشهاد الأكاديمي الرسمي.
+    </div>
+
+  </div><!-- /acad-body -->
+</div><!-- /wrap academic -->
 
 <script>
 /* BG */
@@ -159,6 +520,17 @@ window.addEventListener('resize',()=>{ib();rsz();if(!running)idleLC();});ib();re
 
 /* KATEX */
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(0,212,255,.6)':'rgba(0,212,255,.28)';
+  bar.setAttribute('aria-expanded',opening?'true':'false');
+  if(opening)setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
 function fmt(n,d=5){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e6||(Math.abs(n)<1e-4&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
 function parseV(s){
   if(s===null||s===undefined)return null;

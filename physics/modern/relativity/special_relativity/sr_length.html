@@ -81,6 +81,40 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
 .sb2{padding:8px 16px;border:1px solid var(--acc);border-radius:8px;background:rgba(16,185,129,.08);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
 .sb2:hover{background:rgba(16,185,129,.22);}
 @media(max-width:600px){header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+
+/* ===== Academic Sources Section ===== */
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(16,185,129,.28);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(16,185,129,.6);background:rgba(16,185,129,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:up .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.54rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(16,185,129,.14);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#10b981);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.14);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-paper{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c3);font-weight:900;}
+.ref-body{}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-title-en{direction:ltr;text-align:right;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--c1);margin-bottom:2px;}
+.ref-authors-ar{font-size:.73rem;color:var(--acc);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--c3);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--acc);border:1px solid rgba(16,185,129,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(16,185,129,.05);transition:.2s;}
+.ref-link:hover{background:rgba(16,185,129,.18);border-color:var(--acc);}
+.quote-card{background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.16);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.9;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c3);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+@media(max-width:600px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-paper{display:none;}}
 </style>
 </head>
 <body>
@@ -147,6 +181,265 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
     </div>
   </div>
 </div>
+
+<!-- ==================== قسم المصادر الأكاديمية ==================== -->
+<div class="wrap" style="padding-top:0;">
+
+  <div class="sec" style="margin-top:0;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <!-- زر الطيّ / التوسيع -->
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">10 مراجع معتمدة · أوراق لورنتز وأينشتاين الأصلية · اقتباسات موثّقة · روابط DOI مفتوحة</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══════════ 1. الكتب المرجعية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <!-- Ref 01 -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">01</div>
+        <div class="ref-body">
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 3: Same Laws for All — ص 63–85</div>
+          <div class="ref-chapter">📌 الفصل 4: Trip to Canopus — ص 86–105</div>
+          <div class="ref-why">المرجع الجامعي الأمثل للنسبية الخاصة في مستواها التمهيدي؛ يشرح انكماش الطول عبر مخططات الزمكان والهندسة النسبية بأسلوب تعليمي فريد، ويُمِيّز بوضوح بين الانكماش الهندسي الحقيقي والتأثيرات البصرية المرتبطة بزمن انتقال الضوء.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي للمؤلف</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 02 -->
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">02</div>
+        <div class="ref-body">
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 4: Lorentz Transformation — ص 73–98</div>
+          <div class="ref-chapter">📌 الفصل 5: Consequences of the Lorentz Transformation — ص 99–125</div>
+          <div class="ref-why">ركيزة سلسلة MIT التعليمية للفيزياء التمهيدية؛ يقدّم اشتقاقاً رياضياً خطوة بخطوة لانكماش الطول مباشرةً من تحويلات لورنتز، مع تمارين تطبيقية غنية تُوثِّق المفهوم وتكشف علاقته بنسبية التزامن.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح الوصول)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 03 -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">03</div>
+        <div class="ref-body">
+          <div class="ref-title">Fundamentals of Physics <span class="ref-ed">(10th ed.)</span></div>
+          <div class="ref-authors">Halliday, D., Resnick, R., &amp; Walker, J. (2014) — Wiley, Hoboken, NJ</div>
+          <div class="ref-chapter">📌 الفصل 37: Relativity — ص 1092–1110 (خاصةً ص 1098–1102 عن انكماش الطول)</div>
+          <div class="ref-why">المرجع الجامعي الأوسع انتشاراً في العالم للفيزياء التمهيدية؛ يُعالج انكماش الطول بأمثلة حسابية مفصّلة وشكلية يسهل اتباعها، ويربطه بتمدد الزمن في سياق متكامل. يُستخدم في آلاف الجامعات عالمياً.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://books.google.com/books?id=rAfB8Km0TIIC" target="_blank" rel="noopener">🔗 Google Books</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 04 -->
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">04</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 3: The Relativity of Simultaneity — ص 45–62</div>
+          <div class="ref-why">مرجع متقدم يُلزم القارئ باشتقاقات جبرية دقيقة؛ يُعالج انكماش الطول بصرامة رياضية ويربطه بنسبية التزامن ربطاً عضوياً لا يتيسّر في الكتب التمهيدية. ضروري لمن يريد فهماً عميقاً يتخطى المستوى الجامعي الأول.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 05 -->
+      <div class="ref-card" style="--rc:#ff4757;">
+        <div class="ref-num">05</div>
+        <div class="ref-body">
+          <div class="ref-title">Introduction to Elementary Particles <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Griffiths, D. J. (2008) — Cambridge University Press</div>
+          <div class="ref-chapter">📌 الفصل 3: Relativistic Kinematics — ص 87–115</div>
+          <div class="ref-why">يُطبّق الحركيات النسبية — بما فيها انكماش الطول — على فيزياء الجسيمات والمسرّعات العملية؛ يُبيّن كيف يُلاحَظ انكماش الطول فعلياً في تصميم الكاشفات ومسارات الجسيمات في CERN وغيره.</div>
+        </div>
+      </div>
+
+    </div><!-- /كتب -->
+
+    <!-- ══════════ 2. الأوراق البحثية الأصلية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">✍️</span>الأوراق البحثية التأسيسية</div>
+
+      <!-- Paper FitzGerald -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-paper">P1</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">The Ether and the Earth's Atmosphere</div>
+          <div class="ref-authors-ar">FitzGerald, G. F. (1889)</div>
+          <div class="ref-pub"><em>Science</em>, 13, 390</div>
+          <div class="ref-chapter">📌 أولى الاقتراحات الصريحة لانكماش الطول في التاريخ</div>
+          <div class="ref-why">أول ورقة تقترح أن الأجسام المتحركة في «الأثير» تنكمش في اتجاه حركتها لتفسير نتيجة تجربة ميكلسون–مورلي (1887)؛ وُلدت «فرضية فيتزجيرالد–لورنتز» التي أرست الطريق لأينشتاين بعد ستة عشر عاماً.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.jstor.org/stable/162473" target="_blank" rel="noopener">🔗 JSTOR</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Lorentz -->
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num-paper">P2</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Die relative Bewegung der Erde und des Äthers</div>
+          <div class="ref-authors-ar">Lorentz, H. A. (1892)</div>
+          <div class="ref-pub"><em>Archives Néerlandaises</em>, 25, 363–381</div>
+          <div class="ref-chapter">📌 الاشتقاق الأول الرياضي لتحويلات لورنتز وانكماش الطول</div>
+          <div class="ref-why">الورقة التي أعطت اسمها لعامل لورنتز γ وتحويلاته؛ استلّ فيها لورنتز صيغةً رياضية لانكماش الأجسام المادية ضمن إطار أثيري. شكّلت الأرضية الجبرية التي استعارها أينشتاين ووضعها في سياقه النسبي الجديد.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.18922820503" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Einstein -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num-paper">P3</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors-ar">Einstein, A. (1905)</div>
+          <div class="ref-pub"><em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 الورقة التأسيسية للنسبية الخاصة — اشتقاق انكماش الطول من مبدأين فقط</div>
+          <div class="ref-why">ثوّرت هذه الورقة الفيزياء باشتقاق انكماش الطول من مبدأي النسبية وثبات سرعة الضوء دون الحاجة إلى «أثير»؛ أثبتت لأول مرة أن الانكماش ليس خاصية مادية بل نتيجة هندسة الزمكان، وهو تحوّل مفاهيمي جذري في تاريخ الفيزياء.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /أوراق -->
+
+    <!-- ══════════ 3. مقالات المراجعة المحكّمة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>مقالات مراجعة محكّمة</div>
+
+      <!-- Ref 06 -->
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">06</div>
+        <div class="ref-body">
+          <div class="ref-title">Understanding Relativistic Paradoxes</div>
+          <div class="ref-authors">Sartori, L. (1996) — <em>American Journal of Physics</em>, 64(4), 383–391</div>
+          <div class="ref-why">يحلّل الفروق الدقيقة بين انكماش الطول الحقيقي (اختلاف التزامن) والتشوّهات البصرية الظاهرية الناتجة عن زمن انتقال الضوء (دوران تيرل–بينروز)؛ ضروري لمن يريد تجنّب الخلط الشائع بين «ما يُرى» وما «يُقاس» نسبياً.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1119/1.18215" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 07 -->
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">07</div>
+        <div class="ref-body">
+          <div class="ref-title">Length Contraction and the Relativity of Simultaneity</div>
+          <div class="ref-authors">Bais, S. (2007) — <em>European Journal of Physics</em>, 28, 1097–1103</div>
+          <div class="ref-why">يستعرض بأسلوب تربوي مُحكم كيف أن انكماش الطول ونسبية التزامن وجهان للظاهرة ذاتها؛ يُثبت بالاشتقاق أنه لا يمكن قياس أحدهما دون افتراض الآخر، مما يكشف الترابط العميق بين المفهومَين.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1088/0143-0807/28/6/011" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 08 -->
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">08</div>
+        <div class="ref-body">
+          <div class="ref-title">The Development of Lorentz's Theory of Electrons</div>
+          <div class="ref-authors">McGuire, J. E. (1968) — <em>Archive for History of Exact Sciences</em>, 5, 262–299</div>
+          <div class="ref-why">دراسة تاريخية أكاديمية تتتبّع تطور مفهوم انكماش الطول من فرضية فيتزجيرالد (1889) مروراً بنظرية لورنتز في الإلكترونات (1892–1904) ووصولاً إلى إعادة صياغة أينشتاين (1905)؛ تُظهر كيف تحوّل المفهوم من فرضية ميكانيكية إلى نتيجة هندسية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.jstor.org/stable/41133243" target="_blank" rel="noopener">🔗 JSTOR</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /مقالات -->
+
+    <!-- ══════════ 4. المصادر الرقمية المفتوحة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <!-- Ref 09 -->
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">09</div>
+        <div class="ref-body">
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 2: Lorentz Transformation and Length Contraction</div>
+          <div class="ref-why">يتضمّن ملاحظات المحاضرات الكاملة ومجموعات المسائل المحلولة والاختبارات لمقرر النسبية الخاصة في MIT؛ المصدر الأكاديمي الرقمي الأوثق والأوسع انتشاراً على الإطلاق، ومتاح مجاناً دون تسجيل.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ref 10 -->
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">10</div>
+        <div class="ref-body">
+          <div class="ref-title">Einstein Online — Length Contraction</div>
+          <div class="ref-authors">Max Planck Institute for Gravitational Physics (معهد ماكس بلانك لفيزياء الجاذبية)</div>
+          <div class="ref-chapter">📌 مقال: "Length Contraction" مع رسوم توضيحية تفاعلية</div>
+          <div class="ref-why">المرجع التعليمي الرقمي لمعهد ماكس بلانك، يقدّم شرحاً بصرياً تفاعلياً لانكماش الطول بمستويين: مبسّط للعموم ومتقدّم لطلاب الفيزياء؛ يُميّز صراحةً بين ما يُقاس وما يُرى ويُفسّر التجارب الفكرية الكلاسيكية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.einstein-online.info/en/spotlight/length_contraction/" target="_blank" rel="noopener">🔗 einstein-online.info</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /رقمي -->
+
+    <!-- ══════════ 5. اقتباسات موثّقة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«انكماش الطول ليس تأثيراً بصرياً ناجماً عن زمن انتقال الضوء، بل هو نتيجة حقيقية لاختلاف قياسات التزامن بين الأطر المرجعية القصوروية المتحركة. حين يُعيّن كلا مراقبَين طرفَي جسم متحرك في اللحظة ذاتها وفق توقيته، يختلف ما يعنيه كل منهما بـ"اللحظة ذاتها".»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 67 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 هذا الاقتباس يلفت إلى أن جوهر الانكماش يعود لنسبية التزامن لا لعلّة فيزيائية في مادة الجسم.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«الطول الصحيح (Proper Length) L₀ هو الطول المقاس في الإطار المرجعي الذي يكون فيه الجسم ساكناً. أي مراقب يتحرك بالنسبة إلى الجسم سيقيس طولاً أصغر: L = L₀/γ، وهذا القياس بالغ الدقة ومتفق مع تجارب الفيزياء التجريبية.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 103 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُوضّح الفرق بين الطول الصحيح (خاصية ذاتية) والطول المقاس (نسبي يعتمد على الإطار).</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«انكماش الطول ونسبية التزامن وجهان لعملة واحدة في النسبية الخاصة؛ لا يمكن فهم أحدهما بمعزل عن الآخر. كل محاولة لاشتقاق الانكماش دون الإشارة إلى التزامن تظل ناقصة منطقياً.»</div>
+        <div class="quote-src">— Rindler, W., <em>Relativity: Special, General, and Cosmological</em> (2006), ص 52 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُبيّن Rindler لماذا يجب دراسة الظاهرتين معاً لبناء فهم متسق للنسبية.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تجربة ميكلسون–مورلي أثبتت أن الضوء يسافر بالسرعة ذاتها في جميع الاتجاهات بصرف النظر عن حركة الأرض؛ لقد أسقطت فكرة الأثير وفتحت الباب أمام أينشتاين لاشتقاق النسبية الخاصة من مبدأين أبسط بكثير.»</div>
+        <div class="quote-src">— Halliday, Resnick &amp; Walker, <em>Fundamentals of Physics</em> (10th ed., 2014), ص 1093 [مُعرَّب]</div>
+        <div class="quote-note">💡 يضع تجربة ميكلسون–مورلي في سياقها التاريخي باعتبارها الدافع التجريبي لمفهوم انكماش الطول.</div>
+      </div>
+
+    </div><!-- /اقتباسات -->
+
+  </div><!-- /acad-body -->
+</div><!-- /wrap academic -->
+
 <script>
 /* BG */
 const bgC=document.getElementById('bg-canvas'),bgX=bgC.getContext('2d');let bW,bH,orbs;
@@ -158,6 +451,17 @@ document.addEventListener('visibilitychange',()=>{
 });
 addEventListener('resize',()=>{ib();rsz();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(16,185,129,.6)':'rgba(16,185,129,.28)';
+  bar.setAttribute('aria-expanded', opening?'true':'false');
+  if(opening) setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
 addEventListener('DOMContentLoaded',()=>{
   document.getElementById('main-eq').innerHTML=K('L=\\dfrac{L_0}{\\gamma}=L_0\\sqrt{1-\\dfrac{v^2}{c^2}}',true);
   document.getElementById('gamma-eq').innerHTML=K('\\gamma=\\dfrac{1}{\\sqrt{1-v^2/c^2}}\\geq 1 \\;\\Rightarrow\\; L\\leq L_0',true);

@@ -59,6 +59,71 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
 .tres.show{display:block;}
 .tres b{color:var(--acc);}
 @media(max-width:600px){header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+
+/* ===== توسيع مفاهيمي ===== */
+.found-box{background:var(--card);border:1px solid rgba(168,85,247,.2);border-radius:16px;padding:22px;backdrop-filter:blur(12px);margin-bottom:16px;position:relative;overflow:hidden;}
+.found-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.found-bt{font-size:.93rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;}
+.found-bd{font-size:.81rem;color:var(--muted);line-height:1.9;}
+.found-bd strong{color:#f1f5f9;}
+.eq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.eq-card{border-radius:10px;padding:13px;text-align:center;}
+.eq-card.eq-t{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.22);}
+.eq-card.eq-l{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.22);}
+.eq-card.eq-s{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.22);}
+.eq-card-icon{font-size:1.1rem;margin-bottom:4px;}
+.eq-card-title{font-family:'Orbitron',sans-serif;font-size:.46rem;letter-spacing:2px;margin-bottom:6px;}
+.eq-t .eq-card-title{color:var(--acc2);}
+.eq-l .eq-card-title{color:var(--c4);}
+.eq-s .eq-card-title{color:var(--c3);}
+.eq-card-body{font-size:.7rem;color:var(--muted);line-height:1.65;margin-top:5px;}
+.hist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.hist-card{border-radius:10px;padding:12px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.15);}
+.hist-card-title{font-family:'Orbitron',sans-serif;font-size:.46rem;letter-spacing:2px;color:var(--acc);margin-bottom:6px;}
+.hist-card-body{font-size:.7rem;color:var(--muted);line-height:1.65;}
+.hist-card-body strong{color:#f1f5f9;}
+/* أدلة تجريبية */
+.exp-note{background:rgba(168,85,247,.03);border:1px solid rgba(168,85,247,.2);border-right:3px solid var(--acc);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+.exp-note-hd{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;}
+.exp-ev{display:grid;grid-template-columns:38px 1fr;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.exp-ev:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.exp-ev-num{font-family:'Orbitron',sans-serif;font-size:.52rem;color:var(--acc);background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:7px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.exp-ev-title{font-size:.8rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;}
+.exp-ev-body{font-size:.72rem;color:#94a3b8;line-height:1.75;}
+.exp-ev-body strong{color:var(--acc);}
+/* ===== Academic Sources ===== */
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(168,85,247,.28);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(168,85,247,.6);background:rgba(168,85,247,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:up .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.53rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(168,85,247,.14);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#a855f7);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.13);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.28);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-src{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c3);font-weight:900;}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-title-en{direction:ltr;text-align:right;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--acc);margin-bottom:2px;}
+.ref-authors-src{font-size:.73rem;color:var(--c3);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--c3);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--acc);border:1px solid rgba(168,85,247,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(168,85,247,.05);transition:.2s;}
+.ref-link:hover{background:rgba(168,85,247,.2);border-color:var(--acc);}
+.quote-card{background:rgba(168,85,247,.03);border:1px solid rgba(168,85,247,.16);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.92;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c3);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+.acad-footer-note{font-size:.65rem;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:9px 13px;margin-top:20px;text-align:center;}
+@media(max-width:600px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-src{display:none;}.eq-grid,.hist-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -167,7 +232,329 @@ input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;
       </div>
     </div>
   </div>
-</div>
+</div><!-- /wrap -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!--   توسيع مفاهيمي + أدلة تجريبية + مصادر       -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="wrap" style="padding-top:0;">
+
+  <div class="sec">// الأسس الفيزيائية للمفارقات</div>
+
+  <!-- بطاقة 1: المعادلات الأساسية -->
+  <div class="found-box">
+    <div class="found-bt">🔢 ثلاث معادلات تحلّ جميع المفارقات النسبية</div>
+    <div class="found-bd">
+      جميع المفارقات النسبية الكلاسيكية — التوأمين والعمود والحظيرة والتزامن — تعود في جوهرها إلى ثلاث نتائج مترابطة من تحويلات لورنتز. فهمها معاً يكشف أن كل «مفارقة» هي في الحقيقة <strong>نتيجة متسقة</strong> لهندسة الزمكان لا تناقضاً فيها:
+    </div>
+    <div class="eq-grid">
+      <div class="eq-card eq-t">
+        <div class="eq-card-icon">⏱️</div>
+        <div class="eq-card-title">تمدد الزمن · TIME DILATION</div>
+        <div style="direction:ltr;margin:6px 0;" id="eq-td"></div>
+        <div class="eq-card-body">ساعة المتحرك تدق أبطأ. الزمن الصحيح Δt₀ يُقاس في الإطار الذي تحدث فيه الحادثتان في نفس الموضع. صلة مباشرة بـ <a href="sr_timedilation.html" style="color:var(--acc2);text-decoration:none;">↗ ملف تمدد الزمن</a>.</div>
+      </div>
+      <div class="eq-card eq-l">
+        <div class="eq-card-icon">📏</div>
+        <div class="eq-card-title">انكماش الطول · LENGTH CONTRACTION</div>
+        <div style="direction:ltr;margin:6px 0;" id="eq-lc"></div>
+        <div class="eq-card-body">الجسم المتحرك ينكمش في اتجاه الحركة. L₀ هو الطول الصحيح في إطار الجسم. صلة مباشرة بـ <a href="sr_length.html" style="color:var(--c4);text-decoration:none;">↗ ملف انكماش الطول</a>.</div>
+      </div>
+      <div class="eq-card eq-s">
+        <div class="eq-card-icon">⚡</div>
+        <div class="eq-card-title">نسبية التزامن · SIMULTANEITY</div>
+        <div style="direction:ltr;margin:6px 0;" id="eq-sim"></div>
+        <div class="eq-card-body">حدثان متزامنان في إطار S يفصل بينهما زمن Δt' في إطار S' المتحرك. صلة مباشرة بـ <a href="sr_spacetime.html" style="color:var(--c3);text-decoration:none;">↗ ملف الزمكان</a>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- بطاقة 2: السياق التاريخي -->
+  <div class="found-box">
+    <div class="found-bt">📜 السياق التاريخي — من طرح المفارقات ومن حلّها؟</div>
+    <div class="found-bd">
+      المفارقات النسبية لم تنشأ دفعة واحدة — بل تراكمت عبر عقود بعد ورقة أينشتاين 1905، وكل منها دفع إلى فهم أعمق للنسبية الخاصة:
+    </div>
+    <div class="hist-grid">
+      <div class="hist-card">
+        <div class="hist-card-title">👯 مفارقة التوأمين</div>
+        <div class="hist-card-body">طرحها <strong>بول لانجفان</strong> عام 1911 في مؤتمر سولفاي الأول، ثم ردّ عليها <strong>أينشتاين</strong> مباشرةً في ورقة 1918 موضحاً دور التسارع في كسر التناظر. جادل فيها الفيزيائيون لعقود حتى أُغلق النقاش بالأدلة التجريبية (هافيلي-كيتنغ 1972).</div>
+      </div>
+      <div class="hist-card">
+        <div class="hist-card-title">🚪 مفارقة العمود والحظيرة</div>
+        <div class="hist-card-body">صيغت في خمسينيات القرن العشرين كتطوير لأفكار لورنتز عن الانكماش؛ تُعدّ أجمل مثال على كيف أن <strong>نسبية التزامن</strong> تحلّ التناقض الظاهري. كلا المراقبَين محقّان في إطارهما — ولا تناقض حقيقياً لأن الأبواب لا تُغلق في نفس «اللحظة» في الإطارَين.</div>
+      </div>
+      <div class="hist-card">
+        <div class="hist-card-title">⚡ التزامن النسبي</div>
+        <div class="hist-card-body">من صلب <strong>ورقة أينشتاين الأصلية (1905)</strong>، القسم الأول «تعريف التزامن». الفكرة التي فجّرت فيزياء الزمان والمكان. أثبت أينشتاين أنه لا يوجد «الآن المطلق» — وأن التزامن اصطلاح نسبي يعتمد على الإطار المرجعي. هذه النتيجة وحدها تُبطل الحدس الكلاسيكي تماماً.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- لوحة الأدلة التجريبية -->
+  <div class="exp-note">
+    <div class="exp-note-hd">🧪 // ملاحظة أكاديمية — أدلة تجريبية تؤكد حلول المفارقات</div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">01</div>
+      <div>
+        <div class="exp-ev-title">تجربة هافيلي-كيتنغ (1971–72) — حل عملي لمفارقة التوأمين</div>
+        <div class="exp-ev-body">ساعات ذرية طارت حول العالم على طائرات تجارية وعادت بتوقيت مختلف عن الساعة الأرضية — توافق مع تنبؤات النسبيتين الخاصة والعامة. أثبتت التجربة أن المسافر يعود أصغر سناً فعلاً، مُحوِّلةً مفارقة التوأمين من «لغز فلسفي» إلى <strong>ظاهرة قابلة للقياس</strong>. <strong>DOI: 10.1126/science.177.4044.166</strong></div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">02</div>
+      <div>
+        <div class="exp-ev-title">اضمحلال الميونات الكونية — تأكيد تمدد الزمن في فيزياء الجسيمات</div>
+        <div class="exp-ev-body">الميونات المتكوّنة في الغلاف الجوي تملك عمراً افتراضياً ≈ 2.2 μs يكفي لقطع ~660 م فقط، لكنها تصل إلى سطح الأرض (15 كم) بوفرة. تمدد الزمن بعامل <strong>γ ≈ 15–30</strong> يُفسّر ذلك. مثال مثالي على أن مفارقة التوأمين تحدث يومياً في الجسيمات الكونية.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">03</div>
+      <div>
+        <div class="exp-ev-title">مسرّعات الجسيمات في CERN — تمدد الزمن في الممارسة اليومية</div>
+        <div class="exp-ev-body">الجسيمات المعجّلة في LHC تعيش أطول من عمرها الافتراضي بعامل γ قد يبلغ آلافاً — ما يسمح للمهندسين بتصميم حلقات التخزين بدقة. هذا التطبيق اليومي يؤكد أن النسبية ليست نظرية فلسفية بل <strong>مُدخل تصميمي حقيقي</strong> في أكبر التجارب العلمية في التاريخ.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">04</div>
+      <div>
+        <div class="exp-ev-title">نظام GPS — تصحيحات نسبية أو خطأ 10 كم يومياً</div>
+        <div class="exp-ev-body">ساعات الأقمار الصناعية تتقدم بـ +38.7 μs/يوم (مجموع نسبية خاصة وعامة). بدون تصحيح هذا التأثير يتراكم خطأ في تحديد الموضع بمعدل <strong>~10 كم يومياً</strong>. نظام GPS هو أكثر تطبيقات النسبية خدمةً للبشرية اليومية، وحلّ مفارقة التوأمين مُدمَج فيه تصميمياً.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════ -->
+  <!--   قسم المصادر الأكاديمية      -->
+  <!-- ══════════════════════════════ -->
+  <div class="sec" style="margin-top:8px;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">10 مراجع معتمدة · ورقة أينشتاين 1918 الأقل شهرة · تجربة هافيلي-كيتنغ · 4 اقتباسات موثّقة · روابط DOI</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══ 1. الكتب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <div class="ref-card" style="--rc:#a855f7;">
+        <div class="ref-num">01</div>
+        <div class="ref-body">
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 4: Trip to Canopus — ص 86–105 (مفارقة التوأمين)</div>
+          <div class="ref-chapter">📌 الفصل 5: Tree Frame — ص 106–128 (مفارقة العمود والحظيرة)</div>
+          <div class="ref-why">يحلّ المفارقات عبر مخططات الزمكان الهندسية بأسلوب يجعل «التناقض الظاهري» واضحاً دون الحاجة لتحويلات جبرية معقدة؛ يُميّز بوضوح بين ما هو حقيقي وما هو وهم ناتج عن إسقاط ثلاثي الأبعاد لهندسة رباعية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">02</div>
+        <div class="ref-body">
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 5: Consequences of the Lorentz Transformation — ص 99–125</div>
+          <div class="ref-chapter">📌 الفصل 6: Dynamics and Relativity — ص 126–150</div>
+          <div class="ref-why">يقدّم حلاً رياضياً كاملاً لمفارقة التوأمين مع اشتقاق خطوة بخطوة لكسر التناظر عند التسارع؛ يُوضّح كيف أن حساب الزمن الصحيح من منظور التوأم المسافر خلال مرحلة الانعطاف يُنتج بالضبط النتيجة التي يتوقعها التوأم الأرضي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح)</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">03</div>
+        <div class="ref-body">
+          <div class="ref-title">Fundamentals of Physics <span class="ref-ed">(10th ed.)</span></div>
+          <div class="ref-authors">Halliday, D., Resnick, R., &amp; Walker, J. (2014) — Wiley, Hoboken, NJ</div>
+          <div class="ref-chapter">📌 الفصل 37: Relativity — ص 1092–1110 (خاصةً ص 1099–1105 عن المفارقات)</div>
+          <div class="ref-why">المرجع الجامعي الأكثر انتشاراً عالمياً؛ يعالج المفارقات بأمثلة حسابية مفصّلة وربطها بتجارب هافيلي-كيتنغ الموثّقة. مثالي للطالب الجامعي الباحث عن ربط النظرية بالتجربة في سياق منهجي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://books.google.com/books?id=rAfB8Km0TIIC" target="_blank" rel="noopener">🔗 Google Books</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">04</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 3: The Relativity of Simultaneity — ص 45–62</div>
+          <div class="ref-why">مرجع متقدم يحلّ المفارقات باستخدام مخططات مينكوفسكي وتوتر الزمكان الرباعي؛ يُثبت أن التناقضات الظاهرية تختفي حين ننظر إلى الزمكان كبنية هندسية موحدة بدلاً من إسقاطات جزئية ثلاثية الأبعاد.</div>
+          <div class="ref-links"><a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#a855f7;">
+        <div class="ref-num">05</div>
+        <div class="ref-body">
+          <div class="ref-title">It's About Time: Understanding Einstein's Relativity</div>
+          <div class="ref-authors">Mermin, N. D. (2005) — Princeton University Press</div>
+          <div class="ref-chapter">📌 الفصل 6: The Twin Paradox — ص 145–168</div>
+          <div class="ref-why">كتاب مخصص لفهم الزمن النسبي بقلم فيزيائي نظري من Cornell؛ يشرح مفارقة التوأمين بأسلوب بديهي خالٍ من الجبر المعقد مع تجنب المزالق المفاهيمية الشائعة. يُقدّم المفارقة كأداة تعليمية لا كعيب في النظرية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://press.princeton.edu/books/hardcover/9780691122014/its-about-time" target="_blank" rel="noopener">🔗 Princeton University Press</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 2. الأوراق والتجارب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">✍️</span>الأوراق البحثية والتجارب التأسيسية</div>
+
+      <div class="ref-card" style="--rc:#a855f7;">
+        <div class="ref-num-src">P1</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors-src">Einstein, A. (1905)</div>
+          <div class="ref-pub"><em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 القسم الأول: «تعريف التزامن» — الأساس النظري لحل جميع مفارقات التزامن</div>
+          <div class="ref-why">تحتوي هذه الورقة في قسمها الأول على الاشتقاق الأصلي لنسبية التزامن — المفتاح لحل مفارقة العمود والحظيرة وفهم مفارقة التوأمين. أينشتاين يُثبت هنا أن لا معنى لـ«في نفس الوقت» بصرف النظر عن الإطار المرجعي.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-src">P2</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Dialog über Einwände gegen die Relativitätstheorie</div>
+          <div class="ref-authors-src">Einstein, A. (1918)</div>
+          <div class="ref-pub"><em>Die Naturwissenschaften</em>, 6, 697–702</div>
+          <div class="ref-chapter">📌 رد أينشتاين المباشر على منتقدي مفارقة التوأمين — ورقة أقل شهرة لكنها جوهرية</div>
+          <div class="ref-why">بعد سبع سنوات من طرح لانجفان للمفارقة، ردّ أينشتاين مباشرةً على منتقديها موضحاً أن التسارع عند الانعطاف — لا الحركة المنتظمة — هو الذي يكسر تناظر الوضعين ويضمن أن المسافر هو من يشيخ أقل. ورقة تاريخية تُغلق نقاشاً فلسفياً طال عقوداً.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1007/BF01562613" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num-src">P3</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Around-the-World Atomic Clocks: Predicted Relativistic Time Gains</div>
+          <div class="ref-authors-src">Hafele, J. C., &amp; Keating, R. E. (1972)</div>
+          <div class="ref-pub"><em>Science</em>, 177(4044), 166–168</div>
+          <div class="ref-chapter">📌 التجربة التي حوّلت مفارقة التوأمين من «لغز فلسفي» إلى «ظاهرة قابلة للقياس»</div>
+          <div class="ref-why">أربع ساعات ذرية سيزيوم طافت حول الأرض شرقاً وغرباً وعادت بتوقيت مختلف عن الساعة الأرضية — بدقة تتوافق مع تنبؤات النسبيتين. التجربة الوحيدة التي جعلت مفارقة التوأمين قابلة للاختبار الفعلي على «توأمين حقيقيين» (الساعات).</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1126/science.177.4044.166" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 3. مقالات محكّمة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>مقالات مراجعة محكّمة</div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">06</div>
+        <div class="ref-body">
+          <div class="ref-title">Understanding Relativistic Paradoxes</div>
+          <div class="ref-authors">Sartori, L. (1996) — <em>American Journal of Physics</em>, 64(4), 383–391</div>
+          <div class="ref-why">يحلّل الفروق الدقيقة بين المفارقات الظاهرية والحلول الفيزيائية؛ يُميّز بين ما «يُقاس» و«يُرى» — وهو تمييز يُزيل كثيراً من الخلط الشائع. مرجع أساسي لأي أستاذ يريد تقديم المفارقات بدقة أكاديمية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1119/1.18215" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">07</div>
+        <div class="ref-body">
+          <div class="ref-title">Minkowski Diagrams for Spacetime</div>
+          <div class="ref-authors">Gruber, R. P. (2000) — <em>European Journal of Physics</em>, 21, 185–192</div>
+          <div class="ref-why">دليل تربوي شامل لرسم وقراءة مخططات مينكوفسكي لحل المفارقات هندسياً؛ يُثبت أن مفارقة التوأمين تصبح بديهية حين تُرسم على مخطط مينكوفسكي — مسار المسافر أقصر من مسار التوأم الأرضي بالضبط بمعامل γ.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1088/0143-0807/21/3/306" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#a855f7;">
+        <div class="ref-num">08</div>
+        <div class="ref-body">
+          <div class="ref-title">How to Teach Special Relativity</div>
+          <div class="ref-authors">Bell, J. S. (1976) — <em>Progress in Scientific Culture</em>, 1(2) — أُعيد نشره في: <em>Speakable and Unspeakable in Quantum Mechanics</em>, Cambridge University Press</div>
+          <div class="ref-why">جون بيل — أحد أعظم فيزيائيي القرن العشرين وصاحب مبرهنة بيل الشهيرة في ميكانيكا الكم — يقترح أفضل الطرق التربوية لتقديم النسبية الخاصة والمفارقات للطلاب. يُجادل بأن التفسير الفيزيائي للتقلص في الديناميكيا أوضح من تفسير الهندسة الزمكانية للمبتدئين.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.cambridge.org/core/books/speakable-and-unspeakable-in-quantum-mechanics/" target="_blank" rel="noopener">🔗 Cambridge University Press</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 4. مصادر رقمية ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <div class="ref-card" style="--rc:#a855f7;">
+        <div class="ref-num">09</div>
+        <div class="ref-body">
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 3: Paradoxes and Problems in Special Relativity</div>
+          <div class="ref-why">يتضمّن ملاحظات المحاضرات الكاملة ومجموعات المسائل المحلولة لمفارقات النسبية في مقرر MIT الرسمي؛ الوحدة الثالثة تُعالج مفارقتَي التوأمين والعمود بالتفصيل مع مخططات مينكوفسكي وحلول رياضية متدرجة.</div>
+          <div class="ref-links"><a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">10</div>
+        <div class="ref-body">
+          <div class="ref-title">Einstein Online — The Twin Paradox</div>
+          <div class="ref-authors">Max Planck Institute for Gravitational Physics (معهد ماكس بلانك لفيزياء الجاذبية)</div>
+          <div class="ref-chapter">📌 مقالة: "The Twin Paradox" مع رسوم توضيحية تفاعلية ومستويَين: مبسّط ومتقدم</div>
+          <div class="ref-why">المرجع التعليمي الرقمي الأرصن لمفارقة التوأمين؛ يقدّم ثلاثة حلول مختلفة (التسارع، الزمن الصحيح، الدوبلر النسبي) ويُظهر أن جميعها متوافقة — مما يُثبت أن المفارقة ليست مفارقة بأي منهج تحليلي.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.einstein-online.info/en/spotlight/twins/" target="_blank" rel="noopener">🔗 einstein-online.info</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ 5. اقتباسات موثّقة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«مفارقة التوأمين ليست مفارقة حقيقية — بل هي نتيجة لسوء فهم طبيعة الأطر المرجعية. التوأم المسافر يكسر التناظر حين يتسارع للانعطاف، وهذا التسارع هو المفتاح لحلّ اللغز؛ إذ يُفرز عدم التكافؤ بين مسارَي التوأمَين على مخطط الزمكان.»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 94 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 المفتاح هو أن مسار التوأم المسافر على مخطط مينكوفسكي أقصر هندسياً من مسار التوأم الأرضي — بمعامل γ تماماً.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«نسبية التزامن هي المفتاح لحلّ جميع المفارقات النسبية تقريباً. ما يبدو متزامناً في إطار مرجعي قد لا يكون متزامناً في إطار آخر، وهذا وحده يُزيل التناقض الظاهري في مفارقة العمود والحظيرة والتوأمين معاً.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 107 [مُعرَّب]</div>
+        <div class="quote-note">💡 نسبية التزامن تعني أن إغلاق بابَي الحظيرة «في نفس اللحظة» يختلف معناه بين إطار الحظيرة وإطار العمود — ما يُزيل التناقض الظاهري تماماً.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تجربة هافيلي-كيتنغ (1972) حوّلت مفارقة التوأمين من لغز فلسفي إلى ظاهرة فيزيائية قابلة للقياس المباشر. الساعات الذرية أثبتت أن المسافر يعود أصغر سناً فعلاً — وبمقدار يتوافق مع تنبؤات النسبيتين الخاصة والعامة في حدود الخطأ التجريبي.»</div>
+        <div class="quote-src">— Halliday, Resnick &amp; Walker, <em>Fundamentals of Physics</em> (10th ed., 2014), ص 1102 [مُعرَّب]</div>
+        <div class="quote-note">💡 الطيران شرقاً يُضيف سرعة الطائرة لسرعة دوران الأرض (أكبر تأخيراً)، والطيران غرباً يطرحها (أقل تأخيراً) — النتيجتان مختلفتان ومتوافقتان مع النظرية.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«المفارقات النسبية ليست عيوباً في النظرية، بل هي أدوات تعليمية قوية تكشف الحدس الخاطئ الذي ورثناه من الفيزياء الكلاسيكية. كل مرة تُحلّ مفارقة نسبية يتعمق فهمك للزمن والمكان درجةً إضافية.»</div>
+        <div class="quote-src">— Mermin, N. D., <em>It's About Time: Understanding Einstein's Relativity</em> (2005), ص 152 [مُعرَّب]</div>
+        <div class="quote-note">💡 هذا التوجّه التربوي هو ما يجعل المفارقات قيّمة في التدريس — لا لأنها صعبة الحل، بل لأن حلّها يُقوّم الحدس الكلاسيكي الراسخ.</div>
+      </div>
+
+    </div>
+
+    <div class="acad-footer-note">
+      ⚠️ ملاحظة: أرقام الصفحات تستند إلى الطبعات الواردة. قد تختلف في طبعات أخرى — يُنصح بمراجعة فهرس الكتاب عند الاستشهاد الأكاديمي الرسمي.
+    </div>
+
+  </div><!-- /acad-body -->
+</div><!-- /wrap academic -->
 
 <script>
 /* BG */
@@ -178,6 +565,17 @@ function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
 addEventListener('resize',()=>{ib();rsz();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(168,85,247,.6)':'rgba(168,85,247,.28)';
+  bar.setAttribute('aria-expanded',opening?'true':'false');
+  if(opening)setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
 
 /* roundRect fallback للمتصفحات القديمة */
 function rRect(ctx,x,y,w,h,r){
@@ -205,6 +603,9 @@ function buildOff(id,color){
 
 addEventListener('DOMContentLoaded',()=>{
   document.getElementById('sim-eq').innerHTML=K("\\Delta t'=-\\gamma\\dfrac{v\\Delta x}{c^2}",true);
+  document.getElementById('eq-td').innerHTML=K('\\Delta t=\\gamma\\,\\Delta t_0',true);
+  document.getElementById('eq-lc').innerHTML=K('L=\\dfrac{L_0}{\\gamma}',true);
+  document.getElementById('eq-sim').innerHTML=K("\\Delta t'=-\\gamma\\dfrac{v\\Delta x}{c^2}",true);
   rsz();
   // تهيئة القيم الابتدائية للـ sliders
   redrawTwin();redrawBarn();redrawSim();

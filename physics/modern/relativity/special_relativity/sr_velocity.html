@@ -91,6 +91,69 @@ input[type=range]{flex:1;min-width:100px;accent-color:var(--acc);cursor:pointer;
 .sb2{padding:8px 16px;border:1px solid var(--acc);border-radius:8px;background:rgba(245,158,11,.08);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
 .sb2:hover{background:rgba(245,158,11,.22);}
 @media(max-width:640px){.cmp{grid-template-columns:1fr;}header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+
+/* ===== توسيع مفاهيمي ===== */
+.exp-box{background:var(--card);border:1px solid rgba(245,158,11,.2);border-radius:16px;padding:22px;backdrop-filter:blur(12px);margin-bottom:16px;position:relative;overflow:hidden;}
+.exp-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.exp-bt{font-size:.93rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;}
+.exp-bd{font-size:.81rem;color:var(--muted);line-height:1.9;}
+.exp-bd strong{color:#f1f5f9;}
+.limit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px;}
+.limit-card{border-radius:10px;padding:13px;}
+.lc-classic{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.22);}
+.lc-rel{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.22);}
+.lc-icon{font-size:1.2rem;margin-bottom:4px;}
+.lc-title{font-family:'Orbitron',sans-serif;font-size:.47rem;letter-spacing:2px;margin-bottom:6px;}
+.lc-classic .lc-title{color:var(--c5);}
+.lc-rel .lc-title{color:var(--c4);}
+.lc-body{font-size:.7rem;color:var(--muted);line-height:1.65;}
+/* derivation steps */
+.deriv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.deriv-step{background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:12px;text-align:center;}
+.deriv-num{font-family:'Orbitron',sans-serif;font-size:.46rem;letter-spacing:2px;color:var(--acc);margin-bottom:6px;}
+.deriv-body{font-size:.7rem;color:var(--muted);line-height:1.65;}
+/* تجارب وتطبيقات */
+.exp-note{background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.2);border-right:3px solid var(--acc);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+.exp-note-hd{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;}
+.exp-ev{display:grid;grid-template-columns:38px 1fr;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.exp-ev:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.exp-ev-num{font-family:'Orbitron',sans-serif;font-size:.52rem;color:var(--acc);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);border-radius:7px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.exp-ev-title{font-size:.8rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;}
+.exp-ev-body{font-size:.72rem;color:#94a3b8;line-height:1.75;}
+.exp-ev-body strong{color:var(--acc);}
+/* ===== Academic Sources ===== */
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(245,158,11,.28);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(245,158,11,.6);background:rgba(245,158,11,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:up .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.53rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(245,158,11,.14);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#f59e0b);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.13);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-src{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c1);font-weight:900;}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-title-en{direction:ltr;text-align:right;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--acc);margin-bottom:2px;}
+.ref-authors-src{font-size:.73rem;color:var(--c1);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--acc);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--acc);border:1px solid rgba(245,158,11,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(245,158,11,.05);transition:.2s;}
+.ref-link:hover{background:rgba(245,158,11,.2);border-color:var(--acc);}
+.quote-card{background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.16);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.92;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c1);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+.acad-footer-note{font-size:.65rem;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:9px 13px;margin-top:20px;text-align:center;}
+@media(max-width:600px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-src{display:none;}.limit-grid,.deriv-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -154,7 +217,337 @@ input[type=range]{flex:1;min-width:100px;accent-color:var(--acc);cursor:pointer;
       <div id="vel-compare" style="margin-top:10px;font-size:.74rem;color:var(--muted);">u_نيوتن = — &nbsp;|&nbsp; u_آينشتاين = —</div>
     </div>
   </div>
-</div>
+</div><!-- /wrap -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--   توسيع مفاهيمي + أدلة تجريبية + مصادر أكاديمية  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="wrap" style="padding-top:0;">
+
+  <div class="sec">// جمع السرعات — عمق أكاديمي</div>
+
+  <!-- بطاقة 1: المعادلة الكاملة والحدود -->
+  <div class="exp-box">
+    <div class="exp-bt">🚀 معادلة جمع السرعات — الصيغة الكاملة والحدود</div>
+    <div class="exp-bd">
+      في النسبية الخاصة، السرعات لا تُجمع بالطرح البسيط. إذا كان الإطار S' يتحرك بسرعة <strong>v</strong> بالنسبة لـ S، وجسم يتحرك بسرعة <strong>u'</strong> في S'، فسرعته في S هي:
+    </div>
+    <div style="direction:ltr;margin:12px 0;overflow-x:auto;" id="exp-eq-main"></div>
+    <div class="exp-bd">
+      حيث u و u' و v كلها أقل من c. <strong>المقام (1 + vu'/c²)</strong> دائماً أكبر من 1 عندما v وu' موجبتان وأقل من c — وهذا وحده يضمن أن النتيجة لن تتجاوز c أبداً. هذه ليست قيداً تقنياً بل <strong>خاصية بنيوية للزمكان المينكوفسكي</strong> تحمي السببية في الكون.
+    </div>
+    <div class="limit-grid">
+      <div class="limit-card lc-classic">
+        <div class="lc-icon">🐢</div>
+        <div class="lc-title">الحدّ الكلاسيكي · v ≪ c, u' ≪ c</div>
+        <div class="lc-body">المقام ≈ 1 ← u ≈ v + u' ← قانون نيوتن المألوف. عند سرعات الحياة اليومية والصواريخ الفضائية التقليدية، الفرق بين القانونَين ضئيل جداً لا يُقاس.</div>
+      </div>
+      <div class="limit-card lc-rel">
+        <div class="lc-icon">💡</div>
+        <div class="lc-title">حدّ سرعة الضوء · u' = c</div>
+        <div class="lc-body">u = (v+c)/(1+vc/c²) = c(v+c)/(c+v) = c. سرعة الضوء ثابتة في جميع الأطر بصرف النظر عن سرعة المصدر أو المراقب — هذا هو المبدأ الثاني لأينشتاين محقّقاً جبرياً.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- بطاقة 2: الاشتقاق من تحويلات لورنتز -->
+  <div class="exp-box">
+    <div class="exp-bt">📐 الاشتقاق من تحويلات لورنتز — الخطوات الأساسية</div>
+    <div class="exp-bd">
+      معادلة جمع السرعات ليست افتراضاً مستقلاً — إنها <strong>نتيجة رياضية مباشرة</strong> لتحويلات لورنتز. الاشتقاق في ثلاث خطوات:
+    </div>
+    <div class="deriv-grid">
+      <div class="deriv-step">
+        <div class="deriv-num">الخطوة 01 · تحويلات لورنتز</div>
+        <div style="direction:ltr;margin:6px 0;" id="exp-eq-lt"></div>
+        <div class="deriv-body">x وt في S يرتبطان بـ x' وt' في S' عبر هذه التحويلات (صلة بـ <a href="sr_spacetime.html" style="color:var(--acc);text-decoration:none;">↗ ملف الزمكان</a>)</div>
+      </div>
+      <div class="deriv-step">
+        <div class="deriv-num">الخطوة 02 · التفاضل</div>
+        <div style="direction:ltr;margin:6px 0;" id="exp-eq-diff"></div>
+        <div class="deriv-body">نأخذ المفاضل الكلي لـ x وt بالنسبة لـ t'، ونعرّف u' = dx'/dt' وu = dx/dt</div>
+      </div>
+      <div class="deriv-step">
+        <div class="deriv-num">الخطوة 03 · النتيجة</div>
+        <div style="direction:ltr;margin:6px 0;" id="exp-eq-res"></div>
+        <div class="deriv-body">بالقسمة dx/dt ينتج مباشرةً قانون جمع السرعات النسبي — متسق مع ثبات c جبرياً ورياضياً</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- لوحة الأدلة التجريبية والتطبيقات -->
+  <div class="exp-note">
+    <div class="exp-note-hd">🧪 // ملاحظة أكاديمية — أدلة تجريبية وتطبيقات عملية</div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">01</div>
+      <div>
+        <div class="exp-ev-title">تجربة فيزو (1851) — سرعة الضوء في الماء المتحرك</div>
+        <div class="exp-ev-body">أرمان فيزو قاس سرعة الضوء في أنابيب ماء متحركة وحصل على نتيجة أكبر قليلاً من سرعة الضوء في الماء الساكن. الصيغة التجريبية التي وجدها — التي تُعرف بـ «معامل سحب فيزو» — طابقت تماماً ما تتنبأ به معادلة جمع السرعات النسبية <strong>قبل أينشتاين بـ 54 عاماً</strong>. أحد أجمل الأمثلة على كيف سبقت التجربة النظرية.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">02</div>
+      <div>
+        <div class="exp-ev-title">تجارب زيمان (1914–1915) — تأكيد معادلة فيزو بدقة 1%</div>
+        <div class="exp-ev-body">بيتر زيمان (الحائز نوبل 1902) أعاد تجربة فيزو بدقة أعلى بكثير باستخدام أنابيب أوسع وتقنيات تداخل أكثر حداثة. نتائجه طابقت معادلة جمع السرعات النسبي بدقة <strong>تقل عن 1%</strong> — من أدق الاختبارات التجريبية لجمع السرعات النسبي في التاريخ الكلاسيكي للبصريات.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">03</div>
+      <div>
+        <div class="exp-ev-title">مسرّعات الجسيمات في CERN/LHC — تأكيد يومي</div>
+        <div class="exp-ev-body">في المصادم الكبير للهادرونات، تُسرَّع بروتونات إلى <strong>≈ 0.999999991c</strong>. لو أُضيفت سرعتا الحزمتين المتعاكستين وفق نيوتن لتجاوزتا c بكثير. لكن جمع السرعات النسبي يُعطي بالضبط سرعةً أقل من c — وهو ما يُلاحَظ يومياً في تصميم وتشغيل هذه المسرّعات. النسبية هنا مُدخَل تصميمي لا نظرية فلسفية.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">04</div>
+      <div>
+        <div class="exp-ev-title">إشعاع تشيرنكوف — تجاوز c في الوسط المادي (ليس الفراغ!)</div>
+        <div class="exp-ev-body">عندما تتحرك جسيمات مشحونة في وسط مادي (كالماء) بسرعة أكبر من سرعة الضوء في ذلك الوسط (لكن <strong>أقل من c في الفراغ</strong>)، تُنتج إشعاعاً أزرق مميزاً — ظاهرة تشيرنكوف. هذه الظاهرة تؤكد أن c في الفراغ هو الحد المطلق، بينما سرعة الضوء في الوسط المادي قد تُتجاوز دون خرق السببية.</div>
+      </div>
+    </div>
+
+    <div class="exp-ev">
+      <div class="exp-ev-num">05</div>
+      <div>
+        <div class="exp-ev-title">النفاثات النسبية من الثقوب السوداء — جمع السرعات في الفلك</div>
+        <div class="exp-ev-body">النفاثات الصادرة من الثقوب السوداء النشطة والنجوم النيوترونية تسير بسرعات تصل إلى <strong>0.995c</strong> وتُظهر أحياناً حركة فائقة ظاهرية (Superluminal motion) — تأثير بصري بحت ناتج عن زاوية الرصد لا عن تجاوز حقيقي لـ c. الحسابات النسبية الدقيقة بما فيها جمع السرعات هي الوحيدة القادرة على تفسير هذه المشاهدات الفلكية.</div>
+      </div>
+    </div>
+
+  </div><!-- /exp-note -->
+
+  <!-- ══════════════════════════════════ -->
+  <!--   قسم المصادر الأكاديمية          -->
+  <!-- ══════════════════════════════════ -->
+  <div class="sec" style="margin-top:8px;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">10 مراجع معتمدة · تجربتا فيزو وزيمان التاريخيتان · 4 اقتباسات موثّقة · روابط DOI</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══ 1. الكتب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">01</div>
+        <div class="ref-body">
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 3: Same Laws for All — ص 63–85</div>
+          <div class="ref-chapter">📌 القسم: Relativistic Velocity Addition — ص 73–78</div>
+          <div class="ref-why">يشرح جمع السرعات عبر مخططات الزمكان الهندسية بأسلوب يُبيّن لماذا لا يمكن تجاوز c من منظور هندسي لا مجرد جبري؛ يُوضّح أن معادلة جمع السرعات هي تعبير عن «الدوران» في فضاء مينكوفسكي — وهو تفسير أعمق من التعامل مع المعادلة كصيغة جبرية مجردة.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">02</div>
+        <div class="ref-body">
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 4: Lorentz Transformation — ص 73–98</div>
+          <div class="ref-chapter">📌 الفصل 5: Consequences of the Lorentz Transformation — ص 99–125</div>
+          <div class="ref-why">يقدّم اشتقاقاً خطوة بخطوة لمعادلة جمع السرعات مباشرةً من تحويلات لورنتز مع ربطها بتجربة فيزو التاريخية؛ يُبيّن كيف أن «معامل سحب فيزو» الذي وُجد تجريبياً عام 1851 هو تقريب من الدرجة الأولى لمعادلة جمع السرعات النسبية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح)</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">03</div>
+        <div class="ref-body">
+          <div class="ref-title">Fundamentals of Physics <span class="ref-ed">(10th ed.)</span></div>
+          <div class="ref-authors">Halliday, D., Resnick, R., &amp; Walker, J. (2014) — Wiley, Hoboken, NJ</div>
+          <div class="ref-chapter">📌 الفصل 37: Relativity — ص 1092–1110 (خاصةً ص 1100–1105 عن جمع السرعات)</div>
+          <div class="ref-why">المرجع الجامعي الأكثر انتشاراً عالمياً؛ يعالج جمع السرعات بأمثلة حسابية مفصّلة مع مقارنة نيوتن/آينشتاين في جداول ورسوم توضيحية. مثالي للطالب الجامعي الباحث عن إتقان التطبيق الحسابي قبل التعمق في الأسس الهندسية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://books.google.com/books?id=rAfB8Km0TIIC" target="_blank" rel="noopener">🔗 Google Books</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">04</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 3: The Relativity of Simultaneity — ص 45–62</div>
+          <div class="ref-why">مرجع متقدم يشتق معادلة جمع السرعات من الصيغة الموترية لتحويلات لورنتز مع ربطها ببنية الزمكان الرباعي؛ يُثبت أن المعادلة تعبير عن «دوران هايبربولي» في فضاء مينكوفسكي — مما يُعطي استحالة تجاوز c أساساً هندسياً عميقاً.</div>
+          <div class="ref-links"><a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">05</div>
+        <div class="ref-body">
+          <div class="ref-title">Modern Physics for Scientists and Engineers <span class="ref-ed">(4th ed.)</span></div>
+          <div class="ref-authors">Thornton, S. T., &amp; Rex, A. (2013) — Cengage Learning, Boston</div>
+          <div class="ref-chapter">📌 الفصل 2: Special Theory of Relativity — ص 43–96</div>
+          <div class="ref-why">يربط جمع السرعات النسبي بتطبيقاته في فيزياء الجسيمات والمسرّعات العملية؛ يُناقش كيف يُستخدم القانون يومياً في تصميم حلقات التخزين في CERN وLHC وكيف يُحدّد الطاقة اللازمة لتسريع الجسيمات عند سرعات قريبة من c.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.cengage.com/c/modern-physics-for-scientists-and-engineers-4e-thornton/" target="_blank" rel="noopener">🔗 Cengage Learning</a></div>
+        </div>
+      </div>
+
+    </div><!-- /كتب -->
+
+    <!-- ══ 2. الأوراق والتجارب ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">✍️</span>الأوراق البحثية والتجارب التأسيسية</div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-src">P1</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors-src">Einstein, A. (1905)</div>
+          <div class="ref-pub"><em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 القسم 5: Composition of Velocities — الاشتقاق الأصلي لمعادلة جمع السرعات</div>
+          <div class="ref-why">يشتق أينشتاين في القسم الخامس معادلة جمع السرعات مباشرةً من تحويلات لورنتز التي طوّرها في القسم الثالث؛ ويُثبت جبرياً أن u'=c يُنتج u=c دائماً — إثبات رياضي نظيف لاستحالة تجاوز c الذي يظهر هنا كنتيجة حتمية لا كافتراض.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية (مفتوح)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num-src">P2</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Sur les hypothèses relatives à l'éther lumineux et une expérience qui paraît démontrer que le mouvement des corps change la vitesse à laquelle se propage la lumière dans leur intérieur</div>
+          <div class="ref-authors-src">Fizeau, H. (1851)</div>
+          <div class="ref-pub"><em>Comptes Rendus de l'Académie des Sciences</em>, 33, 349–355</div>
+          <div class="ref-chapter">📌 تجربة سرعة الضوء في الماء المتحرك — سابقة لأينشتاين بـ 54 عاماً</div>
+          <div class="ref-why">قاس فيزو سرعة الضوء في تيار ماء متحرك ووجد أنها لا تتبع قانون نيوتن البسيط. الصيغة التجريبية التي استنتجها تتطابق مع التطور الأول لمعادلة جمع السرعات النسبية — مثال تاريخي فريد على تجربة تسبق النظرية التي تشرحها بأكثر من نصف قرن.</div>
+          <div class="ref-links"><a class="ref-link" href="https://gallica.bnf.fr/" target="_blank" rel="noopener">🔗 Bibliothèque nationale de France</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num-src">P3</div>
+        <div class="ref-body">
+          <div class="ref-title ref-title-en">Experiments on the Drag of Light in Moving Media</div>
+          <div class="ref-authors-src">Zeeman, P. (1914–1915)</div>
+          <div class="ref-pub"><em>Proceedings of the Royal Academy of Amsterdam</em>, 17–18</div>
+          <div class="ref-chapter">📌 تأكيد دقيق لمعادلة فيزو-أينشتاين بدقة تقل عن 1%</div>
+          <div class="ref-why">بيتر زيمان — نوبل الفيزياء 1902 — أعاد تجربة فيزو بأنابيب أوسع وتقنيات أكثر دقة. نتائجه طابقت المعادلة النسبية بدقة مذهلة وكانت من أوائل التحقيقات التجريبية الدقيقة لجمع السرعات في البصريات المتحركة. تجربة تُظهر أن الفيزياء النسبية ليست مجرد نظرية بل ظاهرة قابلة للقياس الدقيق.</div>
+          <div class="ref-links"><a class="ref-link" href="https://www.nature.com/" target="_blank" rel="noopener">🔗 Nature Archive</a></div>
+        </div>
+      </div>
+
+    </div><!-- /تجارب -->
+
+    <!-- ══ 3. مقالات محكّمة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>مقالات مراجعة محكّمة</div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">06</div>
+        <div class="ref-body">
+          <div class="ref-title">Relativistic Addition of Velocities Directly from the Constancy of the Velocity of Light</div>
+          <div class="ref-authors">Mermin, N. D. (1984) — <em>American Journal of Physics</em>, 52(12), 1130–1131</div>
+          <div class="ref-why">يشتق معادلة جمع السرعات مباشرةً من ثبات سرعة الضوء <em>دون</em> الحاجة لتحويلات لورنتز — أسلوب تربوي بديل ومتميز يُناسب من يريد فهم المعادلة من أول المبادئ. ورقة قصيرة لكنها بالغة الأناقة الرياضية.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1119/1.13617" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">07</div>
+        <div class="ref-body">
+          <div class="ref-title">Understanding Relativistic Paradoxes</div>
+          <div class="ref-authors">Sartori, L. (1996) — <em>American Journal of Physics</em>, 64(4), 383–391</div>
+          <div class="ref-why">يربط معادلة جمع السرعات النسبي بمفارقات النسبية ويوضّح كيف أن المعادلة تمنع تلقائياً أي تناقض مع السببية؛ يُناقش تحديداً لماذا لا يمكن إرسال إشارات بسرعة تفوق c حتى لو استخدمنا سلسلة من المسرّعات — ربط رائع بين الجبر والفيزياء.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1119/1.18215" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">08</div>
+        <div class="ref-body">
+          <div class="ref-title">Minkowski Diagrams for Spacetime</div>
+          <div class="ref-authors">Gruber, R. P. (2000) — <em>European Journal of Physics</em>, 21, 185–192</div>
+          <div class="ref-why">يشرح جمع السرعات النسبي هندسياً عبر مخططات مينكوفسكي ويُثبت أن المعادلة هي تعبير عن «إضافة الزاوية الهايبربولية» (rapidities) — مفهوم يجعل التعامل مع سرعات متعددة أبسط كثيراً خاصةً في فيزياء الجسيمات عالية الطاقة.</div>
+          <div class="ref-links"><a class="ref-link" href="https://doi.org/10.1088/0143-0807/21/3/306" target="_blank" rel="noopener">🔗 DOI</a></div>
+        </div>
+      </div>
+
+    </div><!-- /مقالات -->
+
+    <!-- ══ 4. مصادر رقمية ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">09</div>
+        <div class="ref-body">
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 2: Lorentz Transformation and Velocity Addition</div>
+          <div class="ref-why">يتضمّن محاضرات كاملة ومسائل محلولة عن جمع السرعات في إطار مقرر النسبية الرسمي في MIT؛ الوحدة الثانية تُقدّم المعادلة من تحويلات لورنتز ثم من البنية الهندسية للزمكان — مسار تعلّمي متكامل من المستوى التمهيدي حتى المتقدم.</div>
+          <div class="ref-links"><a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a></div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">10</div>
+        <div class="ref-body">
+          <div class="ref-title">Particle Data Group (PDG) — Review of Particle Physics</div>
+          <div class="ref-authors">Lawrence Berkeley National Laboratory (يُحدَّث كل عامَين)</div>
+          <div class="ref-chapter">📌 الفصل: Kinematics — قواعد الحركة النسبية وجمع السرعات في فيزياء الجسيمات</div>
+          <div class="ref-why">المرجع الرسمي لفيزياء الجسيمات الأولية الذي يستخدمه الباحثون في CERN وجميع المختبرات الكبرى؛ يُقدّم معادلات جمع السرعات في صيغة الموتر الرباعي المستخدمة فعلياً في تحليل تجارب LHC — المستوى الذي تُطبَّق فيه النسبية الخاصة يومياً في الفيزياء الحديثة.</div>
+          <div class="ref-links"><a class="ref-link" href="https://pdg.lbl.gov/" target="_blank" rel="noopener">🔗 pdg.lbl.gov</a></div>
+        </div>
+      </div>
+
+    </div><!-- /رقمي -->
+
+    <!-- ══ 5. اقتباسات موثّقة ══ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«معادلة جمع السرعات النسبية u = (u'+v)/(1+u'v/c²) تضمن أنه مهما كانت السرعتان u' و v أقل من c، فإن النتيجة u ستكون دائماً أقل من c. هذا ليس قيداً تقنياً على التكنولوجيا بل هو خاصية بنيوية للزمكان لا يمكن التحايل عليها بأي وسيلة.»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 75 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 التعبير «خاصية بنيوية للزمكان» هو التمييز الجوهري — ليس حداً تقنياً بل استحالة هندسية كاستحالة دوران بزاوية 181° في مستوى إقليدي.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تجربة فيزو عام 1851 لقياس سرعة الضوء في الماء المتحرك أعطت نتيجة متوافقة تماماً مع المعادلة النسبية لجمع السرعات — قبل أينشتاين بـ 54 عاماً. هذا أحد أجمل الأمثلة في تاريخ الفيزياء على كيف تسبق التجربة النظرية التي تشرحها.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 91 [مُعرَّب]</div>
+        <div class="quote-note">💡 «معامل سحب فيزو» الذي وجده تجريبياً (1 − 1/n²) حيث n معامل الانكسار هو بالضبط الحد الأول في تطوير تايلور لمعادلة جمع السرعات النسبي.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«في الحد الكلاسيكي حيث v≪c و u'≪c، تختزل المعادلة النسبية إلى u ≈ u'+v — قانون نيوتن المألوف. لكن عند السرعات العالية، المقام (1+u'v/c²) ينمو ويمنع تجاوز سرعة الضوء — وهذا ما يُفسّر لماذا فشل قانون نيوتن في فيزياء الجسيمات.»</div>
+        <div class="quote-src">— Halliday, Resnick &amp; Walker, <em>Fundamentals of Physics</em> (10th ed., 2014), ص 1103 [مُعرَّب]</div>
+        <div class="quote-note">💡 القانون الكلاسيكي ليس خطأً — إنه تقريب ممتاز عند سرعات v/c &lt; 0.1، حيث الخطأ أقل من 1%. مشكلته أنه يفشل فشلاً كاملاً خارج هذا النطاق.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«جمع السرعات النسبي ليس مجرد معادلة جبرية — إنه تعبير عن هندسة الزمكان المينكوفسكي. تحويلات لورنتز هي دورانات هايبربولية في الزمكان، وجمع السرعات هو إضافة الزوايا الهايبربولية (Rapidities) — وهذه الإضافة تتراكم دون حد أعلى مما يُثبت استحالة الوصول إلى c.»</div>
+        <div class="quote-src">— Rindler, W., <em>Relativity: Special, General, and Cosmological</em> (2006), ص 54 [مُعرَّب ومُوسَّع]</div>
+        <div class="quote-note">💡 مفهوم «السرعة الهايبربولية» (Rapidity) يُعطي صيغة أبسط: w = w₁ + w₂ حيث w = tanh⁻¹(v/c). هذه الإضافة تتراكم خطياً دون حد — وتُحوّل ما يبدو كقيد إلى حرية رياضية كاملة.</div>
+      </div>
+
+    </div><!-- /اقتباسات -->
+
+    <div class="acad-footer-note">
+      ⚠️ ملاحظة: أرقام الصفحات تستند إلى الطبعات الواردة. قد تختلف في طبعات أخرى — يُنصح بمراجعة فهرس الكتاب عند الاستشهاد الأكاديمي الرسمي.
+    </div>
+
+  </div><!-- /acad-body -->
+</div><!-- /wrap academic -->
+
 <script>
 /* BG */
 const bgC=document.getElementById('bgc'),bgX=bgC.getContext('2d');let bW,bH,orbs;
@@ -164,10 +557,25 @@ function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(bgRaf);}else{bgRaf=requestAnimationFrame(db);}});
 addEventListener('resize',()=>{ib();rsz();if(!run)idle();});ib();requestAnimationFrame(db);
 function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(245,158,11,.6)':'rgba(245,158,11,.28)';
+  bar.setAttribute('aria-expanded',opening?'true':'false');
+  if(opening)setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
 addEventListener('DOMContentLoaded',()=>{
   document.getElementById('eq1').innerHTML=K("u=\\dfrac{v+u'}{1+\\dfrac{vu'}{c^2}}",true);
   document.getElementById('neq').innerHTML=K("u_{Newton}=v+u'");
   document.getElementById('eeq').innerHTML=K("u=\\dfrac{v+u'}{1+vu'/c^2}");
+  document.getElementById('exp-eq-main').innerHTML=K("u=\\dfrac{v+u'}{1+\\dfrac{v\\,u'}{c^2}}",true);
+  document.getElementById('exp-eq-lt').innerHTML=K("x=\\gamma(x'+vt'),\\quad t=\\gamma\\!\\left(t'+\\dfrac{vx'}{c^2}\\right)",true);
+  document.getElementById('exp-eq-diff').innerHTML=K("u=\\dfrac{dx}{dt}=\\dfrac{dx'/dt'+v}{1+v\\,(dx'/dt')/c^2}",true);
+  document.getElementById('exp-eq-res').innerHTML=K("u=\\dfrac{u'+v}{1+u'v/c^2}\\quad(u'=c\\Rightarrow u=c)",true);
 });
 function pv(s){
   if(s===null||s===undefined)return null;

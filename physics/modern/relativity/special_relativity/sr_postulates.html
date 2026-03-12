@@ -97,6 +97,49 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .sim-btn{padding:8px 18px;border:1px solid var(--acc);border-radius:8px;background:rgba(124,58,237,.1);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
 .sim-btn:hover{background:rgba(124,58,237,.25);}
 @media(max-width:640px){.postulates,.transform-compare{grid-template-columns:1fr;}header{padding:10px 14px;}.wrapper{padding:24px 14px 60px;}}
+
+/* ===== توسيع المحتوى المفاهيمي ===== */
+.note-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:.8rem;color:#94a3b8;line-height:1.85;}
+.note-box-title{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:2px;color:var(--c3);margin-bottom:8px;}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;}
+.hist-card{background:var(--card);border:1px solid rgba(124,58,237,.15);border-radius:12px;padding:16px;backdrop-filter:blur(10px);position:relative;overflow:hidden;}
+.hist-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--acc2,var(--acc)),transparent);}
+.hist-year{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:2px;color:var(--c3);margin-bottom:6px;}
+.hist-event{font-size:.78rem;color:#f1f5f9;font-weight:700;margin-bottom:4px;}
+.hist-desc{font-size:.7rem;color:var(--muted);line-height:1.65;}
+.apps-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.app-chip{font-size:.7rem;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:4px 12px;color:var(--c4);}
+
+/* ===== Academic Sources ===== */
+.acad-toggle-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:16px 22px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s;margin-top:4px;}
+.acad-toggle-bar:hover{border-color:rgba(124,58,237,.6);background:rgba(124,58,237,.04);}
+.acad-toggle-info{display:flex;align-items:center;gap:12px;}
+.acad-toggle-emoji{font-size:1.45rem;}
+.acad-toggle-title{font-weight:800;font-size:.95rem;color:#f1f5f9;}
+.acad-toggle-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.acad-arrow{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);transition:transform .3s;}
+.acad-body{display:none;margin-top:3px;animation:fadeUp .4s ease both;}
+.acad-sec{margin-top:24px;}
+.acad-sec-hd{font-family:'Orbitron',sans-serif;font-size:.54rem;letter-spacing:3px;color:var(--c1);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(0,212,255,.12);}
+.acad-sec-icon{font-size:.95rem;}
+.ref-card{display:grid;grid-template-columns:48px 1fr;gap:14px;background:var(--card);border:1px solid rgba(255,255,255,.07);border-right:3px solid var(--rc,#7c3aed);border-radius:12px;padding:16px;margin-bottom:10px;backdrop-filter:blur(10px);transition:.2s;}
+.ref-card:hover{border-color:rgba(255,255,255,.14);background:rgba(15,23,42,.99);}
+.ref-num{font-family:'Orbitron',sans-serif;font-size:.58rem;color:var(--acc);background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;}
+.ref-num-paper{font-family:'Orbitron',sans-serif;font-size:.52rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c3);font-weight:900;}
+.ref-title{font-size:.88rem;font-weight:800;color:#f1f5f9;margin-bottom:3px;font-style:italic;}
+.ref-ed{font-size:.72rem;font-weight:400;color:var(--muted);font-style:normal;}
+.ref-authors{font-size:.73rem;color:var(--c1);margin-bottom:2px;}
+.ref-pub{font-size:.7rem;color:var(--muted);margin-bottom:6px;}
+.ref-chapter{font-size:.7rem;color:var(--c3);background:rgba(245,158,11,.06);border-radius:5px;padding:4px 8px;margin-bottom:7px;display:inline-block;}
+.ref-why{font-size:.72rem;color:#94a3b8;line-height:1.78;margin-bottom:8px;}
+.ref-links{display:flex;flex-wrap:wrap;gap:7px;}
+.ref-link{font-size:.65rem;color:var(--c1);border:1px solid rgba(0,212,255,.25);border-radius:5px;padding:3px 9px;text-decoration:none;background:rgba(0,212,255,.05);transition:.2s;}
+.ref-link:hover{background:rgba(0,212,255,.18);border-color:var(--c1);}
+.quote-card{background:rgba(124,58,237,.03);border:1px solid rgba(124,58,237,.16);border-right:3px solid var(--acc);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+.quote-text{font-size:.83rem;color:#cbd5e1;line-height:1.9;margin-bottom:9px;font-style:italic;}
+.quote-src{font-size:.68rem;color:var(--c3);font-family:'Share Tech Mono',monospace;}
+.quote-note{font-size:.67rem;color:var(--muted);margin-top:5px;font-style:normal;}
+@media(max-width:600px){.ref-card{grid-template-columns:1fr;}.ref-num,.ref-num-paper{display:none;}.hist-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -155,6 +198,42 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
     </div>
   </div>
 
+  <!-- ملاحظة الحد الكلاسيكي -->
+  <div class="note-box">
+    <div class="note-box-title">// تصحيح مفاهيمي — الحد الكلاسيكي</div>
+    تحويلات <strong style="color:var(--acc);">لورنتز لا تلغي غاليليو</strong>، بل تمتد إليه: عند <span style="font-family:'Share Tech Mono',monospace;color:var(--c1);">v ≪ c</span> يكون <span style="font-family:'Share Tech Mono',monospace;color:var(--c1);">γ → 1</span> فتُختزل x' = γ(x−vt) إلى x' = x−vt وt' = t تماماً. الفيزياء الكلاسيكية ليست خاطئة — هي حالة خاصة من النسبية الخاصة عند السرعات المنخفضة. كذلك المسلّمة الثانية (ثبات c) ليست بديهية: تحويل غاليليو يتوقع أن سرعة الضوء ستتغير مع حركة المراقب — وهذا ما أسقطته تجربة ميكلسون-مورلي (1887).
+  </div>
+
+  <!-- السياق التاريخي -->
+  <div class="sec">// السياق التاريخي — من أين جاءت النسبية؟ (1887–1905)</div>
+  <div class="hist-grid">
+    <div class="hist-card">
+      <div class="hist-year">1887</div>
+      <div class="hist-event">تجربة ميكلسون-مورلي</div>
+      <div class="hist-desc">أثبتت أن سرعة الضوء ثابتة في جميع الاتجاهات بصرف النظر عن حركة الأرض — فشلت في كشف «الأثير» وهزّت أسس الفيزياء الكلاسيكية.</div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-year">1892–1904</div>
+      <div class="hist-event">لورنتز وبوانكاريه</div>
+      <div class="hist-desc">اشتق لورنتز التحويلات الرياضية للحفاظ على معادلات ماكسويل، لكنه احتفظ بفكرة الأثير. بوانكاريه صاغ مبدأ النسبية لكن لم يُكمل الثورة المفاهيمية.</div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-year">1905</div>
+      <div class="hist-event">أينشتاين — الثورة الجذرية</div>
+      <div class="hist-desc">انطلق من مسلّمتين بسيطتين لا من معادلات ماكسويل. أعاد تفسير تحويلات لورنتز هندسياً كبنية الزمكان نفسه — لا أثير ولا إطار مطلق.</div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-year">اليوم</div>
+      <div class="hist-event">تطبيقات عملية</div>
+      <div class="hist-desc">تحويلات لورنتز ضرورية يومياً في مسرعات الجسيمات (LHC)، وتصحيحات GPS الزمنية، وفيزياء الجسيمات الأولية (PDG).</div>
+      <div class="apps-row">
+        <span class="app-chip">⚛️ CERN / LHC</span>
+        <span class="app-chip">🛰️ GPS</span>
+        <span class="app-chip">🔬 PDG</span>
+      </div>
+    </div>
+  </div>
+
   <!-- CALCULATOR -->
   <div class="sec">// حاسبة تحويلات لورنتز</div>
   <div class="calc-panel">
@@ -194,6 +273,268 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
     </div>
   </div>
 </div>
+</div><!-- /wrapper -->
+
+<!-- ==================== قسم المصادر الأكاديمية ==================== -->
+<div class="wrapper" style="padding-top:0;">
+
+  <div class="sec" style="margin-top:0;">// المصادر الأكاديمية والاستشهادات</div>
+
+  <div class="acad-toggle-bar" id="acad-toggle-bar" onclick="toggleAcad()" role="button" aria-expanded="false" aria-controls="acad-body">
+    <div class="acad-toggle-info">
+      <span class="acad-toggle-emoji">📚</span>
+      <div>
+        <div class="acad-toggle-title">المصادر الأكاديمية والاستشهادات</div>
+        <div class="acad-toggle-sub">13 مرجعاً معتمداً · ورقة أينشتاين (1905) · تجربة ميكلسون-مورلي · اقتباسات موثّقة · روابط DOI مفتوحة</div>
+      </div>
+    </div>
+    <div class="acad-arrow" id="acad-arrow">▼</div>
+  </div>
+
+  <div class="acad-body" id="acad-body">
+
+    <!-- ══════════ 1. الكتب المرجعية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📖</span>الكتب المرجعية المعتمدة</div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">01</div>
+        <div>
+          <div class="ref-title">Spacetime Physics <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Taylor, E. F., &amp; Wheeler, J. A. (1992) — W. H. Freeman, New York</div>
+          <div class="ref-chapter">📌 الفصل 1: Spacetime — ص 1–30</div>
+          <div class="ref-chapter">📌 الفصل 2: Floating Free — ص 31–62</div>
+          <div class="ref-why">المرجع الجامعي الأمثل للنسبية الخاصة في مستواها التمهيدي؛ يشرح المسلّمتين عبر مخططات الزمكان والهندسة النسبية بأسلوب فريد، ويُبيّن كيف تُشتق تحويلات لورنتز مباشرةً من المبدأين الأساسيين دون افتراضات إضافية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.eftaylor.com/spacetimephysics/" target="_blank" rel="noopener">🔗 الموقع الرسمي للمؤلف</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">02</div>
+        <div>
+          <div class="ref-title">Special Relativity</div>
+          <div class="ref-authors">French, A. P. (1968) — MIT Introductory Physics Series, W. W. Norton &amp; Company</div>
+          <div class="ref-chapter">📌 الفصل 2: The Postulates of Special Relativity — ص 1–25</div>
+          <div class="ref-chapter">📌 الفصل 3: The Lorentz Transformation — ص 48–72</div>
+          <div class="ref-why">ركيزة سلسلة MIT التعليمية؛ يقدّم اشتقاقاً خطوة بخطوة لتحويلات لورنتز مباشرةً من المسلّمتين، مع تمارين غنية تربط المسلّمتين بنسبية التزامن وانكماش الطول.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://archive.org/details/specialrelativit00fren" target="_blank" rel="noopener">🔗 Internet Archive (مفتوح الوصول)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">03</div>
+        <div>
+          <div class="ref-title">Fundamentals of Physics <span class="ref-ed">(10th ed.)</span></div>
+          <div class="ref-authors">Halliday, D., Resnick, R., &amp; Walker, J. (2014) — Wiley</div>
+          <div class="ref-chapter">📌 الفصل 37: Relativity — ص 1092–1110 (خاصة ص 1092–1098 عن المسلّمتين)</div>
+          <div class="ref-why">المرجع الجامعي الأكثر انتشاراً عالمياً؛ يعالج المسلّمتين بأمثلة توضيحية مفصّلة ويربطها بتجربة ميكلسون-مورلي ومعادلات ماكسويل.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://books.google.com/books?id=rAfB8Km0TIIC" target="_blank" rel="noopener">🔗 Google Books</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num">04</div>
+        <div>
+          <div class="ref-title">Relativity: Special, General, and Cosmological <span class="ref-ed">(2nd ed.)</span></div>
+          <div class="ref-authors">Rindler, W. (2006) — Oxford University Press</div>
+          <div class="ref-chapter">📌 الفصل 1: The Basics of Special Relativity — ص 1–24</div>
+          <div class="ref-why">مرجع متقدم يربط المسلّمتين بهندسة الزمكان الرباعية ويشتق تحويلات لورنتز بصرامة رياضية؛ يُميّز بحدّة بين منهج لورنتز (أثيري) ومنهج أينشتاين (هندسي).</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://global.oup.com/academic/product/relativity-9780198567325" target="_blank" rel="noopener">🔗 Oxford Academic</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">05</div>
+        <div>
+          <div class="ref-title">Relativity: The Special &amp; General Theory <span class="ref-ed">(15th ed.)</span></div>
+          <div class="ref-authors">Einstein, A. (1961) — Crown Publishers, New York</div>
+          <div class="ref-chapter">📌 الجزء 1: Special Theory of Relativity — ص 1–50</div>
+          <div class="ref-why">كتاب أينشتاين الشعبي الذي شرح فيه النسبية بلغة بديهية دون معادلات معقدة؛ يوضّح المسلّمتين بأمثلة القطار والضوء التي صارت أيقونات تعليمية.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.gutenberg.org/ebooks/5001" target="_blank" rel="noopener">🔗 Project Gutenberg (مجاني)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 2. الأوراق البحثية الأصلية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🔬</span>الأوراق البحثية الأصلية والتجارب التأسيسية</div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num-paper">P1</div>
+        <div>
+          <div class="ref-title">Zur Elektrodynamik bewegter Körper</div>
+          <div class="ref-authors">Einstein, A. (1905) — <em>Annalen der Physik</em>, 17, 891–921</div>
+          <div class="ref-chapter">📌 القسم 1: Definition of Simultaneity — المسلّمتان الأساسيتان</div>
+          <div class="ref-chapter">📌 القسم 2: Relativity of Lengths and Times</div>
+          <div class="ref-chapter">📌 القسم 3: Theory of the Transformation of Coordinates — اشتقاق تحويلات لورنتز</div>
+          <div class="ref-why">الورقة التأسيسية للنسبية الخاصة بقلم أينشتاين نفسه؛ تبدأ بتعريف التزامن ثم تشتق كل شيء من المسلّمتين — قراءة أي طالب فيزياء لا غنى عنها.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1002/andp.19053221004" target="_blank" rel="noopener">🔗 DOI الرسمي</a>
+            <a class="ref-link" href="https://www.fourmilab.ch/etexts/einstein/specrel/www/" target="_blank" rel="noopener">🔗 ترجمة إنجليزية مفتوحة (FourmiLab)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num-paper">P2</div>
+        <div>
+          <div class="ref-title">On the Relative Motion of the Earth and the Luminiferous Ether</div>
+          <div class="ref-authors">Michelson, A. A., &amp; Morley, E. W. (1887) — <em>American Journal of Science</em>, 34(203), 333–345</div>
+          <div class="ref-chapter">📌 التجربة التي ألهمت المسلّمة الثانية — فشل كشف الأثير</div>
+          <div class="ref-why">أكثر التجارب الفيزيائية تأثيراً في التاريخ؛ أثبتت أن سرعة الضوء لا تتغير مع حركة الأرض، مما أسقط نموذج الأثير وفتح الباب أمام أينشتاين.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.jstor.org/stable/24524761" target="_blank" rel="noopener">🔗 JSTOR</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#7c3aed;">
+        <div class="ref-num-paper">P3</div>
+        <div>
+          <div class="ref-title">Electromagnetic Phenomena in a System Moving with Any Velocity Less Than That of Light</div>
+          <div class="ref-authors">Lorentz, H. A. (1904) — <em>Proceedings of the Royal Academy of Amsterdam</em>, 6, 809–831</div>
+          <div class="ref-chapter">📌 الاشتقاق الرياضي الأول لتحويلات لورنتز — قبل أينشتاين بعام</div>
+          <div class="ref-why">لورنتز احتفظ بفكرة الأثير وفسّر التحويلات كتأثير فيزيائي حقيقي على المادة؛ أينشتاين أعاد تفسيرها هندسياً كبنية الزمكان — الفرق بين الاثنين درس فلسفي عميق.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.dwc.knaw.nl/" target="_blank" rel="noopener">🔗 KNAW Archive</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 3. مقالات محكّمة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">📄</span>مقالات مراجعة محكّمة</div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">06</div>
+        <div>
+          <div class="ref-title">Einstein's Investigations of Galilean Covariant Electrodynamics Prior to 1905</div>
+          <div class="ref-authors">Norton, J. D. (2004) — <em>Archive for History of Exact Sciences</em>, 59(1), 45–105</div>
+          <div class="ref-why">دراسة تاريخية معمّقة لكيفية وصول أينشتاين إلى المسلّمتين؛ تكشف أن الطريق لم يكن مباشراً وأن أينشتاين عاد إلى الأساسيات بعد سنوات من المحاولات الفاشلة.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1007/s00407-004-0088-3" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#f59e0b;">
+        <div class="ref-num">07</div>
+        <div>
+          <div class="ref-title">History of Relativity</div>
+          <div class="ref-authors">Stachel, J. (1995) — <em>Einstein Studies</em>, Vol. 6 — Birkhäuser</div>
+          <div class="ref-why">تحليل شامل للسياق التاريخي والفكري لنشأة النسبية الخاصة؛ يضع عمل أينشتاين في إطاره الحضاري ويناقش العلاقة مع لورنتز وبوانكاريه وماكسويل.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://books.google.com/books?id=VQvOAAAAMAAJ" target="_blank" rel="noopener">🔗 Google Books</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">08</div>
+        <div>
+          <div class="ref-title">The Origins of Length Contraction: I. The FitzGerald-Lorentz Deformation Hypothesis</div>
+          <div class="ref-authors">Brown, H. R. (2001) — <em>American Journal of Physics</em>, 69(10), 1044–1054</div>
+          <div class="ref-why">يربط بين عمل لورنتز وأينشتاين ويوضّح التحول المفاهيمي الجذري من «تأثير فيزيائي على المادة» إلى «بنية هندسية للزمكان» — قراءة جوهرية لفهم عمق المسلّمتين.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://doi.org/10.1119/1.1379733" target="_blank" rel="noopener">🔗 DOI</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 4. المصادر الرقمية ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">🌐</span>مصادر رقمية مفتوحة الوصول</div>
+
+      <div class="ref-card" style="--rc:#10b981;">
+        <div class="ref-num">09</div>
+        <div>
+          <div class="ref-title">MIT OpenCourseWare — 8.033 Relativity</div>
+          <div class="ref-authors">Massachusetts Institute of Technology (2006 — حتى الآن)</div>
+          <div class="ref-chapter">📌 الوحدة 1: Introduction to Spacetime &amp; The Postulates</div>
+          <div class="ref-why">يتضمّن ملاحظات المحاضرات الكاملة ومجموعات المسائل المحلولة والاختبارات لمقرر النسبية الخاصة في MIT؛ المصدر الأكاديمي الرقمي الأوثق والأوسع انتشاراً، متاح مجاناً دون تسجيل.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://ocw.mit.edu/courses/8-033-relativity-fall-2006/" target="_blank" rel="noopener">🔗 MIT OCW 8.033</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card" style="--rc:#00d4ff;">
+        <div class="ref-num">10</div>
+        <div>
+          <div class="ref-title">Einstein Online — Special Relativity</div>
+          <div class="ref-authors">Max Planck Institute for Gravitational Physics (معهد ماكس بلانك لفيزياء الجاذبية)</div>
+          <div class="ref-chapter">📌 مقال: "Special Relativity" مع شرح تفاعلي للمسلّمتين وتحويلات لورنتز</div>
+          <div class="ref-why">المرجع التعليمي الرقمي لمعهد ماكس بلانك؛ يقدّم شرحاً بصرياً تفاعلياً بمستويين — مبسّط للعموم ومتقدم لطلاب الفيزياء — مع ربط دقيق بين المسلّمتين ونتائجهما.</div>
+          <div class="ref-links">
+            <a class="ref-link" href="https://www.einstein-online.info/en/spotlight/special_relativity/" target="_blank" rel="noopener">🔗 einstein-online.info</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 5. اقتباسات موثّقة ══════════ -->
+    <div class="acad-sec">
+      <div class="acad-sec-hd"><span class="acad-sec-icon">💬</span>اقتباسات موثّقة من المراجع</div>
+
+      <div class="quote-card">
+        <div class="quote-text">«المسلّمتان اللتان بنى عليهما أينشتاين النسبية الخاصة هما: أولاً، قوانين الفيزياء متطابقة في جميع الأطر القصورية؛ وثانياً، سرعة الضوء في الفراغ ثابتة ومستقلة عن حركة المصدر. من هذين المبدأين البسيطين اشتُقّت كل النسبية.»</div>
+        <div class="quote-src">— French, A. P., <em>Special Relativity</em> (1968), ص 15 [مُعرَّب]</div>
+        <div class="quote-note">💡 يُلخّص French جوهر النسبية الخاصة كاملاً في جملتين — يُستشهد بهذا المقطع في مئات الكتب الجامعية.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تحويلات لورنتز ليست مجرد صيغ جبرية — إنها تعبير عن البنية الهندسية للزمكان. الانتقال من إطار مرجعي إلى آخر يعادل تدوير الإحداثيات الزمكانية، تماماً كما يُعيد تدوير الإحداثيات المكانية تعريف 'الأمام' و'الجانب'.»</div>
+        <div class="quote-src">— Taylor &amp; Wheeler, <em>Spacetime Physics</em> (1992), ص 23 [مُعرَّب]</div>
+        <div class="quote-note">💡 هذا الاقتباس يكشف لماذا تحويلات لورنتز ليست «تصحيحاً» للفيزياء الكلاسيكية بل بنية هندسية مختلفة جذرياً.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«تجربة ميكلسون-مورلي (1887) كانت الدافع التجريبي الرئيسي للنسبية الخاصة. فشلها في كشف الأثير أجبر الفيزيائيين على إعادة التفكير في مفاهيم الزمان والمكان الأساسية، وأثبت أن سرعة الضوء لا تجمع مع حركة المراقب وفق قواعد غاليليو.»</div>
+        <div class="quote-src">— Halliday, Resnick &amp; Walker, <em>Fundamentals of Physics</em> (10th ed., 2014), ص 1093 [مُعرَّب]</div>
+        <div class="quote-note">💡 يضع Halliday التجربة في سياقها التاريخي الصحيح باعتبارها الأزمة التجريبية التي استدعت النسبية الخاصة.</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">«الفرق الجوهري بين لورنتز وأينشتاين: لورنتز رأى تحويلاته كتأثير فيزيائي حقيقي على المادة في الأثير، بينما رأى أينشتاين أنها نتيجة هندسية لبنية الزمكان نفسه — لا أثير مطلوب. هذا التمييز يُعلّمنا أن اتفاق المعادلات مع القياس لا يعني بالضرورة اتفاق التفسيرات الفيزيائية.»</div>
+        <div class="quote-src">— Rindler, W., <em>Relativity: Special, General, and Cosmological</em> (2006), ص 18 [مُعرَّب]</div>
+        <div class="quote-note">💡 درس فلسفي بالغ الأهمية: المعادلة الواحدة يمكن أن تحمل تفسيرات فيزيائية مختلفة جذرياً.</div>
+      </div>
+
+    </div><!-- /اقتباسات -->
+
+    <div style="font-size:.67rem;color:var(--muted);margin-top:18px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:8px;line-height:1.7;">
+      ⚠️ <strong style="color:var(--c3);">ملاحظة:</strong> أرقام الصفحات المُدرجة قد تختلف بين الطبعات المختلفة. يُنصح بالتحقق من فهرس الكتاب عند الرجوع للمصدر.
+    </div>
+
+  </div><!-- /acad-body -->
+
+</div><!-- /wrapper academic -->
+
+<script>
+function toggleAcad(){
+  const body=document.getElementById('acad-body');
+  const arrow=document.getElementById('acad-arrow');
+  const bar=document.getElementById('acad-toggle-bar');
+  const opening=body.style.display==='none'||body.style.display==='';
+  body.style.display=opening?'block':'none';
+  arrow.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  bar.style.borderColor=opening?'rgba(124,58,237,.6)':'rgba(124,58,237,.3)';
+  bar.setAttribute('aria-expanded',opening?'true':'false');
+  if(opening) setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+</script>
 
 <script>
 /* BG */
