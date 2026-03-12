@@ -3,403 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>النسبية الخاصة | SPECIAL SPECIAL·REL</title>
+<title>النسبية الخاصة | SPECIAL RELATIVITY</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-
 <style>
-:root {
-  --bg:    #020817;
-  --c1:    #00d4ff;
-  --c2:    #7c3aed;
-  --c3:    #f59e0b;
-  --c4:    #10b981;
-  --c5:    #ff4757;
-  --text:  #e2e8f0;
-  --muted: #64748b;
-  --card:  rgba(15,23,42,0.9);
-  --border:rgba(124,58,237,0.2);
+:root{
+  --bg:#020817;--text:#e2e8f0;--muted:#64748b;--card:rgba(15,23,42,.92);
+  --c2:#7c3aed;--c1:#00d4ff;--c3:#f59e0b;--c4:#10b981;--c5:#ff4757;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
-
 #bg-canvas{position:fixed;inset:0;z-index:0;}
-.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);background-size:50px 50px;}
-.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
+.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);
+  background-size:50px 50px;}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
 .corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
 .corner.tl{top:14px;left:14px;border-top:2px solid var(--c2);border-left:2px solid var(--c2);}
 .corner.tr{top:14px;right:14px;border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
 .corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
 .corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c4);border-right:2px solid var(--c4);}
-
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c2);letter-spacing:3px;text-shadow:0 0 10px rgba(124,58,237,.5);}
-.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 28px;background:rgba(2,8,23,.88);border-bottom:1px solid rgba(124,58,237,.15);backdrop-filter:blur(18px);}
+.logo{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:900;color:var(--c2);letter-spacing:3px;text-shadow:0 0 12px rgba(124,58,237,.6);}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;
+  border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:.2s;background:none;}
 .back-btn:hover{color:var(--c2);border-color:var(--c2);}
-.header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
-
-.wrapper{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
-
-.page-hero{text-align:center;margin-bottom:48px;animation:fadeUp .7s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.25);border-radius:100px;padding:5px 16px;font-size:.65rem;letter-spacing:3px;color:var(--c2);margin-bottom:20px;}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c2);animation:pulse 1.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page-hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
-.page-hero p{color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.8;}
-
-/* Subtypes tabs */
-.subtypes-row{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;animation:fadeUp .7s .1s ease both;}
-.subtype-tab{flex:1;min-width:160px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:center;transition:all .25s ease;backdrop-filter:blur(8px);position:relative;overflow:hidden;}
-.subtype-tab::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.08),transparent);opacity:0;transition:.3s;}
-.subtype-tab:hover::before{opacity:1;}
-.subtype-tab:hover{border-color:var(--c2);transform:translateY(-2px);}
-.subtype-tab.active{border-color:var(--c2);background:rgba(124,58,237,.1);box-shadow:0 0 24px rgba(124,58,237,.15);}
-.subtype-tab.active::before{opacity:1;}
-.tab-icon{font-size:1.4rem;margin-bottom:6px;}
-.tab-name{font-size:.82rem;font-weight:700;color:#f1f5f9;}
-.tab-en{font-size:.6rem;color:var(--muted);letter-spacing:1px;font-family:'Orbitron',sans-serif;margin-top:2px;}
-.tab-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--c2);transform:scaleX(0);transition:.3s;transform-origin:center;}
-.subtype-tab.active .tab-bar{transform:scaleX(1);}
-
-.solver-panel{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow:hidden;backdrop-filter:blur(12px);animation:fadeUp .7s .2s ease both;}
-.solver-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:14px;}
-.solver-icon{font-size:1.8rem;}
-.solver-title{font-weight:700;color:#f1f5f9;font-size:1.05rem;}
-.solver-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
-.solver-body{padding:24px;}
-
-.inputs-label{font-size:.7rem;letter-spacing:2px;color:var(--muted);font-family:'Orbitron',sans-serif;margin-bottom:14px;}
-.inputs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
-.input-group{display:flex;flex-direction:column;gap:6px;}
-.input-group label{font-size:.75rem;color:#94a3b8;}
-.input-group label span{color:var(--c2);font-size:.7rem;margin-right:4px;}
-.input-field{background:#020617;border:1.5px solid #1e293b;color:white;padding:12px 14px;border-radius:10px;outline:none;font-family:'Tajawal',sans-serif;font-size:.9rem;transition:.25s;}
-.input-field:focus{border-color:var(--c2);box-shadow:0 0 10px rgba(124,58,237,.25);}
-.input-field::placeholder{color:#334155;font-size:.8rem;}
-.solve-btn{width:100%;padding:16px;background:linear-gradient(90deg,var(--c2),var(--c1));color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;font-size:1rem;font-family:'Tajawal',sans-serif;letter-spacing:1px;transition:.3s ease;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;}
-.solve-btn:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,58,237,.25);}
-
-.result-section{margin-top:28px;display:none;animation:fadeUp .5s ease both;}
-.result-section.show{display:block;}
-.result-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.4),transparent);margin-bottom:24px;}
-
-.laws-section{margin-bottom:24px;}
-.laws-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--c2);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.laws-title::after{content:'';flex:1;height:1px;background:rgba(124,58,237,.25);}
-.law-card{background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.18);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;}
-.law-badge{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:2px;color:var(--c2);background:rgba(124,58,237,.12);padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.law-latex{flex:1;overflow-x:auto;direction:ltr;}
-.law-latex .katex{font-size:.95rem!important;}
-
-.steps-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--c4);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.steps-title::after{content:'';flex:1;height:1px;background:rgba(16,185,129,.2);}
-.step{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;}
-.step-num{font-family:'Orbitron',sans-serif;font-size:.65rem;color:var(--c4);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:6px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-label{font-size:.72rem;color:var(--muted);margin-bottom:6px;}
-.step-math{overflow-x:auto;direction:ltr;}
-.step-math .katex{font-size:.95rem!important;}
-
-.result-box{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.35);border-radius:12px;padding:20px 24px;margin-top:16px;box-shadow:0 0 20px rgba(124,58,237,.08);}
-.result-box-label{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;color:var(--c2);margin-bottom:12px;}
-.result-values{display:flex;flex-wrap:wrap;gap:12px;}
-.result-val{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:8px;padding:10px 16px;}
-.result-val-name{font-size:.65rem;color:var(--muted);margin-bottom:4px;}
-.result-val-num{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--c2);font-weight:700;}
-.error-box{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.3);border-radius:10px;padding:14px 16px;color:var(--c5);font-size:.82rem;margin-top:16px;}
-
-@media(max-width:768px){
-  .subtypes-row{flex-direction:column;}
-  .inputs-grid{grid-template-columns:1fr;}
-  .result-values{flex-direction:column;}
-}
-@media(max-width:480px){
-  header{padding:10px 14px;}
-  .wrapper{padding:24px 14px 60px;}
-}
+.wrapper{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:48px 24px 100px;}
+.hero{text-align:center;margin-bottom:64px;animation:fadeUp .7s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(124,58,237,.3);
+  border-radius:100px;padding:5px 18px;font-size:.62rem;letter-spacing:3px;color:var(--c2);
+  background:rgba(124,58,237,.06);margin-bottom:22px;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c2);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;line-height:1.1;margin-bottom:16px;
+  background:linear-gradient(135deg,#fff 20%,var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{color:var(--muted);font-size:.95rem;max-width:540px;margin:0 auto;line-height:1.9;}
+.sec-label{font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:3px;color:var(--muted);
+  margin-bottom:22px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.nav-card{position:relative;background:var(--card);border:1px solid var(--cc-border,rgba(255,255,255,.07));
+  border-radius:20px;padding:28px 22px 22px;text-decoration:none;display:flex;flex-direction:column;
+  backdrop-filter:blur(14px);overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;
+  animation:fadeUp .55s ease both;}
+.nav-card:nth-child(1){animation-delay:.04s;}.nav-card:nth-child(2){animation-delay:.09s;}
+.nav-card:nth-child(3){animation-delay:.14s;}.nav-card:nth-child(4){animation-delay:.19s;}
+.nav-card:nth-child(5){animation-delay:.24s;}.nav-card:nth-child(6){animation-delay:.29s;}
+.nav-card:nth-child(7){animation-delay:.34s;}
+.nav-card::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 25%,var(--cc-glow,rgba(124,58,237,.12)) 0%,transparent 65%);
+  opacity:0;transition:.35s;pointer-events:none;}
+.nav-card:hover::before{opacity:1;}
+.nav-card:hover{transform:translateY(-7px);border-color:var(--cc-acc,var(--c2));
+  box-shadow:0 18px 50px var(--cc-shadow,rgba(124,58,237,.18));}
+.card-bar{position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--cc-acc,var(--c2)),transparent);
+  transform:scaleX(0);transition:.35s;transform-origin:center;}
+.nav-card:hover .card-bar{transform:scaleX(1);}
+.card-num{position:absolute;top:18px;left:20px;font-family:'Orbitron',sans-serif;
+  font-size:.5rem;letter-spacing:2px;color:var(--cc-acc,var(--c2));
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:3px 8px;border-radius:100px;}
+.card-icon{font-size:2.4rem;margin-bottom:16px;filter:drop-shadow(0 0 14px var(--cc-acc,var(--c2)));}
+.card-en{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:2px;color:var(--cc-acc,var(--c2));margin-bottom:7px;}
+.card-title{font-size:1.05rem;font-weight:900;color:#f1f5f9;margin-bottom:9px;line-height:1.35;}
+.card-desc{font-size:.78rem;color:var(--muted);line-height:1.8;flex:1;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);}
+.chips{display:flex;flex-wrap:wrap;gap:5px;}
+.chip{font-size:.58rem;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--muted);}
+.card-arrow{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--cc-acc,var(--c2));opacity:0;transform:translateX(7px);transition:.25s;}
+.nav-card:hover .card-arrow{opacity:1;transform:none;}
+.t1{--cc-acc:#7c3aed;--cc-glow:rgba(124,58,237,.14);--cc-shadow:rgba(124,58,237,.2);--cc-border:rgba(124,58,237,.14);}
+.t2{--cc-acc:#00d4ff;--cc-glow:rgba(0,212,255,.12);--cc-shadow:rgba(0,212,255,.18);--cc-border:rgba(0,212,255,.14);}
+.t3{--cc-acc:#10b981;--cc-glow:rgba(16,185,129,.12);--cc-shadow:rgba(16,185,129,.18);--cc-border:rgba(16,185,129,.14);}
+.t4{--cc-acc:#f59e0b;--cc-glow:rgba(245,158,11,.12);--cc-shadow:rgba(245,158,11,.18);--cc-border:rgba(245,158,11,.14);}
+.t5{--cc-acc:#ff4757;--cc-glow:rgba(255,71,87,.12);--cc-shadow:rgba(255,71,87,.18);--cc-border:rgba(255,71,87,.14);}
+.t6{--cc-acc:#06b6d4;--cc-glow:rgba(6,182,212,.12);--cc-shadow:rgba(6,182,212,.18);--cc-border:rgba(6,182,212,.14);}
+.t7{--cc-acc:#a855f7;--cc-glow:rgba(168,85,247,.13);--cc-shadow:rgba(168,85,247,.2);--cc-border:rgba(168,85,247,.14);}
+@media(max-width:900px){.cards-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.cards-grid{grid-template-columns:1fr;}header{padding:10px 14px;}.wrapper{padding:28px 14px 80px;}}
 </style>
 </head>
 <body>
-
 <canvas id="bg-canvas"></canvas>
-<div class="grid-overlay"></div>
-<div class="scanlines"></div>
+<div class="grid-overlay"></div><div class="scanlines"></div>
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
-
 <header>
   <a class="back-btn" href="relativity.html">← رجوع</a>
-  <div class="header-title">النسبية الخاصة</div>
+  <div style="font-size:.85rem;letter-spacing:1px;">النسبية الخاصة</div>
   <div class="logo">SPECIAL·REL</div>
 </header>
-
 <div class="wrapper">
-
-  <section class="page-hero">
-    <div class="page-badge"><div class="badge-dot"></div>النسبية الخاصة · SPECIAL SPECIAL·REL</div>
-    <h1>🌌 النسبية الخاصة</h1>
-    <p>تمدد الزمن، انكماش الطول، تكافؤ الكتلة والطاقة — آينشتاين 1905</p>
+  <section class="hero">
+    <div class="hero-badge"><div class="badge-dot"></div>النسبية الخاصة · SPECIAL RELATIVITY · 1905</div>
+    <h1>⚡ النسبية الخاصة</h1>
+    <p>آينشتاين 1905 — سبعة مواضيع أكاديمية، كل موضوع بحاسبة وشرح ومحاكاة تفاعلية</p>
   </section>
-
-  <!-- Subtypes -->
-  <div class="subtypes-row" id="subtypes-row">
-    <div class="subtype-tab active" id="tab-rel_time" onclick="selectSubtype('rel_time')">
-      <div class="tab-icon">⏱️</div>
-      <div class="tab-name">تمدد الزمن</div>
-      <div class="tab-en">TIME DILATION</div>
-      <div class="tab-bar"></div>
-    </div>
-    <div class="subtype-tab" id="tab-rel_length" onclick="selectSubtype('rel_length')">
-      <div class="tab-icon">📏</div>
-      <div class="tab-name">انكماش الطول</div>
-      <div class="tab-en">LENGTH CONTRACTION</div>
-      <div class="tab-bar"></div>
-    </div>
-    <div class="subtype-tab" id="tab-rel_energy" onclick="selectSubtype('rel_energy')">
-      <div class="tab-icon">⚡</div>
-      <div class="tab-name">E = mc²</div>
-      <div class="tab-en">MASS-ENERGY</div>
-      <div class="tab-bar"></div>
-    </div>
-  </div>
-
-  <!-- Solver Panel -->
-  <div class="solver-panel">
-    <div class="solver-header" id="solver-header">
-      <div class="solver-icon">⏱️</div>
-      <div>
-        <div class="solver-title" id="solver-title">تمدد الزمن</div>
-        <div class="solver-desc" id="solver-desc">احسب الزمن المتمدد وعامل لورنتز γ</div>
+  <div class="sec-label">// اختر الموضوع — 07 مواضيع</div>
+  <div class="cards-grid">
+    <a class="nav-card t1" href="special_relativity/sr_postulates.html">
+      <div class="card-bar"></div><div class="card-num">01</div>
+      <div class="card-icon">📜</div>
+      <div class="card-en">POSTULATES & LORENTZ</div>
+      <div class="card-title">المسلّمات وتحويلات لورنتز</div>
+      <div class="card-desc">مسلّمتا آينشتاين، فشل تحويلات غاليليو، واشتقاق تحويلات لورنتز بين الأطر المرجعية القصورية</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">مسلّمتان</span><span class="chip">لورنتز</span><span class="chip">غاليليو</span></div>
+        <span class="card-arrow">← ابدأ</span>
       </div>
-    </div>
-    <div class="solver-body">
-      <div class="inputs-label">// أدخل المعطيات المعروفة</div>
-      <div id="inputs-area"></div>
-      <button class="solve-btn" onclick="triggerSolve()">
-        <span>🌌</span> احسب وأظهر الحل الكامل
-      </button>
-      <div class="result-section" id="result-section">
-        <div class="result-divider"></div>
-        <div id="result-content"></div>
+    </a>
+    <a class="nav-card t2" href="special_relativity/sr_timedilation.html">
+      <div class="card-bar"></div><div class="card-num">02</div>
+      <div class="card-icon">⏱️</div>
+      <div class="card-en">TIME DILATION</div>
+      <div class="card-title">تمدد الزمن</div>
+      <div class="card-desc">الساعة المتحركة تدق أبطأ — تمدد الزمن وعامل لورنتز γ مع محاكاة الساعة الضوئية المتحركة</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">عامل γ</span><span class="chip">ساعة ضوئية</span><span class="chip">محاكاة</span></div>
+        <span class="card-arrow">← ابدأ</span>
       </div>
-    </div>
+    </a>
+    <a class="nav-card t3" href="special_relativity/sr_length.html">
+      <div class="card-bar"></div><div class="card-num">03</div>
+      <div class="card-icon">📏</div>
+      <div class="card-en">LENGTH CONTRACTION</div>
+      <div class="card-title">انكماش الطول</div>
+      <div class="card-desc">الجسم المتحرك يبدو أقصر في اتجاه حركته — مع محاكاة مرئية مقارنة بين الإطارين</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">L = L₀/γ</span><span class="chip">محاكاة مقارنة</span></div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+    <a class="nav-card t4" href="special_relativity/sr_velocity.html">
+      <div class="card-bar"></div><div class="card-num">04</div>
+      <div class="card-icon">🚀</div>
+      <div class="card-en">VELOCITY ADDITION</div>
+      <div class="card-title">جمع السرعات النسبي</div>
+      <div class="card-desc">لماذا لا تتجاوز سرعة الضوء؟ قانون آينشتاين لجمع السرعات مع مقارنة نيوتن والنسبية</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">جمع السرعات</span><span class="chip">c كحد أقصى</span></div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+    <a class="nav-card t5" href="special_relativity/sr_energy.html">
+      <div class="card-bar"></div><div class="card-num">05</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-en">ENERGY & MOMENTUM</div>
+      <div class="card-title">الطاقة والزخم النسبي</div>
+      <div class="card-desc">E=mc²، الزخم النسبي، طاقة الحركة النسبية، والعلاقة الذهبية E²=(pc)²+(m₀c²)²</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">E=mc²</span><span class="chip">زخم نسبي</span><span class="chip">E²=p²c²+m²c⁴</span></div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+    <a class="nav-card t6" href="special_relativity/sr_spacetime.html">
+      <div class="card-bar"></div><div class="card-num">06</div>
+      <div class="card-icon">🌐</div>
+      <div class="card-en">SPACETIME & MINKOWSKI</div>
+      <div class="card-title">الزمكان ومخططات مينكوفسكي</div>
+      <div class="card-desc">الفاصل الزمكاني الثابت، المخروط الضوئي، المتجهات الرباعية مع رسم مينكوفسكي تفاعلي</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">فاصل زمكاني</span><span class="chip">مينكوفسكي</span><span class="chip">مخروط ضوئي</span></div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
+    <a class="nav-card t7" href="special_relativity/sr_paradoxes.html">
+      <div class="card-bar"></div><div class="card-num">07</div>
+      <div class="card-icon">🔄</div>
+      <div class="card-en">PARADOXES</div>
+      <div class="card-title">المفارقات النسبية</div>
+      <div class="card-desc">مفارقة التوأم، مفارقة العمود والحظيرة، والتزامن النسبي مع محاكاة بصرية تفاعلية</div>
+      <div class="card-footer">
+        <div class="chips"><span class="chip">مفارقة التوأم</span><span class="chip">التزامن</span><span class="chip">العمود والحظيرة</span></div>
+        <span class="card-arrow">← ابدأ</span>
+      </div>
+    </a>
   </div>
-
 </div>
-
 <script>
-/* ══ CANVAS BG ══ */
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, orbs;
-function initCanvas() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  orbs = [
-    {x:W*.15, y:H*.3,  r:350, color:'rgba(124,58,237,',  speed:.0003,  phase:0},
-    {x:W*.85, y:H*.6,  r:400, color:'rgba(0,212,255,',   speed:.0004,  phase:2},
-    {x:W*.5,  y:H*.9,  r:280, color:'rgba(124,58,237,',  speed:.00035, phase:4},
+const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+let W,H,orbs;
+function init(){
+  W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
+  orbs=[
+    {x:W*.1, y:H*.25,r:350,color:'rgba(124,58,237,',speed:.00026,phase:0},
+    {x:W*.9, y:H*.5, r:400,color:'rgba(0,212,255,', speed:.00032,phase:2},
+    {x:W*.5, y:H*.85,r:280,color:'rgba(124,58,237,',speed:.0003, phase:4},
+    {x:W*.3, y:H*.7, r:220,color:'rgba(16,185,129,',speed:.00022,phase:1},
+    {x:W*.75,y:H*.2, r:200,color:'rgba(245,158,11,',speed:.00028,phase:3},
   ];
 }
-function drawCanvas() {
-  ctx.clearRect(0,0,W,H); ctx.fillStyle='#020817'; ctx.fillRect(0,0,W,H);
-  for (const o of orbs) {
-    o.phase += o.speed;
-    const ox = o.x + Math.sin(o.phase)*70, oy = o.y + Math.cos(o.phase*.7)*50;
-    const g = ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
-    g.addColorStop(0, o.color+'0.07)'); g.addColorStop(.5, o.color+'0.025)'); g.addColorStop(1, o.color+'0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox,oy,o.r,0,Math.PI*2); ctx.fill();
+function draw(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#020817';ctx.fillRect(0,0,W,H);
+  for(const o of orbs){
+    o.phase+=o.speed;
+    const ox=o.x+Math.sin(o.phase)*60,oy=o.y+Math.cos(o.phase*.7)*44;
+    const g=ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
+    g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.022)');g.addColorStop(1,o.color+'0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(ox,oy,o.r,0,Math.PI*2);ctx.fill();
   }
-  requestAnimationFrame(drawCanvas);
+  requestAnimationFrame(draw);
 }
-window.addEventListener('resize', initCanvas);
-initCanvas(); requestAnimationFrame(drawCanvas);
-
-/* ══ KATEX ══ */
-function K(latex) {
-  const el = document.createElement('span');
-  try { katex.render(latex, el, {throwOnError:false, displayMode:false, strict:false}); }
-  catch(e) { el.textContent = latex; }
-  return el.outerHTML;
-}
-
-/* ══ CONFIG ══ */
-const SUBTYPES = {
-  'rel_time': {
-    icon: '⏱️',
-    title: 'تمدد الزمن',
-    desc: 'احسب الزمن المتمدد وعامل لورنتز γ',
-    inputs: [
-      {id:'t0', label:'الزمن الصحيح t₀', unit:'s',   placeholder:'مثال: 1'},
-      {id:'v',  label:'سرعة الإطار v',    unit:'m/s', placeholder:'مثال: 2.4e8'},
-    ]
-  },
-  'rel_length': {
-    icon: '📏',
-    title: 'انكماش الطول',
-    desc: 'احسب الطول المنكمش للجسم المتحرك',
-    inputs: [
-      {id:'L0', label:'الطول الصحيح L₀', unit:'m',   placeholder:'مثال: 100'},
-      {id:'v',  label:'سرعة الإطار v',    unit:'m/s', placeholder:'مثال: 2.4e8'},
-    ]
-  },
-  'rel_energy': {
-    icon: '⚡',
-    title: 'E = mc²',
-    desc: 'طاقة السكون، الطاقة الكلية والطاقة الحركية النسبية',
-    inputs: [
-      {id:'m', label:'الكتلة الساكنة m₀', unit:'kg',  placeholder:'مثال: 1e-27 (بروتون)'},
-      {id:'v', label:'سرعة الجسيم v',      unit:'m/s', placeholder:'مثال: 0 للطاقة الساكنة'},
-    ]
-  }
-};
-
-let currentSub = 'rel_time';
-
-/* ══ SELECT SUBTYPE ══ */
-function selectSubtype(sub) {
-  currentSub = sub;
-  document.querySelectorAll('.subtype-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+sub).classList.add('active');
-
-  const cfg = SUBTYPES[sub];
-  document.getElementById('solver-header').querySelector('.solver-icon').textContent = cfg.icon;
-  document.getElementById('solver-title').textContent = cfg.title;
-  document.getElementById('solver-desc').textContent  = cfg.desc;
-
-  buildInputs(sub);
-  const res = document.getElementById('result-section');
-  res.classList.remove('show');
-}
-
-function buildInputs(sub) {
-  const inputs = SUBTYPES[sub].inputs;
-  let html = '<div class="inputs-grid">';
-  for (const inp of inputs) {
-    html += `<div class="input-group">
-      <label><span>[${inp.unit}]</span>${inp.label}</label>
-      <input class="input-field" type="text" id="inp-${inp.id}" placeholder="${inp.placeholder}" autocomplete="off">
-    </div>`;
-  }
-  html += '</div>';
-  document.getElementById('inputs-area').innerHTML = html;
-}
-
-function getVal(key) {
-  const el = document.getElementById('inp-'+key);
-  if (!el) return null;
-  const v = el.value.trim();
-  if (v === '') return null;
-  return parseFloat(v.replace(/e/gi,'e'));
-}
-
-/* ══ HELPERS ══ */
-function fmt(n, d=4) {
-  if (n===null||n===undefined||isNaN(n)) return '؟';
-  if (!isFinite(n)) return n>0?'∞':'-∞';
-  if (Math.abs(n)>=1e6||(Math.abs(n)<1e-3&&n!==0)) return n.toExponential(3);
-  return parseFloat(n.toFixed(d)).toString();
-}
-function lawCard(badge, latex) {
-  return `<div class="law-card"><span class="law-badge">${badge}</span><div class="law-latex">${K(latex)}</div></div>`;
-}
-function step(num, label, latex, note='') {
-  return `<div class="step"><div class="step-num">${String(num).padStart(2,'0')}</div><div><div class="step-label">${label}</div><div class="step-math">${K(latex)}</div>${note?`<div style="font-size:.7rem;color:var(--c3);margin-top:6px;font-style:italic">${note}</div>`:''}</div></div>`;
-}
-function resultBox(values) {
-  const html = values.map(v=>`<div class="result-val"><div class="result-val-name">${v.name}</div><div class="result-val-num">${v.val} ${v.unit||''}</div></div>`).join('');
-  return `<div class="result-box"><div class="result-box-label">// النتائج النهائية</div><div class="result-values">${html}</div></div>`;
-}
-function errorBox(msg) {
-  return `<div class="error-box">⚠️ ${msg}</div>`;
-}
-function lawsSection(cards) {
-  return `<div class="laws-section"><div class="laws-title">القوانين المستخدمة</div>${cards}</div>`;
-}
-function stepsSection(steps) {
-  return `<div><div class="steps-title">خطوات الحل</div>${steps}</div>`;
-}
-
-/* ══ SOLVER ══ */
-function solve() {
-  const c = 3e8;
-  const sub = currentSub;
-
-  if (sub === 'rel_time') {
-    const t0 = getVal('t0'), v = getVal('v');
-    if (!t0 || !v) return errorBox('أدخل t₀ والسرعة');
-    if (v >= c)   return errorBox('السرعة يجب أن تكون أقل من سرعة الضوء');
-    const gamma = 1/Math.sqrt(1-(v/c)**2), t = gamma*t0;
-    return lawsSection(
-      lawCard('عامل لورنتز', '\\gamma=\\frac{1}{\\sqrt{1-v^2/c^2}}') +
-      lawCard('تمدد الزمن',  't=\\gamma t_0')
-    ) + stepsSection(
-      step(1,'المعطيات',      `t_0=${t0}\\,s,\\;v=${fmt(v)}\\,m/s`) +
-      step(2,'عامل لورنتز',   `\\gamma=\\frac{1}{\\sqrt{1-(${fmt(v)}/3\\times10^8)^2}}=${fmt(gamma,5)}`) +
-      step(3,'الزمن المتمدد', `t=\\gamma t_0=${fmt(gamma,4)}\\times${t0}=${fmt(t,4)}\\,s`)
-    ) + resultBox([
-      {name:'γ عامل لورنتز',   val:fmt(gamma,5)},
-      {name:'الزمن المتمدد t', val:fmt(t,4), unit:'s'}
-    ]);
-  }
-
-  if (sub === 'rel_length') {
-    const L0 = getVal('L0'), v = getVal('v');
-    if (!L0 || !v) return errorBox('أدخل L₀ والسرعة');
-    if (v >= c)    return errorBox('السرعة يجب أن تكون أقل من سرعة الضوء');
-    const gamma = 1/Math.sqrt(1-(v/c)**2), L = L0/gamma;
-    return lawsSection(
-      lawCard('انكماش الطول', 'L=\\frac{L_0}{\\gamma}=L_0\\sqrt{1-v^2/c^2}')
-    ) + stepsSection(
-      step(1,'المعطيات',       `L_0=${L0}\\,m,\\;v=${fmt(v)}\\,m/s`) +
-      step(2,'γ',               `\\gamma=${fmt(gamma,5)}`) +
-      step(3,'الطول المنكمش',  `L=\\frac{${L0}}{${fmt(gamma,4)}}=${fmt(L,4)}\\,m`)
-    ) + resultBox([
-      {name:'γ',                val:fmt(gamma,5)},
-      {name:'الطول المنكمش L', val:fmt(L,4), unit:'m'}
-    ]);
-  }
-
-  // rel_energy — E=mc²
-  const m = getVal('m'), v = getVal('v') ?? 0;
-  if (!m) return errorBox('أدخل الكتلة الساكنة');
-  if (v >= c) return errorBox('السرعة يجب أن تكون أقل من سرعة الضوء');
-  const E0 = m*c*c;
-  let extraLaws = '', extraSteps = '', extraResults = [];
-  if (v > 0 && v < c) {
-    const gamma = 1/Math.sqrt(1-(v/c)**2);
-    const E_total = gamma*m*c*c;
-    const KE = E_total - E0;
-    extraLaws   = lawCard('الطاقة الكلية', 'E=\\gamma m_0c^2');
-    extraSteps  = step(3,'عامل لورنتز',    `\\gamma=${fmt(gamma,5)}`) +
-                  step(4,'الطاقة الكلية',  `E=\\gamma m_0c^2=${fmt(E_total,4)}\\,J`) +
-                  step(5,'الطاقة الحركية', `KE=E-E_0=${fmt(KE,4)}\\,J`);
-    extraResults = [{name:'E الطاقة الكلية',   val:fmt(E_total,4), unit:'J'},
-                    {name:'KE الطاقة الحركية', val:fmt(KE,4),      unit:'J'}];
-  }
-  return lawsSection(
-    lawCard('طاقة السكون', 'E_0=m_0c^2') + extraLaws
-  ) + stepsSection(
-    step(1,'المعطيات',     `m_0=${fmt(m)}\\,kg`) +
-    step(2,'طاقة السكون', `E_0=${fmt(m)}\\times(3\\times10^8)^2=${fmt(E0,4)}\\,J`) +
-    extraSteps
-  ) + resultBox([
-    {name:'E₀ طاقة السكون', val:fmt(E0,4), unit:'J'},
-    ...extraResults
-  ]);
-}
-
-function triggerSolve() {
-  const result = solve();
-  document.getElementById('result-content').innerHTML = result;
-  const resEl = document.getElementById('result-section');
-  resEl.classList.add('show');
-  resEl.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-/* ══ INIT ══ */
-selectSubtype('rel_time');
+window.addEventListener('resize',init);init();requestAnimationFrame(draw);
 </script>
 </body>
 </html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>انكماش الطول | SR-03</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{--bg:#020817;--acc:#10b981;--acc2:#7c3aed;--c1:#00d4ff;--c3:#f59e0b;--c5:#ff4757;--text:#e2e8f0;--muted:#64748b;--card:rgba(15,23,42,.92);--border:rgba(16,185,129,.18);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
+#bg-canvas{position:fixed;inset:0;z-index:0;}
+.go{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(16,185,129,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.025) 1px,transparent 1px);background-size:50px 50px;}
+.sc{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
+.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
+.corner.tl{top:14px;left:14px;border-top:2px solid var(--acc);border-left:2px solid var(--acc);}
+.corner.tr{top:14px;right:14px;border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
+.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
+.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--acc2);border-right:2px solid var(--acc2);}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(18px);}
+.logo{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:900;color:var(--acc);letter-spacing:3px;text-shadow:0 0 12px rgba(16,185,129,.5);}
+.back-btn{color:var(--muted);font-size:.8rem;text-decoration:none;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:.2s;background:none;}
+.back-btn:hover{color:var(--acc);border-color:var(--acc);}
+.wrap{position:relative;z-index:5;max-width:960px;margin:0 auto;padding:40px 24px 80px;}
+.hero{text-align:center;margin-bottom:40px;animation:up .7s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(16,185,129,.3);border-radius:100px;padding:5px 16px;font-size:.63rem;letter-spacing:3px;color:var(--acc);background:rgba(16,185,129,.06);margin-bottom:18px;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+h1{font-size:clamp(1.7rem,4vw,2.9rem);font-weight:900;background:linear-gradient(135deg,#fff 25%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;}
+.sub{color:var(--muted);font-size:.9rem;max-width:520px;margin:0 auto;line-height:1.8;}
+.sec{font-family:'Orbitron',sans-serif;font-size:.56rem;letter-spacing:3px;color:var(--muted);margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.sec::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+.concept{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;backdrop-filter:blur(12px);margin-bottom:18px;position:relative;overflow:hidden;}
+.concept::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.ct{font-size:.95rem;font-weight:800;color:#f1f5f9;margin-bottom:8px;}
+.cd{font-size:.82rem;color:var(--muted);line-height:1.85;}
+.ceq{margin-top:14px;direction:ltr;overflow-x:auto;}
+.calc{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;backdrop-filter:blur(12px);margin-bottom:24px;}
+.ch{padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;}
+.ci{font-size:1.4rem;}.ctt{font-weight:700;font-size:.95rem;color:#f1f5f9;}
+.cb{padding:22px;}
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-bottom:14px;}
+.igrp{display:flex;flex-direction:column;gap:5px;}
+.igrp label{font-size:.72rem;color:#94a3b8;}.igrp label span{color:var(--acc);font-size:.68rem;margin-right:3px;}
+.ifld{background:#020617;border:1.5px solid #1e293b;color:#fff;padding:11px 13px;border-radius:9px;outline:none;font-family:'Tajawal',sans-serif;font-size:.9rem;transition:.25s;width:100%;}
+.ifld:focus{border-color:var(--acc);box-shadow:0 0 10px rgba(16,185,129,.18);}
+.ifld::placeholder{color:#334155;font-size:.78rem;}
+.sbtn{width:100%;padding:14px;background:linear-gradient(90deg,#064e3b,var(--acc));color:#fff;border:none;border-radius:11px;font-weight:800;cursor:pointer;font-size:.95rem;font-family:'Tajawal',sans-serif;letter-spacing:1px;transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.sbtn:hover{opacity:.88;transform:translateY(-2px);}
+.res{margin-top:20px;display:none;animation:up .4s ease both;}.res.show{display:block;}
+.rdiv{height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.3),transparent);margin-bottom:18px;}
+.lc{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.14);border-radius:9px;padding:10px 14px;margin-bottom:7px;display:flex;align-items:center;gap:12px;}
+.lb{font-family:'Orbitron',sans-serif;font-size:.47rem;letter-spacing:2px;color:var(--acc);background:rgba(16,185,129,.1);padding:3px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
+.ll{flex:1;overflow-x:auto;direction:ltr;}.ll .katex{font-size:.9rem!important;}
+.lt,.st{font-family:'Orbitron',sans-serif;font-size:.56rem;letter-spacing:3px;margin-bottom:11px;display:flex;align-items:center;gap:8px;}
+.lt{color:var(--acc);}.lt::after,.st::after{content:'';flex:1;height:1px;}
+.lt::after{background:rgba(16,185,129,.2);}
+.st{color:var(--c1);}.st::after{background:rgba(0,212,255,.18);}
+.step{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 14px;margin-bottom:7px;display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;}
+.sn{font-family:'Orbitron',sans-serif;font-size:.6rem;color:var(--c1);background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);border-radius:6px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sl{font-size:.68rem;color:var(--muted);margin-bottom:5px;}.sm{overflow-x:auto;direction:ltr;}.sm .katex{font-size:.88rem!important;}
+.snt{font-size:.67rem;color:var(--c3);margin-top:4px;font-style:italic;}
+.rb{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.3);border-radius:11px;padding:16px 20px;margin-top:12px;}
+.rbl{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:3px;color:var(--acc);margin-bottom:9px;}
+.rvs{display:flex;flex-wrap:wrap;gap:9px;}
+.rv{background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 13px;}
+.rvn{font-size:.6rem;color:var(--muted);margin-bottom:3px;}
+.rvv{font-family:'Share Tech Mono',monospace;font-size:1.05rem;color:var(--acc);font-weight:700;}
+.err{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.28);border-radius:9px;padding:12px 14px;color:var(--c5);font-size:.8rem;margin-top:12px;}
+.sim{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;backdrop-filter:blur(12px);}
+.sh{padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.stt{font-weight:700;font-size:.95rem;color:#f1f5f9;}
+.sbody{padding:22px;}
+canvas#sc{width:100%;border-radius:10px;background:#000d1a;display:block;}
+.ctrl{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+.cl{font-size:.74rem;color:var(--muted);}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;}
+.cv{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--acc);min-width:52px;}
+.sb2{padding:8px 16px;border:1px solid var(--acc);border-radius:8px;background:rgba(16,185,129,.08);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.sb2:hover{background:rgba(16,185,129,.22);}
+@media(max-width:600px){header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas><div class="go"></div><div class="sc-overlay"></div>
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<header>
+  <a class="back-btn" href="special_relativity.html">← رجوع</a>
+  <div style="font-size:.82rem;">انكماش الطول</div>
+  <div class="logo">SR · 03</div>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <div class="badge"><div class="dot"></div>الموضوع الثالث · LENGTH CONTRACTION</div>
+    <h1>📏 انكماش الطول</h1>
+    <p class="sub">الجسم المتحرك يبدو أقصر في اتجاه حركته — ظاهرة حقيقية وليست وهمية</p>
+  </section>
+
+  <div class="sec">// المفهوم</div>
+  <div class="concept">
+    <div class="ct">انكماش الطول — تأثير حقيقي</div>
+    <div class="cd">عندما يتحرك جسم بسرعة v قريبة من سرعة الضوء، يُقاس طوله في اتجاه الحركة أصغر من طوله الحقيقي (في إطاره الساكن). هذا ليس وهماً بصرياً — بل نتيجة مباشرة لثبات سرعة الضوء ونسبية التزامن.</div>
+    <div class="ceq" id="main-eq"></div>
+  </div>
+  <div class="concept">
+    <div class="ct">ملاحظات جوهرية</div>
+    <div class="cd">
+      • الانكماش فقط في اتجاه الحركة — الأبعاد العمودية لا تتغير<br>
+      • L₀ هو الطول الصحيح (في إطار الجسم الساكن) — دائماً هو الأكبر<br>
+      • عند v→c يتجه L→0، وعند v=0 يكون L=L₀
+    </div>
+    <div class="ceq" id="gamma-eq"></div>
+  </div>
+
+  <div class="sec">// حاسبة انكماش الطول</div>
+  <div class="calc">
+    <div class="ch"><div class="ci">📐</div><div class="ctt">احسب الطول المنكمش L</div></div>
+    <div class="cb">
+      <div class="ig">
+        <div class="igrp"><label><span>[m]</span>الطول الصحيح L₀</label><input class="ifld" id="L0" placeholder="مثال: 100" autocomplete="off"></div>
+        <div class="igrp"><label><span>[xc أو m/s]</span>السرعة v</label><input class="ifld" id="v" placeholder="مثال: 0.8c أو 2.4e8" autocomplete="off"></div>
+      </div>
+      <button class="sbtn" onclick="calc()">📏 احسب الانكماش</button>
+      <div class="res" id="res"><div class="rdiv"></div><div id="rc"></div></div>
+    </div>
+  </div>
+
+  <div class="sec">// محاكاة الانكماش المرئي</div>
+  <div class="sim">
+    <div class="sh">
+      <div class="stt">🚀 مقارنة الطول — ساكن vs متحرك</div>
+      <button class="sb2" id="tog" onclick="toggle()">▶ تشغيل</button>
+    </div>
+    <div class="sbody">
+      <canvas id="sc" height="240"></canvas>
+      <div class="ctrl">
+        <span class="cl">v/c :</span>
+        <input type="range" id="sv" min="1" max="98" value="70" oninput="onSlide()">
+        <span class="cv" id="sv-val">0.70c</span>
+        <span class="cl" style="margin-right:8px">L/L₀ = <span id="ratio-disp" style="color:var(--acc);font-family:'Share Tech Mono',monospace">0.714</span></span>
+      </div>
+      <div style="font-size:.73rem;color:var(--muted);margin-top:10px;line-height:1.7;">
+        🟢 المستطيل الأخضر = طول صحيح L₀ (ساكن) &nbsp;|&nbsp; 🟡 المستطيل الأصفر = طول منكمش L (متحرك)
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* BG */
+const bgC=document.getElementById('bg-canvas'),bgX=bgC.getContext('2d');let bW,bH,orbs;
+function ib(){bW=bgC.width=innerWidth;bH=bgC.height=innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(16,185,129,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(124,58,237,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(16,185,129,',s:.0003,p:4}];}
+function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(db);}
+addEventListener('resize',ib);ib();requestAnimationFrame(db);
+function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('main-eq').innerHTML=K('L=\\dfrac{L_0}{\\gamma}=L_0\\sqrt{1-\\dfrac{v^2}{c^2}}',true);
+  document.getElementById('gamma-eq').innerHTML=K('\\gamma=\\dfrac{1}{\\sqrt{1-v^2/c^2}}\\geq 1 \\;\\Rightarrow\\; L\\leq L_0',true);
+});
+function fmt(n,d=5){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e5||(Math.abs(n)<1e-3&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
+function pv(s){if(!s)return null;s=s.trim();if(s.toLowerCase().endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f*3e8;}return parseFloat(s)||null;}
+function calc(){
+  const c=3e8;
+  const L0=parseFloat(document.getElementById('L0').value);
+  const v=pv(document.getElementById('v').value);
+  if(isNaN(L0)||L0<=0||v===null)return show(err('أدخل قيماً صحيحة'));
+  if(Math.abs(v)>=c)return show(err('السرعة يجب أن تكون أقل من c'));
+  const b=v/c,g=1/Math.sqrt(1-b*b),L=L0/g,dL=L0-L,pct=(1-1/g)*100;
+  const html=
+    `<div class="lt">القوانين</div>`+
+    lc('انكماش الطول','L=\\dfrac{L_0}{\\gamma}=L_0\\sqrt{1-v^2/c^2}')+
+    lc('عامل لورنتز','\\gamma=\\dfrac{1}{\\sqrt{1-\\beta^2}}')+
+    `<div class="st" style="margin-top:14px">خطوات الحل</div>`+
+    sp(1,'β',`\\beta=v/c=${fmt(b,5)}`)+
+    sp(2,'γ',`\\gamma=1/\\sqrt{1-${fmt(b,4)}^2}=${fmt(g,5)}`)+
+    sp(3,'الطول المنكمش',`L=L_0/\\gamma=${fmt(L0,3)}/${fmt(g,4)}=${fmt(L,4)}\\,m`)+
+    sp(4,'مقدار الانكماش',`\\Delta L=L_0-L=${fmt(L0,3)}-${fmt(L,4)}=${fmt(dL,4)}\\,m`,`نسبة الانكماش ${fmt(pct,2)}%`)+
+    rb([{n:'γ',v:fmt(g,5)},{n:'L المنكمش',v:fmt(L,4),u:'m'},{n:'ΔL الانكماش',v:fmt(dL,4),u:'m'},{n:'نسبة L/L₀',v:fmt(L/L0,5)}]);
+  show(html);
+}
+function show(h){document.getElementById('rc').innerHTML=h;const e=document.getElementById('res');e.classList.add('show');e.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function lc(b,l){return`<div class="lc"><span class="lb">${b}</span><div class="ll">${K(l)}</div></div>`;}
+function sp(n,l,la,note=''){return`<div class="step"><div class="sn">${String(n).padStart(2,'0')}</div><div><div class="sl">${l}</div><div class="sm">${K(la)}</div>${note?`<div class="snt">${note}</div>`:''}</div></div>`;}
+function rb(vals){return`<div class="rb"><div class="rbl">// النتائج</div><div class="rvs">${vals.map(v=>`<div class="rv"><div class="rvn">${v.n}</div><div class="rvv">${v.v} ${v.u||''}</div></div>`).join('')}</div></div>`;}
+function err(m){return`<div class="err">⚠️ ${m}</div>`;}
+
+/* SIM */
+const scc=document.getElementById('sc'),scx=scc.getContext('2d');
+let run=false,raf=null,shipX=0;
+function rsz(){scc.width=scc.offsetWidth;scc.height=240;}
+addEventListener('resize',rsz);rsz();
+function onSlide(){const v=parseInt(document.getElementById('sv').value)/100;const g=1/Math.sqrt(1-v*v);document.getElementById('sv-val').textContent=v.toFixed(2)+'c';document.getElementById('ratio-disp').textContent=fmt(1/g,4);}
+function toggle(){run=!run;document.getElementById('tog').textContent=run?'⏸ إيقاف':'▶ تشغيل';if(run){shipX=0;requestAnimationFrame(anim);}else{cancelAnimationFrame(raf);idle();}}
+function idle(){const W=scc.width,H=scc.height;scx.fillStyle='#000d1a';scx.fillRect(0,0,W,H);scx.fillStyle='rgba(16,185,129,.35)';scx.font='14px Tajawal';scx.textAlign='center';scx.fillText('اضغط ▶ تشغيل لمشاهدة الانكماش',W/2,H/2);scx.textAlign='start';}
+function anim(){
+  if(!run)return;
+  const W=scc.width,H=scc.height,vf=parseInt(document.getElementById('sv').value)/100;
+  const g=1/Math.sqrt(1-vf*vf),ratio=1/g;
+  scx.clearRect(0,0,W,H);scx.fillStyle='#000d1a';scx.fillRect(0,0,W,H);
+  // grid
+  scx.strokeStyle='rgba(16,185,129,.06)';scx.lineWidth=1;
+  for(let i=0;i<W;i+=40){scx.beginPath();scx.moveTo(i,0);scx.lineTo(i,H);scx.stroke();}
+  for(let j=0;j<H;j+=40){scx.beginPath();scx.moveTo(0,j);scx.lineTo(W,j);scx.stroke();}
+  const maxL=W*.5,baseL=maxL*ratio;
+  const statH=50,movH=50;
+  // STATIC ship (top)
+  const sy=H*.28;
+  scx.fillStyle='rgba(16,185,129,.12)';
+  scx.strokeStyle='rgba(16,185,129,.7)';scx.lineWidth=2;
+  const sx=(W-maxL)/2;
+  scx.beginPath();scx.roundRect(sx,sy-statH/2,maxL,statH,6);scx.fill();scx.stroke();
+  // arrow L0
+  scx.strokeStyle='rgba(16,185,129,.5)';scx.lineWidth=1;
+  scx.beginPath();scx.moveTo(sx,sy+statH/2+8);scx.lineTo(sx+maxL,sy+statH/2+8);scx.stroke();
+  scx.fillStyle='rgba(16,185,129,.8)';scx.font='bold 11px Share Tech Mono';
+  scx.textAlign='center';scx.fillText('L₀ (ساكن)',sx+maxL/2,sy+statH/2+22);
+  scx.textAlign='start';
+  // MOVING ship
+  shipX=(shipX+vf*3.5)%(W+baseL*2);
+  const mx=shipX-baseL;
+  const my=H*.68;
+  scx.fillStyle='rgba(245,158,11,.12)';
+  scx.strokeStyle='rgba(245,158,11,.8)';scx.lineWidth=2;
+  scx.beginPath();scx.roundRect(mx,my-movH/2,baseL,movH,6);scx.fill();scx.stroke();
+  // speed lines behind
+  scx.strokeStyle='rgba(245,158,11,.15)';scx.lineWidth=1;
+  for(let i=0;i<5;i++){const lx=mx-i*18;scx.beginPath();scx.moveTo(lx,my-movH/2+5);scx.lineTo(lx-30,my-movH/2+5);scx.stroke();scx.beginPath();scx.moveTo(lx,my+movH/2-5);scx.lineTo(lx-30,my+movH/2-5);scx.stroke();}
+  // label
+  scx.fillStyle='rgba(245,158,11,.85)';scx.font='bold 11px Share Tech Mono';
+  scx.textAlign='center';
+  if(mx+baseL/2>0&&mx+baseL/2<W)scx.fillText('L='+fmt(ratio,3)+'×L₀  (v='+vf.toFixed(2)+'c)',mx+baseL/2,my+movH/2+22);
+  scx.textAlign='start';
+  // HUD
+  scx.fillStyle='rgba(16,185,129,.9)';scx.font='bold 12px Share Tech Mono';
+  scx.fillText('γ='+g.toFixed(3)+'  L/L₀='+ratio.toFixed(3),10,20);
+  raf=requestAnimationFrame(anim);
+}
+idle();
+</script>
+</body>
+</html>

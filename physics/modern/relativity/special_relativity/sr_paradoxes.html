@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>المفارقات النسبية | SR-07</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{--bg:#020817;--acc:#a855f7;--acc2:#00d4ff;--c3:#f59e0b;--c4:#10b981;--c5:#ff4757;--text:#e2e8f0;--muted:#64748b;--card:rgba(15,23,42,.92);--border:rgba(168,85,247,.18);}
+*{margin:0;padding:0;box-sizing:border-box;}html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
+#bgc{position:fixed;inset:0;z-index:0;}
+.go{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(168,85,247,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.025) 1px,transparent 1px);background-size:50px 50px;}
+.sc{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
+.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
+.corner.tl{top:14px;left:14px;border-top:2px solid var(--acc);border-left:2px solid var(--acc);}
+.corner.tr{top:14px;right:14px;border-top:2px solid var(--acc2);border-right:2px solid var(--acc2);}
+.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
+.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c4);border-right:2px solid var(--c4);}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(18px);}
+.logo{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:900;color:var(--acc);letter-spacing:3px;}
+.back{color:var(--muted);font-size:.8rem;text-decoration:none;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:.2s;background:none;}
+.back:hover{color:var(--acc);border-color:var(--acc);}
+.wrap{position:relative;z-index:5;max-width:960px;margin:0 auto;padding:40px 24px 80px;}
+.hero{text-align:center;margin-bottom:40px;animation:up .7s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(168,85,247,.3);border-radius:100px;padding:5px 16px;font-size:.63rem;letter-spacing:3px;color:var(--acc);background:rgba(168,85,247,.06);margin-bottom:18px;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+h1{font-size:clamp(1.7rem,4vw,2.9rem);font-weight:900;background:linear-gradient(135deg,#fff 25%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;}
+.sub{color:var(--muted);font-size:.9rem;max-width:520px;margin:0 auto;line-height:1.8;}
+.sec{font-family:'Orbitron',sans-serif;font-size:.56rem;letter-spacing:3px;color:var(--muted);margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.sec::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+.par-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;backdrop-filter:blur(12px);margin-bottom:24px;}
+.pc-hdr{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px;}
+.pc-icon{font-size:1.6rem;}.pc-title{font-weight:800;font-size:1.05rem;color:#f1f5f9;}
+.pc-body{padding:22px;}
+.explain{font-size:.82rem;color:var(--muted);line-height:1.85;margin-bottom:14px;}
+.resolution{background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.18);border-radius:10px;padding:14px 16px;font-size:.8rem;line-height:1.8;margin-bottom:14px;}
+.resolution b{color:var(--acc);}
+canvas{width:100%;border-radius:10px;background:#000d1a;display:block;}
+.ctrl{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+.cl{font-size:.74rem;color:var(--muted);}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--acc);cursor:pointer;}
+.cv{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--acc);min-width:52px;}
+.btn2{padding:8px 16px;border:1px solid var(--acc);border-radius:8px;background:rgba(168,85,247,.08);color:var(--acc);font-size:.78rem;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.btn2:hover{background:rgba(168,85,247,.22);}
+/* twin calc */
+.calc{background:rgba(168,85,247,.03);border:1px solid rgba(168,85,247,.12);border-radius:14px;padding:18px;margin-top:14px;}
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin-bottom:12px;}
+.igrp{display:flex;flex-direction:column;gap:5px;}
+.igrp label{font-size:.72rem;color:#94a3b8;}.igrp label span{color:var(--acc);font-size:.68rem;margin-right:3px;}
+.ifld{background:#020617;border:1.5px solid #1e293b;color:#fff;padding:10px 12px;border-radius:9px;outline:none;font-family:'Tajawal',sans-serif;font-size:.88rem;transition:.25s;width:100%;}
+.ifld:focus{border-color:var(--acc);box-shadow:0 0 10px rgba(168,85,247,.18);}
+.ifld::placeholder{color:#334155;font-size:.78rem;}
+.sbtn{padding:12px 20px;background:linear-gradient(90deg,#4c1d95,var(--acc));color:#fff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:.9rem;font-family:'Tajawal',sans-serif;letter-spacing:1px;transition:.3s;}
+.sbtn:hover{opacity:.88;}
+.tres{margin-top:14px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 18px;font-size:.82rem;display:none;}
+.tres.show{display:block;}
+.tres b{color:var(--acc);}
+@media(max-width:600px){header{padding:10px 14px;}.wrap{padding:24px 14px 60px;}}
+</style>
+</head>
+<body>
+<canvas id="bgc"></canvas><div class="go"></div><div class="sc"></div>
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<header>
+  <a class="back" href="special_relativity.html">← رجوع</a>
+  <div style="font-size:.82rem;">المفارقات النسبية</div>
+  <div class="logo">SR · 07</div>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <div class="badge"><div class="dot"></div>الموضوع السابع · PARADOXES</div>
+    <h1>🔄 المفارقات النسبية</h1>
+    <p class="sub">مواقف تبدو متناقضة حتى تفهم الفيزياء الكامنة وراءها</p>
+  </section>
+
+  <!-- TWIN PARADOX -->
+  <div class="sec">// ١ — مفارقة التوأمين</div>
+  <div class="par-card">
+    <div class="pc-hdr"><div class="pc-icon">👯</div><div>
+      <div class="pc-title">مفارقة التوأمين — Twin Paradox</div>
+    </div></div>
+    <div class="pc-body">
+      <div class="explain">
+        توأم (أ) يبقى على الأرض. توأم (ب) يسافر بسرعة v قريبة من c ثم يعود.
+        كلٌّ منهما يرى الآخر يتحرك — فمن يشيخ أكثر؟<br><br>
+        بالنسبة لـ(أ): ساعة (ب) تدق أبطأ ← (ب) سيكون أصغر سناً عند العودة.<br>
+        بالنسبة لـ(ب): ساعة (أ) تدق أبطأ ← (أ) سيكون أصغر سناً؟<br><br>
+        <strong style="color:#f1f5f9;">المفارقة ليست حقيقية!</strong> لأن (ب) يتسارع عند الانعطاف — يكسر تناظر الوضع. (ب) يشيخ أقل دائماً.
+      </div>
+      <div class="resolution">
+        <b>الحل:</b> النسبية الخاصة تنطبق فقط على الأطر القصورية (غير المتسارعة). عند انعطاف (ب) يدخل إطاراً متسارعاً — وهنا يكسر التناظر. (ب) يُقيس زمناً أقل بمعامل γ.
+      </div>
+      <canvas id="tc" height="220"></canvas>
+      <div class="ctrl">
+        <span class="cl">v/c:</span>
+        <input type="range" id="tv" min="10" max="98" value="70" oninput="redrawTwin()">
+        <span class="cv" id="tv-val">0.70c</span>
+        <button class="btn2" id="tt" onclick="toggleTwin()">▶ تشغيل</button>
+      </div>
+      <div class="calc">
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">احسب فرق العمر عند عودة التوأم المسافر</div>
+        <div class="ig">
+          <div class="igrp"><label><span>[سنة]</span>زمن الرحلة T (من منظور الأرض)</label><input class="ifld" id="tw-T" placeholder="مثال: 10"></div>
+          <div class="igrp"><label><span>[xc]</span>السرعة v</label><input class="ifld" id="tw-v" placeholder="مثال: 0.8c"></div>
+        </div>
+        <button class="sbtn" onclick="calcTwin()">احسب فرق الأعمار</button>
+        <div class="tres" id="tw-res"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARN POLE -->
+  <div class="sec">// ٢ — مفارقة العمود والحظيرة</div>
+  <div class="par-card">
+    <div class="pc-hdr"><div class="pc-icon">🚪</div><div>
+      <div class="pc-title">مفارقة العمود والحظيرة — Barn-Pole Paradox</div>
+    </div></div>
+    <div class="pc-body">
+      <div class="explain">
+        عمود طوله L₀ يتحرك نحو حظيرة طولها L₀ بسرعة v.<br>
+        من منظور الحظيرة: العمود منكمش ← يدخل كاملاً في الحظيرة ✅<br>
+        من منظور العمود: الحظيرة منكمشة ← لا يمكن أن يدخل العمود! ❌<br><br>
+        كيف يتوافق ذلك؟
+      </div>
+      <div class="resolution">
+        <b>الحل:</b> نسبية التزامن! إغلاق بابَي الحظيرة يحدث في لحظتين مختلفتين في كل إطار. لا تناقض حقيقي — فقط اختلاف في ترتيب الأحداث المتزامنة. كلا المشاهدَين محقّان في إطارهما.
+      </div>
+      <canvas id="bc" height="200"></canvas>
+      <div class="ctrl">
+        <span class="cl">v/c:</span>
+        <input type="range" id="bv" min="10" max="95" value="75" oninput="redrawBarn()">
+        <span class="cv" id="bv-val">0.75c</span>
+        <button class="btn2" id="bt" onclick="toggleBarn()">▶ تشغيل</button>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:10px;line-height:1.7;">
+        🔵 العمود الأزرق يتحرك | 🟡 الحظيرة الصفراء ثابتة. لاحظ انكماش العمود من منظور الحظيرة.
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULTANEITY -->
+  <div class="sec">// ٣ — التزامن النسبي</div>
+  <div class="par-card">
+    <div class="pc-hdr"><div class="pc-icon">⚡</div><div>
+      <div class="pc-title">التزامن النسبي — Relativity of Simultaneity</div>
+    </div></div>
+    <div class="pc-body">
+      <div class="explain">
+        حدثان يقعان "في نفس الوقت" في إطار، قد لا يكونا متزامنَين في إطار آخر. لا يوجد "الآن المطلق" في الكون.
+      </div>
+      <div class="resolution">
+        <b>المعادلة:</b> الفرق الزمني بين حدثين في الإطار S' إذا كانا متزامنَين في S هو: Δt' = -γvΔx/c²
+        <div id="sim-eq" style="direction:ltr;margin-top:10px;overflow-x:auto;"></div>
+      </div>
+      <canvas id="sc2" height="200"></canvas>
+      <div class="ctrl">
+        <span class="cl">v/c للقطار:</span>
+        <input type="range" id="sv2" min="10" max="95" value="60" oninput="redrawSim()">
+        <span class="cv" id="sv2-val">0.60c</span>
+        <button class="btn2" id="s2t" onclick="toggleSim()">▶ تشغيل</button>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:10px;line-height:1.7;">
+        ⚡ الصواعق تضرب طرفَي القطار "في نفس الوقت" من منظور المحطة — لكن من منظور القطار المتحرك؟
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* BG */
+const bgC=document.getElementById('bgc'),bgX=bgC.getContext('2d');let bW,bH,orbs;
+function ib(){bW=bgC.width=innerWidth;bH=bgC.height=innerHeight;orbs=[{x:bW*.15,y:bH*.3,r:350,color:'rgba(168,85,247,',s:.00026,p:0},{x:bW*.82,y:bH*.6,r:400,color:'rgba(0,212,255,',s:.00033,p:2.1},{x:bW*.5,y:bH*.88,r:260,color:'rgba(168,85,247,',s:.0003,p:4}];}
+function db(){bgX.clearRect(0,0,bW,bH);bgX.fillStyle='#020817';bgX.fillRect(0,0,bW,bH);for(const o of orbs){o.p+=o.s;const ox=o.x+Math.sin(o.p)*60,oy=o.y+Math.cos(o.p*.7)*45;const g=bgX.createRadialGradient(ox,oy,0,ox,oy,o.r);g.addColorStop(0,o.color+'0.07)');g.addColorStop(.5,o.color+'0.02)');g.addColorStop(1,o.color+'0)');bgX.fillStyle=g;bgX.beginPath();bgX.arc(ox,oy,o.r,0,Math.PI*2);bgX.fill();}requestAnimationFrame(db);}
+addEventListener('resize',()=>{ib();rsz();});ib();requestAnimationFrame(db);
+function K(l,b=false){const e=document.createElement(b?'div':'span');try{katex.render(l,e,{throwOnError:false,displayMode:b,strict:false});}catch(x){e.textContent=l;}return e.outerHTML;}
+addEventListener('DOMContentLoaded',()=>{document.getElementById('sim-eq').innerHTML=K("\\Delta t'=-\\gamma\\dfrac{v\\Delta x}{c^2}",true);});
+function pv(s){if(!s)return null;s=s.trim().toLowerCase();if(s.endsWith('c')){const f=parseFloat(s);return isNaN(f)?null:f;}return parseFloat(s)/3e8||null;}
+function fmt(n,d=4){if(n===null||isNaN(n))return'؟';if(!isFinite(n))return'∞';if(Math.abs(n)>=1e5||(Math.abs(n)<1e-4&&n!==0))return n.toExponential(3);return parseFloat(n.toFixed(d)).toString();}
+/* TWIN CALC */
+function calcTwin(){
+  const T=parseFloat(document.getElementById('tw-T').value),v=pv(document.getElementById('tw-v').value);
+  if(!T||T<=0||v===null||Math.abs(v)>=1)return;
+  const g=1/Math.sqrt(1-v*v),Tb=T/g,diff=T-Tb;
+  document.getElementById('tw-res').innerHTML=
+    `زمن الأرض: <b>${fmt(T,3)} سنة</b><br>
+     زمن المسافر (ب): <b style="color:var(--acc)">${fmt(Tb,4)} سنة</b><br>
+     γ = ${fmt(g,4)}<br>
+     فرق العمر: (أ) يكبر بـ <b style="color:var(--c3)">${fmt(diff,4)} سنة</b> أكثر من (ب)`;
+  document.getElementById('tw-res').classList.add('show');
+}
+/* RESIZE */
+function rsz(){
+  ['tc','bc','sc2'].forEach(id=>{const c=document.getElementById(id);c.width=c.offsetWidth;});
+  redrawTwin();redrawBarn();redrawSim();
+}
+rsz();
+/* TWIN SIM */
+let tRun=false,tRaf=null,tPhase=0;
+function toggleTwin(){tRun=!tRun;document.getElementById('tt').textContent=tRun?'⏸':'▶ تشغيل';if(tRun){tPhase=0;requestAnimationFrame(animTwin);}else{cancelAnimationFrame(tRaf);redrawTwin();}}
+function redrawTwin(){const v=parseInt(document.getElementById('tv').value)/100;document.getElementById('tv-val').textContent=v.toFixed(2)+'c';drawTwin(v,tPhase);}
+function animTwin(){if(!tRun)return;tPhase=(tPhase+0.008)%1;redrawTwin();tRaf=requestAnimationFrame(animTwin);}
+function drawTwin(v,phase){
+  const c=document.getElementById('tc'),cx=c.getContext('2d'),W=c.width,H=c.height;
+  const g=1/Math.sqrt(1-v*v);
+  cx.clearRect(0,0,W,H);cx.fillStyle='#000d1a';cx.fillRect(0,0,W,H);
+  cx.strokeStyle='rgba(168,85,247,.06)';cx.lineWidth=1;for(let i=0;i<W;i+=40){cx.beginPath();cx.moveTo(i,0);cx.lineTo(i,H);cx.stroke();}
+  // Earth (A)
+  const earthX=W*.15,aAge=phase*10;
+  cx.fillStyle='rgba(16,185,129,.12)';cx.strokeStyle='rgba(16,185,129,.6)';cx.lineWidth=2;
+  cx.beginPath();cx.arc(earthX,H*.5,20,0,Math.PI*2);cx.fill();cx.stroke();
+  cx.fillStyle='rgba(16,185,129,.9)';cx.font='bold 10px Orbitron';cx.textAlign='center';
+  cx.fillText('أ (الأرض)',earthX,H*.5+35);
+  cx.fillText(fmt(aAge,2)+' سنة',earthX,H*.5+50);
+  // Traveler (B)
+  const bAge=aAge/g;
+  let bX;
+  if(phase<0.5){bX=earthX+(W*.7)*phase*2;}else{bX=earthX+(W*.7)*(1-(phase-0.5)*2);}
+  cx.fillStyle='rgba(168,85,247,.12)';cx.strokeStyle='rgba(168,85,247,.8)';cx.lineWidth=2;
+  cx.beginPath();cx.roundRect(bX-15,H*.35,30,30,4);cx.fill();cx.stroke();
+  cx.fillStyle='rgba(168,85,247,.9)';
+  cx.fillText('ب (مسافر)',bX,H*.35-8);
+  cx.fillText(fmt(bAge,2)+' سنة',bX,H*.35-22);
+  // star destination
+  const starX=W*.85;
+  cx.fillStyle='rgba(245,158,11,.7)';cx.font='16px';cx.textAlign='center';cx.fillText('⭐',starX,H*.5);
+  cx.fillStyle='rgba(245,158,11,.5)';cx.font='10px Orbitron';cx.fillText('نجم',starX,H*.5+20);
+  // trajectory
+  cx.strokeStyle='rgba(168,85,247,.2)';cx.lineWidth=1;cx.setLineDash([4,4]);
+  cx.beginPath();cx.moveTo(earthX,H*.5);cx.lineTo(starX,H*.5);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle='rgba(255,255,255,.5)';cx.font='10px Share Tech Mono';
+  cx.fillText('γ='+g.toFixed(3)+'  فرق العمر='+(aAge-bAge).toFixed(2)+' سنة',10,18);
+  cx.textAlign='start';
+}
+drawTwin(0.7,0);
+
+/* BARN SIM */
+let bRun=false,bRaf=null,bPhase=0;
+function toggleBarn(){bRun=!bRun;document.getElementById('bt').textContent=bRun?'⏸':'▶ تشغيل';if(bRun){bPhase=0;requestAnimationFrame(animBarn);}else{cancelAnimationFrame(bRaf);redrawBarn();}}
+function redrawBarn(){const v=parseInt(document.getElementById('bv').value)/100;document.getElementById('bv-val').textContent=v.toFixed(2)+'c';drawBarn(v,bPhase);}
+function animBarn(){if(!bRun)return;bPhase=(bPhase+0.006)%1;redrawBarn();bRaf=requestAnimationFrame(animBarn);}
+function drawBarn(v,phase){
+  const c=document.getElementById('bc'),cx=c.getContext('2d'),W=c.width,H=c.height;
+  const g=1/Math.sqrt(1-v*v),barnW=W*.35,poleW=barnW/g;
+  cx.clearRect(0,0,W,H);cx.fillStyle='#000d1a';cx.fillRect(0,0,W,H);
+  cx.strokeStyle='rgba(245,158,11,.05)';cx.lineWidth=1;for(let i=0;i<W;i+=40){cx.beginPath();cx.moveTo(i,0);cx.lineTo(i,H);cx.stroke();}
+  // barn (static)
+  const barnX=W*.55,barnY=H*.3,barnH=H*.4;
+  cx.fillStyle='rgba(245,158,11,.08)';cx.strokeStyle='rgba(245,158,11,.6)';cx.lineWidth=2;
+  cx.beginPath();cx.rect(barnX,barnY,barnW,barnH);cx.fill();cx.stroke();
+  // barn doors
+  cx.strokeStyle='rgba(245,158,11,.9)';cx.lineWidth=3;
+  cx.beginPath();cx.moveTo(barnX,barnY);cx.lineTo(barnX,barnY+barnH);cx.stroke();
+  cx.beginPath();cx.moveTo(barnX+barnW,barnY);cx.lineTo(barnX+barnW,barnY+barnH);cx.stroke();
+  cx.fillStyle='rgba(245,158,11,.7)';cx.font='10px Orbitron';cx.textAlign='center';
+  cx.fillText('حظيرة L₀',barnX+barnW/2,barnY-8);
+  // moving pole
+  const startX=-poleW,endX=W+poleW;
+  const poleX=startX+(endX-startX)*phase;
+  const poleY=barnY+(barnH-20)/2;
+  cx.fillStyle='rgba(0,212,255,.15)';cx.strokeStyle='rgba(0,212,255,.8)';cx.lineWidth=2;
+  cx.beginPath();cx.rect(poleX,poleY,poleW,20);cx.fill();cx.stroke();
+  // speed streaks
+  cx.strokeStyle='rgba(0,212,255,.15)';cx.lineWidth=1;
+  for(let i=0;i<4;i++){cx.beginPath();cx.moveTo(poleX-i*15,poleY+4);cx.lineTo(poleX-i*15-25,poleY+4);cx.stroke();cx.beginPath();cx.moveTo(poleX-i*15,poleY+16);cx.lineTo(poleX-i*15-25,poleY+16);cx.stroke();}
+  cx.fillStyle='rgba(0,212,255,.7)';cx.font='9px Share Tech Mono';
+  cx.fillText('عمود L=L₀/γ='+fmt(1/g,3)+'L₀',poleX+poleW/2,poleY-8);
+  // fits inside?
+  const inside=poleX>=barnX&&poleX+poleW<=barnX+barnW;
+  if(inside){cx.fillStyle='rgba(16,185,129,.9)';cx.font='bold 11px Orbitron';cx.fillText('✅ داخل الحظيرة!',W/2,H*.92);}
+  cx.fillStyle='rgba(255,255,255,.5)';cx.font='10px Share Tech Mono';cx.textAlign='start';
+  cx.fillText('γ='+g.toFixed(3)+'  L/L₀='+fmt(1/g,3)+'  v='+v.toFixed(2)+'c',10,18);
+  cx.textAlign='start';
+}
+drawBarn(0.75,0);
+
+/* SIMULTANEITY SIM */
+let sRun=false,sRaf=null,sPhase=0;
+function toggleSim(){sRun=!sRun;document.getElementById('s2t').textContent=sRun?'⏸':'▶ تشغيل';if(sRun){sPhase=0;requestAnimationFrame(animSim);}else{cancelAnimationFrame(sRaf);redrawSim();}}
+function redrawSim(){const v=parseInt(document.getElementById('sv2').value)/100;document.getElementById('sv2-val').textContent=v.toFixed(2)+'c';drawSim(v,sPhase);}
+function animSim(){if(!sRun)return;sPhase=(sPhase+0.005)%1;redrawSim();sRaf=requestAnimationFrame(animSim);}
+function drawSim(v,phase){
+  const c=document.getElementById('sc2'),cx=c.getContext('2d'),W=c.width,H=c.height;
+  const g=1/Math.sqrt(1-v*v);
+  cx.clearRect(0,0,W,H);cx.fillStyle='#000d1a';cx.fillRect(0,0,W,H);
+  cx.strokeStyle='rgba(168,85,247,.05)';cx.lineWidth=1;for(let i=0;i<W;i+=40){cx.beginPath();cx.moveTo(i,0);cx.lineTo(i,H);cx.stroke();}
+  const trainL=W*.5,trainX=W*.5*phase+(W*.1),trainY=H*.35,trainH=H*.3;
+  // train
+  cx.fillStyle='rgba(168,85,247,.08)';cx.strokeStyle='rgba(168,85,247,.6)';cx.lineWidth=2;
+  cx.beginPath();cx.roundRect(trainX,trainY,trainL,trainH,8);cx.fill();cx.stroke();
+  cx.fillStyle='rgba(168,85,247,.7)';cx.font='10px Orbitron';cx.textAlign='center';
+  cx.fillText('قطار v='+v.toFixed(2)+'c →',trainX+trainL/2,trainY-10);
+  // lightning strikes on BOTH ends simultaneously (station frame)
+  const bolt1X=trainX,bolt2X=trainX+trainL;
+  // flash
+  const f=Math.abs(Math.sin(phase*Math.PI*4));
+  cx.fillStyle=`rgba(255,255,0,${f*.7})`;cx.shadowColor='yellow';cx.shadowBlur=15;
+  cx.font='20px';cx.fillText('⚡',bolt1X-10,trainY-15);
+  // for train frame: right bolt hits FIRST by Δt' = γvL/c²
+  const dt=g*v*trainL/(3e8);
+  cx.fillStyle=`rgba(255,200,0,${f*.4})`;
+  cx.fillText('⚡',bolt2X-10,trainY-15);cx.shadowBlur=0;
+  cx.fillStyle='rgba(255,255,255,.5)';cx.font='10px Share Tech Mono';
+  cx.fillText('من منظور القطار: الصاعقة اليمنى أسبق بـ Δt\'=γvL/c²',W/2,H*.88);
+  cx.fillStyle='rgba(168,85,247,.7)';
+  cx.fillText('γ='+g.toFixed(3),10,18);cx.textAlign='start';
+}
+drawSim(0.6,0);
+</script>
+</body>
+</html>
