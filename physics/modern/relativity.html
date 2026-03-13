@@ -4,247 +4,890 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>النسبية | RELATIVITY</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:    #020817;
-  --c1:    #00d4ff;
-  --c2:    #7c3aed;
-  --c3:    #f59e0b;
-  --c4:    #10b981;
-  --c5:    #ff4757;
-  --acc:   #a855f7;
-  --text:  #e2e8f0;
-  --muted: #64748b;
-  --card:  rgba(15,23,42,0.9);
-  --border:rgba(124,58,237,0.2);
+  --deep:    #00000f;
+  --nebula1: #0a001a;
+  --nebula2: #00071f;
+  --special: #4f9eff;
+  --general: #bf5fff;
+  --gold:    #ffd166;
+  --text:    #d4e8ff;
+  --muted:   #4a6080;
+  --white:   #ffffff;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
 
-#bg-canvas{position:fixed;inset:0;z-index:0;}
-.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);
-  background-size:50px 50px;}
-.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
-.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
-.corner.tl{top:14px;left:14px;border-top:2px solid var(--c2);border-left:2px solid var(--c2);}
-.corner.tr{top:14px;right:14px;border-top:2px solid var(--acc);border-right:2px solid var(--acc);}
-.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
-.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c1);border-right:2px solid var(--c1);}
+* { margin:0; padding:0; box-sizing:border-box; }
 
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c2);
-  letter-spacing:3px;text-shadow:0 0 10px rgba(124,58,237,.5);}
-.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;
-  cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
-.back-btn:hover{color:var(--c2);border-color:var(--c2);}
-.header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
+html, body {
+  min-height: 100%;
+  background: var(--deep);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-.wrapper{position:relative;z-index:5;max-width:860px;margin:0 auto;padding:48px 24px 100px;}
+/* ── CURSOR ── */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--white);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .08s, width .2s, height .2s, background .2s, box-shadow .2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform .18s ease, width .25s, height .25s, border-color .2s;
+}
+body:has(.nav-card:hover) #cursor { width:24px; height:24px; background:var(--gold); }
+body:has(.nav-card:hover) #cursor-ring { width:64px; height:64px; border-color:var(--gold); }
 
-.page-hero{text-align:center;margin-bottom:60px;animation:fadeUp .7s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.06);
-  border:1px solid rgba(124,58,237,.25);border-radius:100px;padding:5px 18px;
-  font-size:.65rem;letter-spacing:3px;color:var(--c2);margin-bottom:22px;}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);
-  box-shadow:0 0 8px var(--c2);animation:pulse 1.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page-hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;
-  background:linear-gradient(135deg,#fff 20%,var(--c2) 60%,var(--acc));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;}
-.page-hero p{color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto;line-height:1.9;}
+/* ── CANVAS LAYERS ── */
+#space-canvas { position:fixed; inset:0; z-index:0; }
+#warp-canvas  { position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity .6s; }
+#warp-canvas.active { opacity:1; }
 
-.section-label{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;
-  color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
-.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+/* ── SCANLINES ── */
+.scanlines {
+  position:fixed; inset:0; z-index:2; pointer-events:none;
+  background: repeating-linear-gradient(0deg,
+    transparent, transparent 3px,
+    rgba(0,5,30,0.07) 3px, rgba(0,5,30,0.07) 4px);
+}
 
-/* ── CARDS ── */
-.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+/* ── VIGNETTE ── */
+.vignette {
+  position:fixed; inset:0; z-index:3; pointer-events:none;
+  background: radial-gradient(ellipse at 50% 50%,
+    transparent 50%, rgba(0,0,8,0.75) 100%);
+}
 
-.nav-card{
+/* ── HEADER ── */
+header {
+  position: sticky; top:0; z-index:100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 36px;
+  background: linear-gradient(180deg, rgba(0,0,15,0.9) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(79,158,255,0.08);
+  backdrop-filter: blur(20px);
+}
+.logo {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: 5px; color: var(--special);
+  text-shadow: 0 0 20px rgba(79,158,255,0.5);
+  animation: logoFlicker 6s ease infinite;
+}
+@keyframes logoFlicker {
+  0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.6} 94%{opacity:1} 96%{opacity:.8} 97%{opacity:1}
+}
+.back-btn {
+  display:flex; align-items:center; gap:8px;
+  color:var(--muted); font-size:.78rem; text-decoration:none;
+  border:1px solid rgba(79,158,255,0.12); padding:8px 18px; border-radius:4px;
+  transition:all .3s; background:rgba(79,158,255,0.03);
+}
+.back-btn:hover { color:var(--special); border-color:rgba(79,158,255,0.4); background:rgba(79,158,255,0.06); }
+.header-center {
+  display: flex; align-items:center; gap:10px;
+  font-size:.78rem; color:rgba(212,232,255,0.5); letter-spacing:2px;
+}
+.header-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--special); box-shadow:0 0 10px var(--special);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.7)} }
+
+/* ── WRAPPER ── */
+.wrapper {
+  position:relative; z-index:5;
+  max-width:920px; margin:0 auto;
+  padding:60px 28px 120px;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align:center; margin-bottom:80px;
+  animation: heroIn 1.2s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes heroIn { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem; letter-spacing:4px; color:var(--muted);
+  margin-bottom:28px;
+}
+.eyebrow-line { width:30px; height:1px; background:rgba(79,158,255,0.3); }
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+  position: relative;
+  display: inline-block;
+}
+.hero-title-ar {
+  display:block;
+  background: linear-gradient(180deg, #fff 0%, rgba(212,232,255,0.6) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  letter-spacing:-1px;
+}
+.hero-title-en {
+  display:block;
+  font-family:'Rajdhani',sans-serif;
+  font-size: clamp(1rem, 2.5vw, 1.8rem);
+  font-weight:300; letter-spacing:12px;
+  background:linear-gradient(90deg, var(--special), var(--general));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-top:6px;
+}
+.hero-desc {
+  color:var(--muted); font-size:.95rem; line-height:2;
+  max-width:460px; margin:22px auto 0;
+}
+.hero-year-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem; letter-spacing:3px; color:var(--gold);
+  border:1px solid rgba(255,209,102,0.2); padding:4px 12px; border-radius:2px;
+  margin-top:24px;
+  animation:badgeFade 2.5s ease both 1s;
+}
+@keyframes badgeFade{from{opacity:0}to{opacity:1}}
+.year-sep { color:rgba(255,209,102,0.3); }
+
+/* ── DIVIDER ── */
+.divider {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:36px; animation:fadeIn 1s ease both .6s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.div-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(79,158,255,0.15),transparent); }
+.div-text {
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem; letter-spacing:4px; color:var(--muted);
+  white-space:nowrap;
+}
+
+/* ── CARDS GRID ── */
+.cards-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:28px;
+}
+
+/* ── NAV CARD ── */
+.nav-card {
   position:relative;
-  background:var(--card);
-  border:1px solid var(--card-border,rgba(255,255,255,.07));
-  border-radius:22px;
-  padding:36px 30px 30px;
+  border-radius:2px;
   text-decoration:none;
-  display:flex;flex-direction:column;
-  backdrop-filter:blur(12px);
+  display:flex; flex-direction:column;
   overflow:hidden;
-  transition:transform .32s ease, box-shadow .32s ease, border-color .32s ease;
-  animation:fadeUp .6s ease both;
-  cursor:pointer;
+  cursor:none;
+  animation:cardIn .8s cubic-bezier(.16,1,.3,1) both;
+  isolation:isolate;
 }
-.nav-card:nth-child(1){animation-delay:.06s;}
-.nav-card:nth-child(2){animation-delay:.15s;}
+.nav-card:nth-child(1){ animation-delay:.3s; }
+.nav-card:nth-child(2){ animation-delay:.5s; }
+@keyframes cardIn{from{opacity:0;transform:translateY(50px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-.nav-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 25% 30%, var(--card-glow,rgba(124,58,237,.13)) 0%, transparent 65%);
-  opacity:0;transition:opacity .35s;pointer-events:none;
-}
-.nav-card:hover::before{opacity:1;}
-.nav-card:hover{
-  transform:translateY(-8px);
-  border-color:var(--card-acc,var(--c2));
-  box-shadow:0 20px 56px var(--card-shadow,rgba(124,58,237,.2));
+/* card canvas (star field per card) */
+.card-canvas {
+  position:absolute; inset:0; z-index:0;
+  border-radius:2px;
 }
 
-.card-bar{position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,transparent,var(--card-acc,var(--c2)),transparent);
-  transform:scaleX(0);transition:transform .35s ease;transform-origin:center;}
-.nav-card:hover .card-bar{transform:scaleX(1);}
-
-/* year badge top-left */
-.card-year{position:absolute;top:18px;left:22px;
-  font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:2px;
-  color:var(--card-acc,var(--c2));background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);padding:3px 9px;border-radius:100px;}
-
-.card-icon{font-size:3rem;margin-bottom:20px;
-  filter:drop-shadow(0 0 16px var(--card-acc,var(--c2)));}
-.card-en{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;
-  color:var(--card-acc,var(--c2));margin-bottom:8px;}
-.card-title{font-size:1.4rem;font-weight:900;color:#f1f5f9;margin-bottom:12px;line-height:1.3;}
-.card-desc{font-size:.85rem;color:var(--muted);line-height:1.85;flex:1;}
-
-.card-footer{display:flex;align-items:center;justify-content:space-between;
-  margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.05);}
-.card-topics{display:flex;flex-wrap:wrap;gap:6px;}
-.topic-chip{font-size:.6rem;padding:3px 10px;border-radius:100px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);}
-.card-arrow{font-family:'Share Tech Mono',monospace;font-size:.8rem;
-  color:var(--card-acc,var(--c2));opacity:0;transform:translateX(8px);
-  transition:opacity .25s,transform .25s;}
-.nav-card:hover .card-arrow{opacity:1;transform:translateX(0);}
-
-/* colours per card */
-.card-special{
-  --card-acc:    var(--c2);
-  --card-glow:   rgba(124,58,237,.15);
-  --card-shadow: rgba(124,58,237,.22);
-  --card-border: rgba(124,58,237,.15);
+/* glass panel */
+.card-glass {
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(135deg,
+    rgba(5,10,30,0.85) 0%,
+    rgba(5,10,30,0.7) 100%);
+  border:1px solid transparent;
+  border-radius:2px;
+  transition:border-color .4s, background .4s;
 }
-.card-general{
-  --card-acc:    var(--acc);
-  --card-glow:   rgba(168,85,247,.15);
-  --card-shadow: rgba(168,85,247,.22);
-  --card-border: rgba(168,85,247,.15);
+.card-special .card-glass { border-color:rgba(79,158,255,0.15); }
+.card-general .card-glass { border-color:rgba(191,95,255,0.15); }
+.nav-card:hover .card-glass {
+  background:linear-gradient(135deg, rgba(5,10,30,0.6) 0%, rgba(5,10,30,0.45) 100%);
+}
+.card-special:hover .card-glass { border-color:rgba(79,158,255,0.5); }
+.card-general:hover .card-glass { border-color:rgba(191,95,255,0.5); }
+
+/* top edge glow */
+.card-edge {
+  position:absolute; top:0; left:0; right:0; height:2px; z-index:10;
+  background:linear-gradient(90deg, transparent 0%, var(--acc) 50%, transparent 100%);
+  transform:scaleX(0); transform-origin:center;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.nav-card:hover .card-edge { transform:scaleX(1); }
+
+/* corner marks */
+.card-corner {
+  position:absolute; width:12px; height:12px; z-index:10;
+  transition:opacity .3s;
+}
+.card-corner.tl { top:10px; left:10px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
+.card-corner.tr { top:10px; right:10px; border-top:1px solid var(--acc); border-right:1px solid var(--acc); }
+.card-corner.bl { bottom:10px; left:10px; border-bottom:1px solid var(--acc); border-left:1px solid var(--acc); }
+.card-corner.br { bottom:10px; right:10px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
+
+/* content */
+.card-content {
+  position:relative; z-index:5;
+  padding:40px 32px 32px;
+  display:flex; flex-direction:column;
+  min-height:400px;
+}
+.card-year {
+  position:absolute; top:16px; right:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem; letter-spacing:3px; color:var(--acc);
+  background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.07);
+  padding:3px 10px; border-radius:2px;
 }
 
-@media(max-width:620px){
+/* big planet/orb visual */
+.card-orb-wrap {
+  display:flex; justify-content:center; align-items:center;
+  height:150px; margin-bottom:28px;
+}
+.card-orb {
+  width:100px; height:100px; border-radius:50%;
+  position:relative;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.nav-card:hover .card-orb { transform:scale(1.12); }
+
+.orb-special {
+  background: radial-gradient(circle at 35% 35%,
+    rgba(120,180,255,0.9) 0%,
+    rgba(40,100,220,0.8) 40%,
+    rgba(10,40,120,0.95) 80%,
+    rgba(0,10,50,1) 100%);
+  box-shadow:
+    0 0 30px rgba(79,158,255,0.4),
+    0 0 80px rgba(79,158,255,0.15),
+    inset 0 0 30px rgba(0,10,80,0.8);
+}
+.orb-general {
+  background: radial-gradient(circle at 35% 35%,
+    rgba(220,160,255,0.9) 0%,
+    rgba(140,60,220,0.8) 40%,
+    rgba(60,10,120,0.95) 80%,
+    rgba(10,0,40,1) 100%);
+  box-shadow:
+    0 0 30px rgba(191,95,255,0.4),
+    0 0 80px rgba(191,95,255,0.15),
+    inset 0 0 30px rgba(40,0,80,0.8);
+}
+
+/* ring around general relativity orb */
+.orb-ring {
+  position:absolute; inset:-18px;
+  border-radius:50%;
+  border:1px solid rgba(191,95,255,0.25);
+  animation:ringRotate 8s linear infinite;
+}
+.orb-ring::before {
+  content:''; position:absolute;
+  width:8px; height:8px; border-radius:50%;
+  background:rgba(191,95,255,0.8);
+  box-shadow:0 0 10px rgba(191,95,255,0.6);
+  top:-4px; left:50%; transform:translateX(-50%);
+}
+@keyframes ringRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.orb-ring2 {
+  position:absolute; inset:-32px;
+  border-radius:50%;
+  border:1px solid rgba(191,95,255,0.1);
+  animation:ringRotate 14s linear infinite reverse;
+}
+
+/* lightning for special */
+.orb-lightning {
+  position:absolute; inset:-20px;
+  border-radius:50%;
+  background:conic-gradient(
+    rgba(79,158,255,0) 0%,
+    rgba(79,158,255,0.15) 15%,
+    rgba(79,158,255,0) 30%,
+    rgba(79,158,255,0) 70%,
+    rgba(79,158,255,0.1) 85%,
+    rgba(79,158,255,0) 100%
+  );
+  animation:ringRotate 4s linear infinite;
+}
+
+.card-badge {
+  font-family:'Rajdhani',monospace;
+  font-size:.55rem; letter-spacing:4px;
+  color:var(--acc); margin-bottom:10px;
+  opacity:0.8;
+}
+.card-title {
+  font-size:1.55rem; font-weight:900;
+  color:#fff; margin-bottom:14px; line-height:1.25;
+}
+.card-desc {
+  font-size:.84rem; color:rgba(180,210,255,0.55);
+  line-height:1.95; flex:1;
+}
+.card-footer {
+  margin-top:28px; padding-top:20px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip {
+  font-size:.56rem; padding:3px 10px; border-radius:2px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  color:rgba(180,210,255,0.45);
+  font-family:'Share Tech Mono',monospace;
+  letter-spacing:1px;
+  transition:all .2s;
+}
+.nav-card:hover .chip { border-color:rgba(var(--chip-rgb),0.25); color:rgba(var(--chip-rgb),0.7); }
+.card-special { --chip-rgb:79,158,255; }
+.card-general { --chip-rgb:191,95,255; }
+
+.card-cta {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.65rem; letter-spacing:2px;
+  color:var(--acc);
+  opacity:0; transform:translateX(10px);
+  transition:opacity .3s, transform .3s;
+}
+.nav-card:hover .card-cta { opacity:1; transform:translateX(0); }
+.cta-arrow { font-size:.8rem; }
+
+/* card vars */
+.card-special { --acc:var(--special); }
+.card-general { --acc:var(--general); }
+
+/* ── WARP OVERLAY ── */
+#warp-overlay {
+  position:fixed; inset:0; z-index:200;
+  pointer-events:none; opacity:0;
+  background:radial-gradient(ellipse at 50% 50%,
+    rgba(255,255,255,0.05) 0%, transparent 70%);
+  transition:opacity .5s;
+}
+#warp-overlay.flash { opacity:1; }
+
+/* ── BOTTOM STATUS ── */
+.status-bar {
+  position:fixed; bottom:0; left:0; right:0; z-index:50;
+  padding:10px 36px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:linear-gradient(0deg, rgba(0,0,10,0.9) 0%, transparent 100%);
+  pointer-events:none;
+}
+.status-left, .status-right {
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem; letter-spacing:3px; color:var(--muted);
+}
+.status-center {
+  display:flex; gap:16px; align-items:center;
+}
+.status-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:var(--special); box-shadow:0 0 6px var(--special);
+  animation:pulse 1.5s ease infinite;
+}
+
+@media(max-width:640px){
   .cards-grid{grid-template-columns:1fr;}
-  header{padding:10px 14px;}
-  .wrapper{padding:28px 14px 80px;}
-  .nav-card{padding:26px 20px 22px;}
+  header{padding:12px 16px;}
+  .wrapper{padding:40px 16px 80px;}
+  .card-content{min-height:320px; padding:30px 22px 24px;}
+  .hero-title{font-size:clamp(2.4rem,10vw,3.5rem);}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="grid-overlay"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<canvas id="space-canvas"></canvas>
+<canvas id="warp-canvas"></canvas>
+<div id="warp-overlay"></div>
 <div class="scanlines"></div>
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
+<div class="vignette"></div>
 
 <header>
   <a class="back-btn" href="modern.html">← رجوع</a>
-  <div class="header-title">النسبية</div>
-  <div class="logo">RELATIVITY</div>
+  <div class="header-center">
+    <div class="header-dot"></div>
+    النسبية
+    <div class="header-dot" style="background:var(--general);box-shadow:0 0 10px var(--general);animation-delay:.7s"></div>
+  </div>
+  <div class="logo">RELATIVITY · EINSTEIN</div>
 </header>
 
 <div class="wrapper">
 
-  <section class="page-hero">
-    <div class="page-badge"><div class="badge-dot"></div>نظرية النسبية · THEORY OF RELATIVITY</div>
-    <h1>🌌 النسبية</h1>
-    <p>نظريتا آينشتاين — اختر الفرع الذي تريد دراسته أو حل مسائله</p>
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      THEORY OF RELATIVITY · ALBERT EINSTEIN
+      <span class="eyebrow-line"></span>
+    </div>
+    <h1 class="hero-title">
+      <span class="hero-title-ar">النسبية</span>
+      <span class="hero-title-en">RELATIVITY</span>
+    </h1>
+    <p class="hero-desc">
+      نظريتان غيّرتا فهم البشرية للكون — الزمان والمكان والجاذبية وطبيعة الضوء.
+      اختر النظرية التي تريد استكشافها.
+    </p>
+    <div class="hero-year-badge">
+      1905 <span class="year-sep">·</span> SPECIAL
+      <span class="year-sep">——</span>
+      1915 <span class="year-sep">·</span> GENERAL
+    </div>
   </section>
 
-  <div class="section-label">// اختر النظرية</div>
+  <div class="divider">
+    <div class="div-line"></div>
+    <div class="div-text">// اختر النظرية</div>
+    <div class="div-line"></div>
+  </div>
 
   <div class="cards-grid">
 
     <!-- النسبية الخاصة -->
-    <a class="nav-card card-special" href="relativity/special_relativity.html">
-      <div class="card-bar"></div>
-      <div class="card-year">1905</div>
-      <div class="card-icon">⚡</div>
-      <div class="card-en">SPECIAL RELATIVITY</div>
-      <div class="card-title">النسبية الخاصة</div>
-      <div class="card-desc">
-        تتناول الأجسام المتحركة بسرعات قريبة من الضوء في غياب الجاذبية —
-        تمدد الزمن، انكماش الطول، وتكافؤ الكتلة والطاقة E=mc²
-      </div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">تمدد الزمن</span>
-          <span class="topic-chip">انكماش الطول</span>
-          <span class="topic-chip">E=mc²</span>
-          <span class="topic-chip">عامل لورنتز γ</span>
+    <a class="nav-card card-special" href="relativity/special_relativity.html" data-color="79,158,255">
+      <canvas class="card-canvas" data-type="special"></canvas>
+      <div class="card-edge"></div>
+      <div class="card-corner tl"></div>
+      <div class="card-corner tr"></div>
+      <div class="card-corner bl"></div>
+      <div class="card-corner br"></div>
+      <div class="card-glass"></div>
+      <div class="card-content">
+        <div class="card-year">1905 · SPECIAL</div>
+        <div class="card-orb-wrap">
+          <div class="card-orb orb-special">
+            <div class="orb-lightning"></div>
+          </div>
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <div class="card-badge">SPECIAL RELATIVITY</div>
+        <div class="card-title">النسبية الخاصة</div>
+        <div class="card-desc">
+          الأجسام المتحركة بسرعات قريبة من الضوء في غياب الجاذبية —
+          تمدد الزمن، انكماش الطول، وتكافؤ الكتلة والطاقة.
+        </div>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">تمدد الزمن</span>
+            <span class="chip">انكماش الطول</span>
+            <span class="chip">E=mc²</span>
+            <span class="chip">γ لورنتز</span>
+          </div>
+          <div class="card-cta">ابدأ <span class="cta-arrow">←</span></div>
+        </div>
       </div>
     </a>
 
     <!-- النسبية العامة -->
-    <a class="nav-card card-general" href="relativity/general_relativity.html">
-      <div class="card-bar"></div>
-      <div class="card-year">1915</div>
-      <div class="card-icon">🌀</div>
-      <div class="card-en">GENERAL RELATIVITY</div>
-      <div class="card-title">النسبية العامة</div>
-      <div class="card-desc">
-        تمتد لتشمل الجاذبية وانحناء الزمكان —
-        تمدد الزمن الجاذبي، الثقوب السوداء، انحناء الضوء، وموجات الجاذبية
-      </div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">تمدد زمن جاذبي</span>
-          <span class="topic-chip">شوارزشيلد</span>
-          <span class="topic-chip">انحناء الضوء</span>
-          <span class="topic-chip">موجات الجاذبية</span>
+    <a class="nav-card card-general" href="relativity/general_relativity.html" data-color="191,95,255">
+      <canvas class="card-canvas" data-type="general"></canvas>
+      <div class="card-edge"></div>
+      <div class="card-corner tl"></div>
+      <div class="card-corner tr"></div>
+      <div class="card-corner bl"></div>
+      <div class="card-corner br"></div>
+      <div class="card-glass"></div>
+      <div class="card-content">
+        <div class="card-year">1915 · GENERAL</div>
+        <div class="card-orb-wrap">
+          <div class="card-orb orb-general">
+            <div class="orb-ring"></div>
+            <div class="orb-ring2"></div>
+          </div>
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <div class="card-badge">GENERAL RELATIVITY</div>
+        <div class="card-title">النسبية العامة</div>
+        <div class="card-desc">
+          الجاذبية وانحناء الزمكان — تمدد الزمن الجاذبي، الثقوب السوداء،
+          انحناء الضوء، وموجات الجاذبية.
+        </div>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">تمدد زمن جاذبي</span>
+            <span class="chip">شوارزشيلد</span>
+            <span class="chip">انحناء الضوء</span>
+            <span class="chip">موجات الجاذبية</span>
+          </div>
+          <div class="card-cta">ابدأ <span class="cta-arrow">←</span></div>
+        </div>
       </div>
     </a>
 
   </div>
 </div>
 
+<div class="status-bar">
+  <div class="status-left">SYS:ONLINE · COORDINATES:∞</div>
+  <div class="status-center">
+    <div class="status-dot"></div>
+    <div class="status-dot" style="background:var(--general);box-shadow:0 0 6px var(--general);animation-delay:.8s"></div>
+    <div class="status-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold);animation-delay:1.4s"></div>
+  </div>
+  <div class="status-right">EINSTEIN FIELD EQ · Gμν = 8πTμν</div>
+</div>
+
 <script>
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, orbs;
-function initCanvas() {
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  orbs = [
-    {x:W*.12, y:H*.28, r:380, color:'rgba(124,58,237,',  speed:.00028, phase:0},
-    {x:W*.88, y:H*.52, r:420, color:'rgba(168,85,247,',  speed:.00034, phase:2.4},
-    {x:W*.5,  y:H*.88, r:290, color:'rgba(124,58,237,',  speed:.0003,  phase:4.2},
+/* ─────────────────────────────────────────────
+   CURSOR
+───────────────────────────────────────────── */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx += (mx-rx)*.12;
+  ry += (my-ry)*.12;
+  cursorRing.style.left=rx+'px';
+  cursorRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+/* ─────────────────────────────────────────────
+   MAIN SPACE CANVAS
+───────────────────────────────────────────── */
+const spaceCanvas = document.getElementById('space-canvas');
+const sc = spaceCanvas.getContext('2d');
+let W,H;
+
+function resize(){
+  W = spaceCanvas.width  = window.innerWidth;
+  H = spaceCanvas.height = window.innerHeight;
+  initStars(); initNebula();
+}
+
+/* Stars */
+let stars = [];
+function initStars(){
+  stars = [];
+  const count = Math.floor(W*H/1400);
+  for(let i=0;i<count;i++){
+    const mag = Math.random();
+    stars.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      r: mag < .6 ? .4 : mag < .85 ? .7 : mag < .95 ? 1.1 : 1.6,
+      a: Math.random(),
+      da: (Math.random()-.5)*.003,
+      hue: Math.random()<.7 ? 200+Math.random()*40 : 260+Math.random()*30,
+      sat: 30+Math.random()*50,
+    });
+  }
+}
+
+/* Shooting stars */
+let shooters=[];
+function spawnShooter(){
+  const angle = Math.PI/4 + (Math.random()-.5)*.4;
+  const speed = 8+Math.random()*12;
+  shooters.push({
+    x:Math.random()*W*1.2 - W*.1,
+    y:Math.random()*H*.5,
+    vx:Math.cos(angle)*speed,
+    vy:Math.sin(angle)*speed,
+    len:80+Math.random()*120,
+    a:1, life:1,
+    color:Math.random()<.5 ? '79,158,255' : '191,95,255',
+  });
+}
+setInterval(()=>{ if(Math.random()<.6) spawnShooter(); },2200);
+
+/* Nebula blobs */
+let nebulae=[];
+function initNebula(){
+  nebulae=[
+    {x:W*.15,y:H*.25,r:W*.28,h:220,s:50,a:.05,vx:.03,vy:.02,px:0,py:0},
+    {x:W*.82,y:H*.6, r:W*.25,h:280,s:60,a:.04,vx:-.02,vy:.025,px:0,py:0},
+    {x:W*.5, y:H*.82,r:W*.22,h:260,s:55,a:.035,vx:.025,vy:-.02,px:0,py:0},
   ];
 }
-function drawCanvas() {
-  ctx.clearRect(0,0,W,H); ctx.fillStyle='#020817'; ctx.fillRect(0,0,W,H);
-  for (const o of orbs) {
-    o.phase += o.speed;
-    const ox = o.x + Math.sin(o.phase)*60, oy = o.y + Math.cos(o.phase*.7)*45;
-    const g = ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
-    g.addColorStop(0, o.color+'0.08)'); g.addColorStop(.5, o.color+'0.025)'); g.addColorStop(1, o.color+'0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox,oy,o.r,0,Math.PI*2); ctx.fill();
+
+/* Mouse parallax */
+let pmx=W/2||500, pmy=H/2||400;
+document.addEventListener('mousemove',e=>{ pmx=e.clientX; pmy=e.clientY; });
+
+/* Draw */
+let t=0;
+function drawSpace(){
+  t++;
+  sc.clearRect(0,0,W,H);
+  sc.fillStyle='#00000f';
+  sc.fillRect(0,0,W,H);
+
+  // parallax offsets
+  const ox=(pmx/W-.5)*30, oy=(pmy/H-.5)*20;
+
+  // nebulae
+  for(const n of nebulae){
+    n.px += (ox*.4 - n.px)*.02;
+    n.py += (oy*.3 - n.py)*.02;
+    const nx=n.x+n.px, ny=n.y+n.py;
+    const g=sc.createRadialGradient(nx,ny,0,nx,ny,n.r);
+    g.addColorStop(0,  `hsla(${n.h},${n.s}%,40%,${n.a})`);
+    g.addColorStop(.4, `hsla(${n.h},${n.s}%,30%,${n.a*.5})`);
+    g.addColorStop(1,  `hsla(${n.h},${n.s}%,20%,0)`);
+    sc.fillStyle=g;
+    sc.beginPath(); sc.arc(nx,ny,n.r,0,Math.PI*2); sc.fill();
   }
-  requestAnimationFrame(drawCanvas);
+
+  // stars
+  for(const s of stars){
+    s.a += s.da;
+    if(s.a>1||s.a<0) s.da*=-1;
+    s.a=Math.max(0,Math.min(1,s.a));
+    const sx = s.x + ox*.15, sy = s.y + oy*.1;
+    sc.globalAlpha = .3+s.a*.7;
+    sc.fillStyle=`hsl(${s.hue},${s.sat}%,90%)`;
+    sc.beginPath(); sc.arc(sx,sy,s.r,0,Math.PI*2); sc.fill();
+    // star glow for big ones
+    if(s.r>1){
+      const sg=sc.createRadialGradient(sx,sy,0,sx,sy,s.r*5);
+      sg.addColorStop(0,`hsl(${s.hue},80%,90%)`);
+      sg.addColorStop(1,'transparent');
+      sc.globalAlpha=s.a*.15;
+      sc.fillStyle=sg;
+      sc.beginPath(); sc.arc(sx,sy,s.r*5,0,Math.PI*2); sc.fill();
+    }
+  }
+  sc.globalAlpha=1;
+
+  // shooting stars
+  shooters = shooters.filter(s=>{
+    s.x+=s.vx; s.y+=s.vy; s.life-=.015;
+    if(s.life<=0) return false;
+    sc.globalAlpha=s.life*.8;
+    const grad=sc.createLinearGradient(s.x,s.y,s.x-s.vx/s.vx*s.len,s.y-s.vy/Math.abs(s.vy)*s.len);
+    // simplified direction
+    const ex=s.x-Math.cos(Math.atan2(s.vy,s.vx))*s.len;
+    const ey=s.y-Math.sin(Math.atan2(s.vy,s.vx))*s.len;
+    const gl=sc.createLinearGradient(s.x,s.y,ex,ey);
+    gl.addColorStop(0,`rgba(${s.color},${s.life})`);
+    gl.addColorStop(1,`rgba(${s.color},0)`);
+    sc.strokeStyle=gl; sc.lineWidth=s.life*2;
+    sc.beginPath(); sc.moveTo(s.x,s.y); sc.lineTo(ex,ey); sc.stroke();
+    sc.globalAlpha=1;
+    return true;
+  });
+
+  requestAnimationFrame(drawSpace);
 }
-window.addEventListener('resize', initCanvas);
-initCanvas(); requestAnimationFrame(drawCanvas);
+
+/* ─────────────────────────────────────────────
+   CARD MINI STAR FIELDS
+───────────────────────────────────────────── */
+function initCardCanvas(canvas){
+  const ctx = canvas.getContext('2d');
+  const isSpecial = canvas.dataset.type==='special';
+  const color = isSpecial ? '79,158,255' : '191,95,255';
+  let cw, ch, cstars=[], ctime=0;
+
+  function setup(){
+    cw=canvas.width=canvas.offsetWidth;
+    ch=canvas.height=canvas.offsetHeight;
+    cstars=[];
+    for(let i=0;i<120;i++){
+      cstars.push({
+        x:Math.random()*cw, y:Math.random()*ch,
+        r:Math.random()*.9+.2,
+        a:Math.random(),
+        da:(Math.random()-.5)*.005,
+        speed:(Math.random()-.5)*.08,
+      });
+    }
+  }
+  setup();
+  new ResizeObserver(setup).observe(canvas);
+
+  // wormhole/vortex for general
+  function drawVortex(){
+    const cx=cw*.5, cy=ch*.5;
+    for(let ring=0;ring<6;ring++){
+      const r=20+ring*22 + Math.sin(ctime*.03+ring)*.5*ring;
+      const alpha=.04 - ring*.005;
+      ctx.strokeStyle=`rgba(${color},${alpha})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.stroke();
+    }
+    // pull lines
+    for(let a=0;a<12;a++){
+      const ang=a*(Math.PI*2/12)+ctime*.008;
+      const r1=15, r2=90+Math.sin(ctime*.02+a)*5;
+      ctx.strokeStyle=`rgba(${color},0.04)`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(ang)*r1,cy+Math.sin(ang)*r1);
+      ctx.lineTo(cx+Math.cos(ang)*r2,cy+Math.sin(ang)*r2);
+      ctx.stroke();
+    }
+  }
+
+  // speed lines for special
+  function drawSpeedLines(){
+    const cx=cw*.5, cy=ch*.35;
+    for(let i=0;i<20;i++){
+      const ang=Math.random()*Math.PI*2;
+      const r1=5+Math.random()*10;
+      const r2=r1+30+Math.random()*40;
+      ctx.strokeStyle=`rgba(${color},${.03+Math.random()*.04})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(ang)*r1,cy+Math.sin(ang)*r1);
+      ctx.lineTo(cx+Math.cos(ang)*r2,cy+Math.sin(ang)*r2);
+      ctx.stroke();
+    }
+  }
+
+  function draw(){
+    ctime++;
+    ctx.clearRect(0,0,cw,ch);
+    // bg
+    ctx.fillStyle=`rgba(0,0,10,0.0)`;
+    ctx.fillRect(0,0,cw,ch);
+    // visual
+    if(isSpecial) drawSpeedLines();
+    else drawVortex();
+    // stars
+    for(const s of cstars){
+      s.a+=s.da; if(s.a>1||s.a<0) s.da*=-1;
+      ctx.globalAlpha=.1+s.a*.5;
+      ctx.fillStyle=`rgba(${color},1)`;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+document.querySelectorAll('.card-canvas').forEach(initCardCanvas);
+
+/* ─────────────────────────────────────────────
+   WARP EFFECT ON CLICK
+───────────────────────────────────────────── */
+const warpCanvas = document.getElementById('warp-canvas');
+const wc = warpCanvas.getContext('2d');
+const warpOverlay = document.getElementById('warp-overlay');
+
+function resizeWarp(){
+  warpCanvas.width=window.innerWidth;
+  warpCanvas.height=window.innerHeight;
+}
+resizeWarp();
+window.addEventListener('resize',resizeWarp);
+
+function doWarp(color, href){
+  warpCanvas.classList.add('active');
+  let frame=0, maxFrames=50;
+  const cx=window.innerWidth/2, cy=window.innerHeight/2;
+
+  function animWarp(){
+    const progress=frame/maxFrames;
+    wc.clearRect(0,0,warpCanvas.width,warpCanvas.height);
+    // dark overlay growing
+    wc.fillStyle=`rgba(0,0,8,${progress*.9})`;
+    wc.fillRect(0,0,warpCanvas.width,warpCanvas.height);
+
+    // warp lines shooting outward
+    const lineCount=120;
+    for(let i=0;i<lineCount;i++){
+      const ang=(i/lineCount)*Math.PI*2;
+      const r1=progress*20;
+      const r2=r1 + (80+Math.random()*200)*progress*progress*2;
+      const alpha=(1-progress)*.5+.1;
+      wc.strokeStyle=`rgba(${color},${alpha})`;
+      wc.lineWidth=progress*1.5+.5;
+      wc.beginPath();
+      wc.moveTo(cx+Math.cos(ang)*r1,cy+Math.sin(ang)*r1);
+      wc.lineTo(cx+Math.cos(ang)*r2,cy+Math.sin(ang)*r2);
+      wc.stroke();
+    }
+
+    // center flash
+    if(progress>.7){
+      const p=(progress-.7)/.3;
+      const g=wc.createRadialGradient(cx,cy,0,cx,cy,300*p);
+      g.addColorStop(0,`rgba(${color},${p*.8})`);
+      g.addColorStop(1,`rgba(${color},0)`);
+      wc.fillStyle=g;
+      wc.fillRect(0,0,warpCanvas.width,warpCanvas.height);
+    }
+
+    frame++;
+    if(frame<maxFrames) requestAnimationFrame(animWarp);
+    else { setTimeout(()=>{ window.location.href=href; },80); }
+  }
+  animWarp();
+}
+
+document.querySelectorAll('.nav-card').forEach(card=>{
+  card.addEventListener('click',e=>{
+    e.preventDefault();
+    const color=card.dataset.color;
+    const href=card.getAttribute('href');
+    doWarp(color,href);
+  });
+});
+
+/* ─────────────────────────────────────────────
+   CARD TILT 3D
+───────────────────────────────────────────── */
+document.querySelectorAll('.nav-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const rect=card.getBoundingClientRect();
+    const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+    const dx=(e.clientX-cx)/(rect.width/2);
+    const dy=(e.clientY-cy)/(rect.height/2);
+    card.style.transform=`perspective(700px) rotateY(${dx*6}deg) rotateX(${-dy*5}deg) translateY(-8px)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='';
+    card.style.transition='transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s';
+  });
+  card.addEventListener('mouseenter',()=>{
+    card.style.transition='transform .15s ease, box-shadow .3s';
+  });
+});
+
+/* ─────────────────────────────────────────────
+   START
+───────────────────────────────────────────── */
+window.addEventListener('resize',resize);
+resize();
+drawSpace();
 </script>
 </body>
 </html>

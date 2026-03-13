@@ -3,346 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الفيزياء النووية | NUCLEAR PHYSICS</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-
+<title>NP-00 · بوابة الفيزياء النووية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:    #020817;
-  --c1:    #00d4ff;
-  --c2:    #7c3aed;
-  --c3:    #f59e0b;
-  --c4:    #10b981;
-  --c5:    #ff4757;
-  --acc:   #10b981;
-  --text:  #e2e8f0;
-  --muted: #64748b;
-  --card:  rgba(15,23,42,0.9);
-  --border:rgba(16,185,129,0.2);
+:root{
+  --blk:#000;
+  --grn:#00ff41;--grn2:#00cc33;
+  --red:#ff1a1a;--red2:#cc0000;
+  --ylw:#ffcc00;--blu:#00aaff;--prp:#cc44ff;
+  --txt:#c8e6c8;--muted:#2a4a2a;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
+html,body{min-height:100%;background:var(--blk);color:var(--txt);font-family:'Tajawal',sans-serif;overflow-x:hidden;cursor:crosshair;}
+#cv{position:fixed;inset:0;z-index:0;}
+.crt-scan{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);}
+.crt-vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 50%,rgba(0,0,0,.85) 100%);}
+.crt-flk{position:fixed;inset:0;z-index:1;pointer-events:none;animation:flk 14s infinite;}
+@keyframes flk{0%,93%,95%,100%{opacity:1}94%{opacity:.84}}
+.bg-grid{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,255,65,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,65,.018) 1px,transparent 1px);background-size:60px 60px;}
+.brk{position:fixed;width:40px;height:40px;z-index:10;pointer-events:none;}
+.brk.tl{top:14px;left:14px;border-top:2px solid var(--grn);border-left:2px solid var(--grn);}
+.brk.tr{top:14px;right:14px;border-top:2px solid var(--red);border-right:2px solid var(--red);}
+.brk.bl{bottom:14px;left:14px;border-bottom:2px solid var(--red2);border-left:2px solid var(--red2);}
+.brk.br{bottom:14px;right:14px;border-bottom:2px solid var(--grn2);border-right:2px solid var(--grn2);}
 
-#bg-canvas{position:fixed;inset:0;z-index:0;}
-.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);background-size:50px 50px;}
-.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
-.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
-.corner.tl{top:14px;left:14px;border-top:2px solid var(--acc);border-left:2px solid var(--acc);}
-.corner.tr{top:14px;right:14px;border-top:2px solid var(--c3);border-right:2px solid var(--c3);}
-.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c2);border-left:2px solid var(--c2);}
-.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c5);border-right:2px solid var(--c5);}
+/* HEADER */
+header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:11px 32px;background:rgba(0,3,0,.96);border-bottom:1px solid rgba(0,255,65,.07);backdrop-filter:blur(20px);}
+.h-code{font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:900;color:var(--grn);letter-spacing:5px;text-shadow:0 0 16px rgba(0,255,65,.5);}
+.h-mid{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(0,255,65,.28);letter-spacing:3px;}
+.h-status{display:flex;gap:16px;align-items:center;}
+.hst{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--muted);}
+.hst-dot{width:5px;height:5px;border-radius:50%;animation:blink 1.4s ease-in-out infinite;}
+.hst-dot.g{background:var(--grn);box-shadow:0 0 6px var(--grn);}
+.hst-dot.r{background:var(--red);box-shadow:0 0 6px var(--red);animation-delay:.5s;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.12}}
 
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--acc);letter-spacing:3px;text-shadow:0 0 10px rgba(16,185,129,.5);}
-.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
-.back-btn:hover{color:var(--acc);border-color:var(--acc);}
-.header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
+/* WRAP */
+.wrap{position:relative;z-index:5;max-width:1280px;margin:0 auto;padding:52px 28px 100px;}
 
-.wrapper{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
-
-.page-hero{text-align:center;margin-bottom:48px;animation:fadeUp .7s ease both;}
+/* HERO */
+.hero{text-align:center;margin-bottom:72px;animation:fadeUp .8s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:100px;padding:5px 16px;font-size:.65rem;letter-spacing:3px;color:var(--acc);margin-bottom:20px;}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 1.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page-hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
-.page-hero p{color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.8;}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(255,26,26,.32);border-radius:3px;padding:6px 22px;margin-bottom:24px;font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:4px;color:var(--red);background:rgba(255,26,26,.04);}
+.spin{animation:spin 5s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero h1{font-family:'Orbitron',sans-serif;font-weight:900;line-height:1.1;margin-bottom:14px;}
+.h1a{display:block;font-size:clamp(.8rem,2vw,1rem);color:rgba(0,255,65,.38);letter-spacing:8px;margin-bottom:6px;}
+.h1b{display:block;font-size:clamp(2rem,5vw,3.8rem);background:linear-gradient(160deg,#fff 0%,var(--grn) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 16px rgba(0,255,65,.2))}50%{filter:drop-shadow(0 0 38px rgba(0,255,65,.55))}}
+.h1c{display:block;font-size:.7rem;color:rgba(255,26,26,.45);letter-spacing:6px;margin-top:8px;font-family:'Share Tech Mono',monospace;}
+.rad{display:inline-flex;align-items:center;gap:14px;margin-top:22px;background:rgba(255,26,26,.03);border:1px solid rgba(255,26,26,.16);border-radius:3px;padding:9px 22px;font-family:'Share Tech Mono',monospace;}
+.rad-lbl{font-size:.52rem;color:rgba(255,26,26,.45);letter-spacing:3px;}
+.rad-bars{display:flex;gap:3px;align-items:flex-end;height:16px;}
+.rb{width:3px;background:var(--red);border-radius:1px;animation:rb 1s ease-in-out infinite;}
+.rb:nth-child(1){height:25%;animation-delay:0s}.rb:nth-child(2){height:55%;animation-delay:.08s}.rb:nth-child(3){height:90%;animation-delay:.16s}.rb:nth-child(4){height:70%;animation-delay:.24s}.rb:nth-child(5){height:40%;animation-delay:.32s}.rb:nth-child(6){height:85%;animation-delay:.4s}.rb:nth-child(7){height:50%;animation-delay:.48s}.rb:nth-child(8){height:100%;animation-delay:.56s}
+@keyframes rb{0%,100%{opacity:.18}50%{opacity:.85}}
+.rad-val{font-size:.95rem;color:var(--red);text-shadow:0 0 10px rgba(255,26,26,.5);}
+.rad-unit{font-size:.48rem;color:rgba(255,26,26,.38);letter-spacing:2px;}
 
-.subtypes-row{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;animation:fadeUp .7s .1s ease both;}
-.subtype-tab{flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:center;transition:all .25s ease;backdrop-filter:blur(8px);position:relative;overflow:hidden;}
-.subtype-tab::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);opacity:0;transition:.3s;}
-.subtype-tab:hover::before{opacity:1;}
-.subtype-tab:hover{border-color:var(--acc);transform:translateY(-2px);}
-.subtype-tab.active{border-color:var(--acc);background:rgba(16,185,129,.08);box-shadow:0 0 24px rgba(16,185,129,.12);}
-.subtype-tab.active::before{opacity:1;}
-.tab-icon{font-size:1.4rem;margin-bottom:6px;}
-.tab-name{font-size:.82rem;font-weight:700;color:#f1f5f9;}
-.tab-en{font-size:.6rem;color:var(--muted);letter-spacing:1px;font-family:'Orbitron',sans-serif;margin-top:2px;}
-.tab-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--acc);transform:scaleX(0);transition:.3s;transform-origin:center;}
-.subtype-tab.active .tab-bar{transform:scaleX(1);}
+/* ══ PHASE BLOCK ══ */
+.phase{margin-bottom:56px;animation:fadeUp .6s ease both;}
 
-.solver-panel{background:var(--card);border-radius:20px;border:1px solid rgba(16,185,129,.15);overflow:hidden;backdrop-filter:blur(12px);animation:fadeUp .7s .2s ease both;}
-.solver-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:14px;}
-.solver-icon{font-size:1.8rem;}
-.solver-title{font-weight:700;color:#f1f5f9;font-size:1.05rem;}
-.solver-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
-.solver-body{padding:24px;}
+.phase-bar{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:14px 20px;border-radius:5px;position:relative;overflow:hidden;}
+.phase-bar.c-grn{border:1px solid rgba(0,255,65,.18);background:linear-gradient(135deg,rgba(0,255,65,.04),rgba(0,255,65,.01));}
+.phase-bar.c-red{border:1px solid rgba(255,26,26,.18);background:linear-gradient(135deg,rgba(255,26,26,.04),rgba(255,26,26,.01));}
+.phase-bar.c-ylw{border:1px solid rgba(255,204,0,.18);background:linear-gradient(135deg,rgba(255,204,0,.04),rgba(255,204,0,.01));}
+.phase-bar.c-blu{border:1px solid rgba(0,170,255,.18);background:linear-gradient(135deg,rgba(0,170,255,.04),rgba(0,170,255,.01));}
+.phase-bar.c-prp{border:1px solid rgba(204,68,255,.18);background:linear-gradient(135deg,rgba(204,68,255,.04),rgba(204,68,255,.01));}
 
-.inputs-label{font-size:.7rem;letter-spacing:2px;color:var(--muted);font-family:'Orbitron',sans-serif;margin-bottom:14px;}
-.inputs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
-.input-group{display:flex;flex-direction:column;gap:6px;}
-.input-group label{font-size:.75rem;color:#94a3b8;}
-.input-group label span{color:var(--acc);font-size:.7rem;margin-right:4px;}
-.input-field{background:#020617;border:1.5px solid #1e293b;color:white;padding:12px 14px;border-radius:10px;outline:none;font-family:'Tajawal',sans-serif;font-size:.9rem;transition:.25s;}
-.input-field:focus{border-color:var(--acc);box-shadow:0 0 10px rgba(16,185,129,.2);}
-.input-field::placeholder{color:#334155;font-size:.8rem;}
-.solve-btn{width:100%;padding:16px;background:linear-gradient(90deg,#064e3b,var(--acc));color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;font-size:1rem;font-family:'Tajawal',sans-serif;letter-spacing:1px;transition:.3s ease;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;}
-.solve-btn:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 10px 30px rgba(16,185,129,.2);}
+.phase-ico{font-size:1.4rem;flex-shrink:0;}
+.phase-labels{flex:1;}
+.phase-code{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:900;letter-spacing:4px;margin-bottom:2px;}
+.phase-code.c-grn{color:var(--grn);}
+.phase-code.c-red{color:var(--red);}
+.phase-code.c-ylw{color:var(--ylw);}
+.phase-code.c-blu{color:var(--blu);}
+.phase-code.c-prp{color:var(--prp);}
+.phase-name{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:3px;}
+.phase-count{font-family:'Share Tech Mono',monospace;font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 
-.result-section{margin-top:28px;display:none;animation:fadeUp .5s ease both;}
-.result-section.show{display:block;}
-.result-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.4),transparent);margin-bottom:24px;}
-
-.laws-section{margin-bottom:24px;}
-.laws-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.laws-title::after{content:'';flex:1;height:1px;background:rgba(16,185,129,.25);}
-.law-card{background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;}
-.law-badge{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:2px;color:var(--acc);background:rgba(16,185,129,.1);padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.law-latex{flex:1;overflow-x:auto;direction:ltr;}
-.law-latex .katex{font-size:.95rem!important;}
-
-.steps-title{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;color:var(--c3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.steps-title::after{content:'';flex:1;height:1px;background:rgba(245,158,11,.2);}
-.step{background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;}
-.step-num{font-family:'Orbitron',sans-serif;font-size:.65rem;color:var(--c3);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:6px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-label{font-size:.72rem;color:var(--muted);margin-bottom:6px;}
-.step-math{overflow-x:auto;direction:ltr;}
-.step-math .katex{font-size:.95rem!important;}
-
-.result-box{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:20px 24px;margin-top:16px;box-shadow:0 0 20px rgba(16,185,129,.06);}
-.result-box-label{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;color:var(--acc);margin-bottom:12px;}
-.result-values{display:flex;flex-wrap:wrap;gap:12px;}
-.result-val{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 16px;}
-.result-val-name{font-size:.65rem;color:var(--muted);margin-bottom:4px;}
-.result-val-num{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--acc);font-weight:700;}
-.error-box{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.3);border-radius:10px;padding:14px 16px;color:var(--c5);font-size:.82rem;margin-top:16px;}
-
-@media(max-width:768px){
-  .subtypes-row{flex-direction:column;}
-  .inputs-grid{grid-template-columns:1fr;}
-  .result-values{flex-direction:column;}
+/* ══ MODULES GRID ══ */
+.modules-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:10px;
 }
-@media(max-width:480px){
-  header{padding:10px 14px;}
-  .wrapper{padding:24px 14px 60px;}
+
+/* single module card */
+.mod-card{
+  background:rgba(2,7,2,.97);
+  border-radius:5px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  transition:transform .18s, box-shadow .18s;
+  display:flex;
+  flex-direction:column;
 }
+.mod-card:hover{transform:translateY(-3px);}
+
+/* top accent line */
+.mod-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:.6;}
+.mod-card.c-grn{border:1px solid rgba(0,255,65,.1);}
+.mod-card.c-grn::after{background:linear-gradient(90deg,var(--grn),transparent);}
+.mod-card.c-grn:hover{box-shadow:0 8px 30px rgba(0,255,65,.07);border-color:rgba(0,255,65,.22);}
+.mod-card.c-red{border:1px solid rgba(255,26,26,.1);}
+.mod-card.c-red::after{background:linear-gradient(90deg,var(--red),transparent);}
+.mod-card.c-red:hover{box-shadow:0 8px 30px rgba(255,26,26,.07);border-color:rgba(255,26,26,.22);}
+.mod-card.c-ylw{border:1px solid rgba(255,204,0,.1);}
+.mod-card.c-ylw::after{background:linear-gradient(90deg,var(--ylw),transparent);}
+.mod-card.c-ylw:hover{box-shadow:0 8px 30px rgba(255,204,0,.07);border-color:rgba(255,204,0,.22);}
+.mod-card.c-blu{border:1px solid rgba(0,170,255,.1);}
+.mod-card.c-blu::after{background:linear-gradient(90deg,var(--blu),transparent);}
+.mod-card.c-blu:hover{box-shadow:0 8px 30px rgba(0,170,255,.07);border-color:rgba(0,170,255,.22);}
+.mod-card.c-prp{border:1px solid rgba(204,68,255,.1);}
+.mod-card.c-prp::after{background:linear-gradient(90deg,var(--prp),transparent);}
+.mod-card.c-prp:hover{box-shadow:0 8px 30px rgba(204,68,255,.07);border-color:rgba(204,68,255,.22);}
+
+/* card header area */
+.mc-hdr{padding:16px 16px 12px 16px;display:flex;align-items:flex-start;gap:11px;}
+.mc-tag{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:900;letter-spacing:2px;padding:5px 11px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.mc-tag.c-grn{background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.18);color:var(--grn);}
+.mc-tag.c-red{background:rgba(255,26,26,.07);border:1px solid rgba(255,26,26,.18);color:var(--red);}
+.mc-tag.c-ylw{background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.18);color:var(--ylw);}
+.mc-tag.c-blu{background:rgba(0,170,255,.07);border:1px solid rgba(0,170,255,.18);color:var(--blu);}
+.mc-tag.c-prp{background:rgba(204,68,255,.07);border:1px solid rgba(204,68,255,.18);color:var(--prp);}
+.mc-info{flex:1;min-width:0;}
+.mc-title{font-size:.9rem;font-weight:800;color:#d8f0d8;line-height:1.3;margin-bottom:3px;}
+.mc-en{font-family:'Orbitron',sans-serif;font-size:.38rem;letter-spacing:2px;color:var(--muted);}
+.mc-lockico{font-size:.75rem;opacity:.35;flex-shrink:0;}
+
+/* separator */
+.mc-sep{height:1px;margin:0 14px;}
+.mc-sep.c-grn{background:linear-gradient(90deg,rgba(0,255,65,.1),transparent);}
+.mc-sep.c-red{background:linear-gradient(90deg,rgba(255,26,26,.1),transparent);}
+.mc-sep.c-ylw{background:linear-gradient(90deg,rgba(255,204,0,.1),transparent);}
+.mc-sep.c-blu{background:linear-gradient(90deg,rgba(0,170,255,.1),transparent);}
+.mc-sep.c-prp{background:linear-gradient(90deg,rgba(204,68,255,.1),transparent);}
+
+/* topics */
+.mc-topics{padding:10px 14px 6px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.mct{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:3px;transition:.15s;}
+.mct:hover{background:rgba(255,255,255,.02);}
+.mct-code{font-family:'Orbitron',sans-serif;font-size:.42rem;font-weight:700;letter-spacing:1.5px;padding:2px 6px;border-radius:2px;white-space:nowrap;flex-shrink:0;}
+.mct-code.c-grn{color:rgba(0,255,65,.55);background:rgba(0,255,65,.05);border:1px solid rgba(0,255,65,.1);}
+.mct-code.c-red{color:rgba(255,26,26,.55);background:rgba(255,26,26,.05);border:1px solid rgba(255,26,26,.1);}
+.mct-code.c-ylw{color:rgba(255,204,0,.55);background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.1);}
+.mct-code.c-blu{color:rgba(0,170,255,.55);background:rgba(0,170,255,.05);border:1px solid rgba(0,170,255,.1);}
+.mct-code.c-prp{color:rgba(204,68,255,.55);background:rgba(204,68,255,.05);border:1px solid rgba(204,68,255,.1);}
+.mct-name{font-size:.68rem;color:rgba(180,210,180,.38);flex:1;line-height:1.4;}
+.mct-lk{font-size:.55rem;opacity:.18;flex-shrink:0;}
+
+/* card footer */
+.mc-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 13px;margin-top:auto;}
+.mcf-denied{font-family:'Share Tech Mono',monospace;font-size:.48rem;color:rgba(255,26,26,.3);letter-spacing:2px;display:flex;align-items:center;gap:5px;}
+.mcf-dot{width:3px;height:3px;border-radius:50%;background:var(--red);opacity:.45;animation:blink 1.2s infinite;}
+.mcf-req{font-family:'Share Tech Mono',monospace;font-size:.46rem;color:rgba(0,255,65,.16);letter-spacing:1px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:56px;animation:fadeUp .7s .3s ease both;}
+.st{background:rgba(2,6,2,.96);border:1px solid rgba(0,255,65,.06);padding:20px;text-align:center;border-radius:4px;position:relative;overflow:hidden;transition:.25s;}
+.st::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--grn);transform:scaleX(0);transition:.35s;}
+.st:hover::after{transform:scaleX(1);}
+.st-n{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:900;color:var(--grn);text-shadow:0 0 18px rgba(0,255,65,.3);display:block;margin-bottom:5px;}
+.st-n.r{color:var(--red);text-shadow:0 0 18px rgba(255,26,26,.3);}
+.st-l{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:2px;}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.9);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;}
+.modal-ov.open{opacity:1;pointer-events:all;}
+.modal{background:#010601;border:1px solid rgba(255,26,26,.28);max-width:400px;width:90%;text-align:center;padding:40px 32px;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));transform:scale(.92);transition:.3s;}
+.modal-ov.open .modal{transform:scale(1);}
+.m-ico{font-size:2.5rem;display:block;margin-bottom:14px;}
+.m-code{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:4px;color:rgba(255,26,26,.38);margin-bottom:8px;}
+.m-title{font-family:'Orbitron',sans-serif;font-size:.82rem;font-weight:900;color:var(--red);letter-spacing:3px;margin-bottom:10px;}
+.m-text{font-size:.8rem;color:rgba(180,180,180,.5);line-height:1.9;margin-bottom:24px;}
+.m-btn{background:transparent;border:1px solid rgba(255,26,26,.28);color:rgba(255,26,26,.65);font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:3px;padding:11px 28px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:.2s;}
+.m-btn:hover{background:rgba(255,26,26,.07);}
+
+/* TICKER */
+.ticker{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(0,3,0,.97);border-top:1px solid rgba(0,255,65,.07);padding:7px 0;overflow:hidden;height:30px;}
+.tk-inner{display:flex;gap:80px;animation:tick 55s linear infinite;white-space:nowrap;}
+@keyframes tick{from{transform:translateX(100vw)}to{transform:translateX(-200%)}}
+.tki{font-family:'Share Tech Mono',monospace;font-size:.54rem;color:rgba(0,255,65,.22);letter-spacing:2px;display:flex;align-items:center;gap:8px;}
+.tki b{color:rgba(0,255,65,.42);}
+
+@media(max-width:900px){.modules-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}}
+@media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr);}header{padding:10px 16px;}.h-status{display:none;}.modules-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.wrap{padding:28px 14px 80px;}.h1b{font-size:2rem;}}
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="grid-overlay"></div>
-<div class="scanlines"></div>
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
+<canvas id="cv"></canvas>
+<div class="crt-scan"></div><div class="crt-vig"></div><div class="crt-flk"></div>
+<div class="bg-grid"></div>
+<div class="brk tl"></div><div class="brk tr"></div><div class="brk bl"></div><div class="brk br"></div>
 
 <header>
-  <a class="back-btn" href="modern.html">← رجوع</a>
-  <div class="header-title">الفيزياء النووية</div>
-  <div class="logo">NUCLEAR·PHYS</div>
+  <div class="h-code">☢ NP-00</div>
+  <div class="h-mid">NUCLEAR · PHYSICS · PORTAL</div>
+  <div class="h-status">
+    <div class="hst"><div class="hst-dot g"></div>SYSTEM ONLINE</div>
+    <div class="hst"><div class="hst-dot r"></div>ALL LOCKED</div>
+    <div class="hst"><div class="hst-dot g"></div>SECURE</div>
+  </div>
 </header>
 
-<div class="wrapper">
+<div class="wrap">
 
-  <section class="page-hero">
-    <div class="page-badge"><div class="badge-dot"></div>الفيزياء النووية · NUCLEAR PHYSICS</div>
-    <h1>☢️ الفيزياء النووية</h1>
-    <p>الانحلال الإشعاعي، النشاط الإشعاعي، وحساب عمر النصف</p>
-  </section>
-
-  <div class="subtypes-row">
-    <div class="subtype-tab active" id="tab-nuc_decay" onclick="selectSubtype('nuc_decay')">
-      <div class="tab-icon">📉</div>
-      <div class="tab-name">قانون الانحلال الإشعاعي</div>
-      <div class="tab-en">RADIOACTIVE DECAY</div>
-      <div class="tab-bar"></div>
-    </div>
-    <div class="subtype-tab" id="tab-nuc_halflife" onclick="selectSubtype('nuc_halflife')">
-      <div class="tab-icon">⏳</div>
-      <div class="tab-name">عمر النصف</div>
-      <div class="tab-en">HALF-LIFE</div>
-      <div class="tab-bar"></div>
-    </div>
+<section class="hero">
+  <div class="hero-badge"><span class="spin">☢</span> RESTRICTED · مقيّد · AUTHORIZED ACCESS ONLY <span class="spin">☢</span></div>
+  <h1>
+    <span class="h1a">PORTAL · NP-00</span>
+    <span class="h1b">الفيزياء النووية</span>
+    <span class="h1c">ALL MODULES LOCKED · جميع الوحدات مقفلة</span>
+  </h1>
+  <div class="rad">
+    <span class="rad-lbl">RADIATION</span>
+    <div class="rad-bars"><div class="rb"></div><div class="rb"></div><div class="rb"></div><div class="rb"></div><div class="rb"></div><div class="rb"></div><div class="rb"></div><div class="rb"></div></div>
+    <span class="rad-val" id="rv">0.00</span>
+    <span class="rad-unit">μSv/hr</span>
   </div>
+</section>
 
-  <div class="solver-panel">
-    <div class="solver-header" id="solver-header">
-      <div class="solver-icon">📉</div>
-      <div>
-        <div class="solver-title" id="solver-title">قانون الانحلال الإشعاعي</div>
-        <div class="solver-desc"  id="solver-desc">احسب العدد المتبقي والنشاط الإشعاعي</div>
+<!-- ══════════════════════════════
+     PHASE 1 · البنية النووية
+══════════════════════════════ -->
+<div class="phase" style="animation-delay:.05s">
+  <div class="phase-bar c-grn">
+    <span class="phase-ico">⚛</span>
+    <div class="phase-labels">
+      <div class="phase-code c-grn">NS-XX · البنية النووية</div>
+      <div class="phase-name">NUCLEAR STRUCTURE · PHASE 1</div>
+    </div>
+    <div class="phase-count">7 مواضيع</div>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card c-grn" onclick="showModal('NS-01','بنية النواة الذرية','نقطة البداية الإلزامية — ادرس مكونات النواة وخصائصها الجوهرية قبل أي شيء آخر.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-grn">NS-01</div>
+        <div class="mc-info"><div class="mc-title">بنية النواة الذرية</div><div class="mc-en">NUCLEAR STRUCTURE · FUNDAMENTALS</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-grn"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-grn">NS-1A</div><div class="mct-name">البروتونات والنيوترونات والنوكليونات</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1B</div><div class="mct-name">الأعداد النووية Z, N, A والرموز النووية</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1C</div><div class="mct-name">نصف قطر النواة · r = r₀ A^(1/3)</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1D</div><div class="mct-name">عجز الكتلة Δm وطاقة الربط النووي</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1E</div><div class="mct-name">طاقة الربط النووي B.E الكلية</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1F</div><div class="mct-name">B.E/A ومنحنى الاستقرار النووي</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-grn">NS-1G</div><div class="mct-name">معادلة Bethe-Weizsäcker · نموذج قطرة السائل</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">لا يوجد متطلب · نقطة البداية</div>
       </div>
     </div>
-    <div class="solver-body">
-      <div class="inputs-label">// أدخل المعطيات المعروفة</div>
-      <div id="inputs-area"></div>
-      <button class="solve-btn" onclick="triggerSolve()">
-        <span>☢️</span> احسب وأظهر الحل الكامل
-      </button>
-      <div class="result-section" id="result-section">
-        <div class="result-divider"></div>
-        <div id="result-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PHASE 2 · الانحلال الإشعاعي
+══════════════════════════════ -->
+<div class="phase" style="animation-delay:.1s">
+  <div class="phase-bar c-red">
+    <span class="phase-ico">☢</span>
+    <div class="phase-labels">
+      <div class="phase-code c-red">RD-XX · الانحلال الإشعاعي</div>
+      <div class="phase-name">RADIOACTIVE DECAY · PHASE 2</div>
+    </div>
+    <div class="phase-count">11 موضوع</div>
+  </div>
+  <div class="modules-grid">
+
+    <div class="mod-card c-red" onclick="showModal('RD-02','قوانين الانحلال الإشعاعي','يتطلب إتمام الوحدة NS-01 بالكامل قبل الدخول إلى هذه الوحدة.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-red">RD-02</div>
+        <div class="mc-info"><div class="mc-title">قوانين الانحلال الإشعاعي</div><div class="mc-en">RADIOACTIVE DECAY · LAWS & CONSTANTS</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-red"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-red">RD-2A</div><div class="mct-name">قانون الانحلال الأساسي N(t) = N₀ e^(−λt)</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-2B</div><div class="mct-name">ثابت الانحلال λ وعمر النصف t½</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-2C</div><div class="mct-name">متوسط العمر الذري τ = 1/λ</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-2D</div><div class="mct-name">النشاط الإشعاعي A · Becquerel / Curie</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-2E</div><div class="mct-name">حساب عدد فترات عمر النصف n</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">المتطلب: NS-01</div>
       </div>
     </div>
-  </div>
 
+    <div class="mod-card c-red" onclick="showModal('RD-03','أنواع الانحلال α β γ','يتطلب إتمام الوحدة RD-02 · قوانين الانحلال أولاً.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-red">RD-03</div>
+        <div class="mc-info"><div class="mc-title">أنواع الانحلال · α β γ</div><div class="mc-en">DECAY TYPES · ALPHA · BETA · GAMMA</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-red"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-red">RD-3A</div><div class="mct-name">انحلال ألفا α + قاعدة Geiger-Nuttall</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-3B</div><div class="mct-name">انحلال بيتا β⁻ · النيوترون إلى بروتون</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-3C</div><div class="mct-name">انحلال بيتا β⁺ والتقاط الإلكتروني</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-3D</div><div class="mct-name">إشعاع غاما γ والتحول الداخلي</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-3E</div><div class="mct-name">سلاسل الانحلال المتتابع</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-red">RD-3F</div><div class="mct-name">قواعد الإزاحة في الانحلال النووي</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">المتطلب: RD-02</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PHASE 3 · التفاعلات النووية
+══════════════════════════════ -->
+<div class="phase" style="animation-delay:.15s">
+  <div class="phase-bar c-ylw">
+    <span class="phase-ico">💥</span>
+    <div class="phase-labels">
+      <div class="phase-code c-ylw">NR-XX · التفاعلات النووية</div>
+      <div class="phase-name">NUCLEAR REACTIONS · PHASE 3</div>
+    </div>
+    <div class="phase-count">10 مواضيع</div>
+  </div>
+  <div class="modules-grid">
+
+    <div class="mod-card c-ylw" onclick="showModal('NR-04','التفاعلات النووية الأساسية','يتطلب إتمام وحدات NS-01 و RD-02 و RD-03 كاملةً.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-ylw">NR-04</div>
+        <div class="mc-info"><div class="mc-title">التفاعلات النووية الأساسية</div><div class="mc-en">NUCLEAR REACTIONS · Q-VALUE & CROSS SECTION</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-ylw"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-ylw">NR-4A</div><div class="mct-name">قوانين حفظ الأعداد النووية في التفاعلات</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-4B</div><div class="mct-name">قيمة Q وطاقة التفاعل النووي</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-4C</div><div class="mct-name">مقطع العرض الفعال σ (Cross Section)</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-4D</div><div class="mct-name">طاقة العتبة للتفاعلات الماصة للطاقة</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-4E</div><div class="mct-name">تفاعلات جسيمات α والبروتونات</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">المتطلب: NS-01 + RD-02 + RD-03</div>
+      </div>
+    </div>
+
+    <div class="mod-card c-ylw" onclick="showModal('NR-05','الانشطار والاندماج النووي','يتطلب إتمام الوحدة NR-04 · التفاعلات الأساسية.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-ylw">NR-05</div>
+        <div class="mc-info"><div class="mc-title">الانشطار والاندماج النووي</div><div class="mc-en">FISSION · FUSION · CHAIN REACTION</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-ylw"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-ylw">NR-5A</div><div class="mct-name">الانشطار النووي Fission وآليته</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-5B</div><div class="mct-name">سلسلة التفاعل المتسلسل · عامل k</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-5C</div><div class="mct-name">المفاعل النووي · المبادئ الأساسية</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-5D</div><div class="mct-name">الاندماج النووي Fusion + شرط Lawson</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-ylw">NR-5E</div><div class="mct-name">دورة CNO وطاقة النجوم</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">المتطلب: NR-04</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PHASE 4 · الإشعاع والمادة
+══════════════════════════════ -->
+<div class="phase" style="animation-delay:.2s">
+  <div class="phase-bar c-blu">
+    <span class="phase-ico">🛡</span>
+    <div class="phase-labels">
+      <div class="phase-code c-blu">RM-XX · الإشعاع والمادة</div>
+      <div class="phase-name">RADIATION & MATTER · PHASE 4</div>
+    </div>
+    <div class="phase-count">6 مواضيع</div>
+  </div>
+  <div class="modules-grid">
+
+    <div class="mod-card c-blu" onclick="showModal('RM-06','تفاعل الإشعاع مع المادة','يتطلب إتمام وحدات RD كاملةً قبل الدخول هنا.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-blu">RM-06</div>
+        <div class="mc-info"><div class="mc-title">تفاعل الإشعاع مع المادة</div><div class="mc-en">RADIATION INTERACTION · ATTENUATION & DOSE</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-blu"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-blu">RM-6A</div><div class="mct-name">أنواع الإشعاع وخصائص الاختراق</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-blu">RM-6B</div><div class="mct-name">قانون تخفيف الإشعاع I = I₀ e^(−μx)</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-blu">RM-6C</div><div class="mct-name">طاقة التأين ومعامل التوقف</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-blu">RM-6D</div><div class="mct-name">الجرعة الإشعاعية · Gray و Sievert</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-blu">RM-6E</div><div class="mct-name">أجهزة الكشف النووي · Geiger وغيره</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-blu">RM-6F</div><div class="mct-name">مبادئ الحماية من الإشعاع النووي</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>ACCESS DENIED</div>
+        <div class="mcf-req">المتطلب: RD-02 + RD-03</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PHASE 5 · التطبيقات المتقدمة
+══════════════════════════════ -->
+<div class="phase" style="animation-delay:.25s">
+  <div class="phase-bar c-prp">
+    <span class="phase-ico">🔬</span>
+    <div class="phase-labels">
+      <div class="phase-code c-prp">AP-XX · التطبيقات المتقدمة</div>
+      <div class="phase-name">ADVANCED APPLICATIONS · CLASSIFIED · PHASE 5</div>
+    </div>
+    <div class="phase-count">6 مواضيع</div>
+  </div>
+  <div class="modules-grid">
+
+    <div class="mod-card c-prp" onclick="showModal('AP-07','التطبيقات النووية المتقدمة','وحدة مصنفة — يتطلب إتمام جميع الوحدات السابقة بالكامل.')">
+      <div class="mc-hdr">
+        <div class="mc-tag c-prp">AP-07</div>
+        <div class="mc-info"><div class="mc-title">التطبيقات النووية المتقدمة</div><div class="mc-en">ADVANCED APPLICATIONS · CLASSIFIED</div></div>
+        <div class="mc-lockico">🔒</div>
+      </div>
+      <div class="mc-sep c-prp"></div>
+      <div class="mc-topics">
+        <div class="mct"><div class="mct-code c-prp">AP-7A</div><div class="mct-name">التأريخ الإشعاعي · Carbon-14</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-prp">AP-7B</div><div class="mct-name">الطب النووي · PET و SPECT</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-prp">AP-7C</div><div class="mct-name">نماذج النواة · Shell Model</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-prp">AP-7D</div><div class="mct-name">التطبيقات الصناعية للإشعاع</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-prp">AP-7E</div><div class="mct-name">████████████████████████</div><div class="mct-lk">🔒</div></div>
+        <div class="mct"><div class="mct-code c-prp">AP-7F</div><div class="mct-name">███████████████████████████████</div><div class="mct-lk">🔒</div></div>
+      </div>
+      <div class="mc-foot">
+        <div class="mcf-denied"><div class="mcf-dot"></div>CLASSIFIED</div>
+        <div class="mcf-req">المتطلب: جميع الوحدات NS + RD + NR + RM</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="st"><span class="st-n" id="s1">0</span><span class="st-l">TOTAL TOPICS</span></div>
+  <div class="st"><span class="st-n r" id="s2">0</span><span class="st-l">LOCKED MODULES</span></div>
+  <div class="st"><span class="st-n" id="s3">0</span><span class="st-l">TOTAL MODULES</span></div>
+  <div class="st"><span class="st-n r" id="s4">0%</span><span class="st-l">PROGRESS</span></div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <span class="m-ico">☢</span>
+    <div class="m-code" id="mc">MODULE · LOCKED</div>
+    <div class="m-title" id="mt">ACCESS DENIED</div>
+    <div class="m-text" id="mm">هذه الوحدة مقفلة. أتمم المتطلبات أولاً.</div>
+    <button class="m-btn" onclick="document.getElementById('modal').classList.remove('open')">UNDERSTOOD · إغلاق</button>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tk-inner">
+    <div class="tki"><b>☢</b> NS-01 · بنية النواة الذرية</div>
+    <div class="tki"><b>⚛</b> RD-02 · قوانين الانحلال الإشعاعي</div>
+    <div class="tki"><b>⚡</b> RD-03 · انحلال α β γ</div>
+    <div class="tki"><b>💥</b> NR-04 · قيمة Q · مقطع العرض σ</div>
+    <div class="tki"><b>🔥</b> NR-05 · الانشطار والاندماج النووي</div>
+    <div class="tki"><b>🛡</b> RM-06 · الجرعة الإشعاعية</div>
+    <div class="tki"><b>🔬</b> AP-07 · تطبيقات مصنفة</div>
+    <div class="tki"><b>☢</b> ALL MODULES LOCKED · جميع الوحدات مقفلة</div>
+    <div class="tki"><b>⚛</b> NS-01 · بنية النواة الذرية</div>
+    <div class="tki"><b>⚡</b> RD-02 · قوانين الانحلال الإشعاعي</div>
+  </div>
 </div>
 
 <script>
-/* ══ CANVAS BG ══ */
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, orbs;
-function initCanvas() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  orbs = [
-    {x:W*.15, y:H*.3,  r:340, color:'rgba(16,185,129,',  speed:.0003,  phase:0},
-    {x:W*.82, y:H*.55, r:370, color:'rgba(245,158,11,',  speed:.00038, phase:2},
-    {x:W*.5,  y:H*.88, r:260, color:'rgba(16,185,129,',  speed:.00032, phase:4},
-  ];
-}
-function drawCanvas() {
-  ctx.clearRect(0,0,W,H); ctx.fillStyle='#020817'; ctx.fillRect(0,0,W,H);
-  for (const o of orbs) {
-    o.phase += o.speed;
-    const ox = o.x + Math.sin(o.phase)*65, oy = o.y + Math.cos(o.phase*.7)*50;
-    const g = ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
-    g.addColorStop(0, o.color+'0.07)'); g.addColorStop(.5, o.color+'0.025)'); g.addColorStop(1, o.color+'0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox,oy,o.r,0,Math.PI*2); ctx.fill();
-  }
-  requestAnimationFrame(drawCanvas);
-}
-window.addEventListener('resize', initCanvas);
-initCanvas(); requestAnimationFrame(drawCanvas);
+/* CANVAS */
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let W,H;
+function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const ps=[];
+for(let i=0;i<90;i++)ps.push(mkP(true));
+function mkP(init){return{x:Math.random()*W,y:init?Math.random()*H:H+10,vx:(Math.random()-.5)*.25,vy:-(Math.random()*.45+.08),sz:Math.random()*1.3+.3,op:Math.random()*.3+.04,col:Math.random()<.65?'#00ff41':Math.random()<.5?'#ff1a1a':'#cc0000',t:Math.random()<.12?'x':'dot'};}
+function drP(p){ctx.save();ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.strokeStyle=p.col;if(p.t==='x'){ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(p.x-p.sz*2.5,p.y);ctx.lineTo(p.x+p.sz*2.5,p.y);ctx.moveTo(p.x,p.y-p.sz*2.5);ctx.lineTo(p.x,p.y+p.sz*2.5);ctx.stroke();}else{ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fill();}ctx.restore();}
+let at=0;
+function drAtom(){at+=.004;const cx=W*.5,cy=H*.28,R=Math.min(W,H)*.1;ctx.save();ctx.globalAlpha=.03;const g=ctx.createRadialGradient(cx,cy,0,cx,cy,16);g.addColorStop(0,'#00ff41');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,16,0,Math.PI*2);ctx.fill();[[R,R*.32,0],[R*.88,R*.28,Math.PI/3],[R*.82,R*.26,-Math.PI/3]].forEach(([a,b,rot],i)=>{ctx.save();ctx.translate(cx,cy);ctx.rotate(rot);ctx.strokeStyle='#00ff41';ctx.lineWidth=.4;ctx.beginPath();ctx.ellipse(0,0,a,b,0,0,Math.PI*2);ctx.stroke();const ang=at*(1+i*.4)*(i%2?-1:1);ctx.globalAlpha=.28;ctx.fillStyle='#00ff41';ctx.beginPath();ctx.arc(a*Math.cos(ang),b*Math.sin(ang),2.2,0,Math.PI*2);ctx.fill();ctx.restore();});ctx.restore();}
+function loop(){ctx.clearRect(0,0,W,H);drAtom();ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.y<-15)Object.assign(p,mkP(false));drP(p);});requestAnimationFrame(loop);}
+loop();
 
-/* ══ KATEX ══ */
-function K(latex) {
-  const el = document.createElement('span');
-  try { katex.render(latex, el, {throwOnError:false, displayMode:false, strict:false}); }
-  catch(e) { el.textContent = latex; }
-  return el.outerHTML;
+/* RAD METER */
+let rv=.18;
+setInterval(()=>{rv+=(Math.random()-.48)*.1;rv=Math.max(.01,Math.min(9.99,rv));document.getElementById('rv').textContent=rv.toFixed(2);},280);
+
+/* STATS */
+function cnt(id,t,sfx='',dur=1400){const el=document.getElementById(id);let s=0,st=t/(dur/16);const ti=setInterval(()=>{s=Math.min(s+st,t);el.textContent=Math.floor(s)+sfx;if(s>=t)clearInterval(ti);},16);}
+setTimeout(()=>{cnt('s1',40);cnt('s2',7);cnt('s3',7);cnt('s4',0,'%');},700);
+
+/* MODAL */
+function showModal(code,title,text){
+  document.getElementById('mc').textContent=code+' · LOCKED';
+  document.getElementById('mt').textContent=title;
+  document.getElementById('mm').textContent=text;
+  document.getElementById('modal').classList.add('open');
 }
-
-/* ══ CONFIG ══ */
-const SUBTYPES = {
-  'nuc_decay': {
-    icon:'📉', title:'قانون الانحلال الإشعاعي', desc:'احسب العدد المتبقي والنشاط الإشعاعي',
-    inputs:[
-      {id:'N0',     label:'العدد الأولي N₀',   unit:'ذرة', placeholder:'مثال: 1e20'},
-      {id:'t',      label:'الزمن t',             unit:'s',   placeholder:'مثال: 1000'},
-      {id:'t_half', label:'عمر النصف t½',        unit:'s',   placeholder:'مثال: 500'},
-    ]
-  },
-  'nuc_halflife': {
-    icon:'⏳', title:'حساب عمر النصف', desc:'احسب عدد فترات t½ من الكميتين',
-    inputs:[
-      {id:'N0', label:'الكمية الأولية N₀', unit:'', placeholder:'مثال: 100'},
-      {id:'N',  label:'الكمية المتبقية N', unit:'', placeholder:'مثال: 12.5'},
-    ]
-  }
-};
-
-let currentSub = 'nuc_decay';
-
-function selectSubtype(sub) {
-  currentSub = sub;
-  document.querySelectorAll('.subtype-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+sub).classList.add('active');
-  const cfg = SUBTYPES[sub];
-  document.querySelector('#solver-header .solver-icon').textContent = cfg.icon;
-  document.getElementById('solver-title').textContent = cfg.title;
-  document.getElementById('solver-desc').textContent  = cfg.desc;
-  buildInputs(sub);
-  document.getElementById('result-section').classList.remove('show');
-}
-
-function buildInputs(sub) {
-  const inputs = SUBTYPES[sub].inputs;
-  let html = '<div class="inputs-grid">';
-  for (const inp of inputs) {
-    html += `<div class="input-group">
-      <label><span>[${inp.unit||'—'}]</span>${inp.label}</label>
-      <input class="input-field" type="text" id="inp-${inp.id}" placeholder="${inp.placeholder}" autocomplete="off">
-    </div>`;
-  }
-  html += '</div>';
-  document.getElementById('inputs-area').innerHTML = html;
-}
-
-function getVal(key) {
-  const el = document.getElementById('inp-'+key);
-  if (!el) return null;
-  const v = el.value.trim();
-  if (v === '') return null;
-  return parseFloat(v.replace(/e/gi,'e'));
-}
-
-/* ══ HELPERS ══ */
-function fmt(n, d=4) {
-  if (n===null||n===undefined||isNaN(n)) return '؟';
-  if (!isFinite(n)) return n>0?'∞':'-∞';
-  if (Math.abs(n)>=1e6||(Math.abs(n)<1e-3&&n!==0)) return n.toExponential(3);
-  return parseFloat(n.toFixed(d)).toString();
-}
-function lawCard(badge, latex) {
-  return `<div class="law-card"><span class="law-badge">${badge}</span><div class="law-latex">${K(latex)}</div></div>`;
-}
-function step(num, label, latex, note='') {
-  return `<div class="step"><div class="step-num">${String(num).padStart(2,'0')}</div><div><div class="step-label">${label}</div><div class="step-math">${K(latex)}</div>${note?`<div style="font-size:.7rem;color:var(--c3);margin-top:6px;font-style:italic">${note}</div>`:''}</div></div>`;
-}
-function resultBox(values) {
-  const html = values.map(v=>`<div class="result-val"><div class="result-val-name">${v.name}</div><div class="result-val-num">${v.val} ${v.unit||''}</div></div>`).join('');
-  return `<div class="result-box"><div class="result-box-label">// النتائج النهائية</div><div class="result-values">${html}</div></div>`;
-}
-function errorBox(msg) { return `<div class="error-box">⚠️ ${msg}</div>`; }
-function lawsSection(cards) { return `<div class="laws-section"><div class="laws-title">القوانين المستخدمة</div>${cards}</div>`; }
-function stepsSection(steps) { return `<div><div class="steps-title">خطوات الحل</div>${steps}</div>`; }
-
-/* ══ SOLVER ══ */
-function solve() {
-  const sub = currentSub;
-
-  if (sub === 'nuc_decay') {
-    const N0 = getVal('N0'), t = getVal('t'), t_half = getVal('t_half');
-    if (!N0 || !t || !t_half) return errorBox('أدخل N₀ والزمن وعمر النصف');
-    const lambda = Math.LN2 / t_half;
-    const N      = N0 * Math.exp(-lambda * t);
-    const A      = lambda * N;
-    return lawsSection(
-      lawCard('الانحلال',        'N(t)=N_0\\,e^{-\\lambda t}') +
-      lawCard('ثابت الانحلال',   '\\lambda=\\dfrac{\\ln 2}{t_{1/2}}') +
-      lawCard('النشاط الإشعاعي', 'A=\\lambda N')
-    ) + stepsSection(
-      step(1, 'المعطيات',       `N_0=${fmt(N0)},\\;t=${t}\\,s,\\;t_{1/2}=${t_half}\\,s`) +
-      step(2, 'ثابت الانحلال λ',`\\lambda=\\dfrac{\\ln 2}{${t_half}}=${fmt(lambda,6)}\\,s^{-1}`) +
-      step(3, 'العدد المتبقي N', `N=${fmt(N0)}\\times e^{-${fmt(lambda,4)}\\times${t}}=${fmt(N,4)}\\,\\text{ذرة}`) +
-      step(4, 'النشاط A',        `A=\\lambda N=${fmt(lambda,4)}\\times${fmt(N,4)}=${fmt(A,4)}\\,Bq`)
-    ) + resultBox([
-      {name:'العدد المتبقي N',  val:fmt(N,4),      unit:'ذرة'},
-      {name:'النشاط A',         val:fmt(A,4),      unit:'Bq'},
-      {name:'λ ثابت الانحلال', val:fmt(lambda,6), unit:'s⁻¹'},
-    ]);
-  }
-
-  // nuc_halflife
-  const N0 = getVal('N0'), N = getVal('N');
-  if (!N0 || !N) return errorBox('أدخل الكميتين N₀ و N');
-  if (N >= N0)   return errorBox('N يجب أن تكون أصغر من N₀');
-  const n_half = Math.log(N0/N) / Math.log(2);
-  return lawsSection(
-    lawCard('عدد فترات t½', 'n=\\dfrac{\\ln(N_0/N)}{\\ln 2}=\\dfrac{\\log(N_0/N)}{\\log 2}')
-  ) + stepsSection(
-    step(1, 'المعطيات',      `N_0=${fmt(N0)},\\;N=${fmt(N)}`) +
-    step(2, 'النسبة',         `\\dfrac{N_0}{N}=\\dfrac{${fmt(N0)}}{${fmt(N)}}=${fmt(N0/N,4)}`) +
-    step(3, 'عدد فترات t½',  `n=\\dfrac{\\ln(${fmt(N0/N,4)})}{\\ln 2}=${fmt(n_half,4)}`)
-  ) + resultBox([
-    {name:'عدد فترات t½', val:fmt(n_half,4)},
-  ]);
-}
-
-function triggerSolve() {
-  const result = solve();
-  document.getElementById('result-content').innerHTML = result;
-  const resEl = document.getElementById('result-section');
-  resEl.classList.add('show');
-  resEl.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-/* ══ INIT ══ */
-selectSubtype('nuc_decay');
 </script>
 </body>
 </html>
