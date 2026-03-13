@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر الفيزياء — Physics Laboratory</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Exo+2:wght@100;300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   ROOT
+═══════════════════════════════════ */
+:root {
+  --bg:       #020a0e;
+  --bg2:      #06141c;
+  --amber:    #ffd740;
+  --amber2:   #ffab00;
+  --amber3:   rgba(255,215,64,.12);
+  --cyan:     #00e5ff;
+  --cyan2:    rgba(0,229,255,.1);
+  --green:    #69f0ae;
+  --red:      #ff5252;
+  --violet:   #7c4dff;
+  --white:    #f4faff;
+  --text:     #ddeef8;
+  --muted:    #6a8fa8;
+  --card:     rgba(14,36,52,0.98);
+  --border:   rgba(255,215,64,.28);
+  --rim:      rgba(255,255,255,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════
+   BACKGROUND
+═══════════════════════════════════ */
+#lab-canvas{position:fixed;inset:0;z-index:0;}
+.noise{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px;
+}
+.vignette{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 40%,rgba(0,4,8,.6) 100%);
+}
+.scanlines{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,215,64,.005) 3px,rgba(255,215,64,.005) 4px);
+}
+
+/* ── GRID OVERLAY ── */
+.grid-field{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,215,64,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,215,64,.035) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 50%,black 0%,transparent 100%);
+}
+
+/* ── CORNERS ── */
+.corner{position:fixed;z-index:20;pointer-events:none;width:40px;height:40px;}
+.corner.tl{top:18px;left:18px;border-top:1px solid rgba(255,215,64,.4);border-left:1px solid rgba(255,215,64,.4);}
+.corner.tr{top:18px;right:18px;border-top:1px solid rgba(255,215,64,.4);border-right:1px solid rgba(255,215,64,.4);}
+.corner.bl{bottom:18px;left:18px;border-bottom:1px solid rgba(255,215,64,.2);border-left:1px solid rgba(255,215,64,.2);}
+.corner.br{bottom:18px;right:18px;border-bottom:1px solid rgba(255,215,64,.2);border-right:1px solid rgba(255,215,64,.2);}
+
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:58px;
+  background:rgba(2,6,8,.92);
+  border-bottom:1px solid rgba(255,215,64,.1);
+  backdrop-filter:blur(24px);
+}
+.h-logo{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;letter-spacing:5px;
+  color:var(--amber);
+  text-shadow:0 0 16px rgba(255,215,64,.6);
+  animation:logoFlicker 9s infinite;
+}
+@keyframes logoFlicker{0%,88%,92%,100%{opacity:1}90%{opacity:.4}}
+.h-center{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:3px;color:var(--muted);
+  display:flex;align-items:center;gap:10px;
+}
+.h-pulse{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 8px var(--green);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
+.h-back{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Tajawal',sans-serif;font-size:.82rem;
+  color:var(--muted);text-decoration:none;
+  border:1px solid rgba(255,215,64,.1);padding:7px 18px;border-radius:3px;
+  transition:.25s;
+}
+.h-back:hover{color:var(--amber);border-color:rgba(255,215,64,.35);}
+
+/* ── PROGRESS ── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;z-index:200;
+  background:linear-gradient(90deg,var(--amber),var(--cyan));
+  box-shadow:0 0 10px var(--amber);width:0%;transition:width .1s linear;
+}
+
+/* ═══════════════════════════════════
+   WRAPPER
+═══════════════════════════════════ */
+.wrapper{
+  position:relative;z-index:10;
+  max-width:1060px;margin:0 auto;
+  padding:0 32px 120px;
+}
+
+/* ═══════════════════════════════════
+   HERO
+═══════════════════════════════════ */
+.hero{
+  min-height:52vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:80px 20px 60px;
+  position:relative;
+}
+.hero-eyebrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;letter-spacing:6px;color:var(--amber);
+  display:flex;align-items:center;gap:14px;margin-bottom:28px;
+  opacity:0;animation:fadeUp .7s .2s ease forwards;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';width:36px;height:1px;
+}
+.hero-eyebrow::before{background:linear-gradient(90deg,transparent,var(--amber));}
+.hero-eyebrow::after{background:linear-gradient(90deg,var(--amber),transparent);}
+
+.hero-icon{
+  font-size:3.5rem;margin-bottom:20px;
+  display:block;
+  filter:drop-shadow(0 0 24px rgba(255,215,64,.5));
+  opacity:0;animation:fadeUp .7s .35s ease forwards;
+}
+.hero-title{
+  opacity:0;animation:fadeUp .8s .5s ease forwards;
+  margin-bottom:16px;
+}
+.hero-title .ar{
+  display:block;
+  font-family:'Exo 2',sans-serif;
+  font-size:clamp(2.2rem,5.5vw,4rem);
+  font-weight:900;
+  background:linear-gradient(135deg,#fff 10%,#ffe566 45%,var(--amber) 75%,#b87800 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 28px rgba(255,215,64,.2));
+  line-height:1.1;
+}
+.hero-title .en{
+  display:block;font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.6rem,1.4vw,.82rem);letter-spacing:8px;
+  color:rgba(255,215,64,.35);margin-top:10px;
+}
+.hero-desc{
+  max-width:560px;font-size:.92rem;color:var(--muted);line-height:2.1;
+  margin:20px 0 36px;
+  opacity:0;animation:fadeUp .7s .8s ease forwards;
+}
+.hero-stats{
+  display:flex;gap:0;
+  border:1px solid rgba(255,215,64,.12);border-radius:3px;overflow:hidden;
+  opacity:0;animation:fadeUp .7s 1s ease forwards;
+}
+.stat{
+  padding:12px 28px;text-align:center;
+  border-left:1px solid rgba(255,215,64,.08);
+}
+.stat:first-child{border-left:none;}
+.stat-n{
+  font-family:'Exo 2',sans-serif;font-size:1.5rem;font-weight:900;
+  color:var(--amber);display:block;line-height:1;margin-bottom:4px;
+}
+.stat-l{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:3px;color:var(--muted);
+}
+
+/* ═══════════════════════════════════
+   SECTION DIVIDER
+═══════════════════════════════════ */
+.sec-divider{
+  display:flex;align-items:center;gap:16px;
+  margin:56px 0 32px;
+}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,64,.15),transparent);}
+.sec-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;color:var(--muted);
+  white-space:nowrap;
+}
+
+/* ═══════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════ */
+.filter-bar{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.filter-btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:2px;
+  padding:7px 18px;border-radius:2px;
+  background:transparent;
+  border:1px solid rgba(255,215,64,.12);
+  color:var(--muted);cursor:pointer;
+  transition:.2s;font-family:'Tajawal',sans-serif;font-size:.8rem;
+}
+.filter-btn:hover,.filter-btn.active{
+  background:rgba(255,215,64,.07);
+  border-color:rgba(255,215,64,.4);
+  color:var(--amber);
+}
+.filter-btn.active{box-shadow:0 0 12px rgba(255,215,64,.08);}
+
+/* ═══════════════════════════════════
+   LAB CARDS GRID
+═══════════════════════════════════ */
+.labs-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;
+}
+
+/* ── SINGLE LAB CARD ── */
+.lab-card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  text-decoration:none;
+  display:flex;flex-direction:column;
+  transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .3s,box-shadow .3s;
+  cursor:pointer;
+  box-shadow:0 4px 24px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.04) inset;
+
+  /* reveal animation handled by JS */
+  opacity:0;transform:translateY(24px);
+}
+.lab-card.visible{
+  opacity:1;transform:translateY(0);
+  transition:opacity .6s ease,transform .6s ease,border-color .3s,box-shadow .3s;
+}
+.lab-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(255,215,64,.55);
+  box-shadow:0 0 40px rgba(255,215,64,.1),0 16px 48px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.06) inset;
+}
+
+/* top stripe */
+.card-stripe{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
+}
+.lab-card:hover .card-stripe{transform:scaleX(1);transform-origin:left;}
+
+/* glow */
+.card-glow{
+  position:absolute;inset:0;opacity:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(255,215,64,.06) 0%,transparent 65%);
+  transition:opacity .4s;pointer-events:none;
+}
+.lab-card:hover .card-glow{opacity:1;}
+
+/* category color variants */
+.lab-card.cat-relativity{--accent:rgba(124,77,255,1);--accent-dim:rgba(124,77,255,.08);--accent-border:rgba(124,77,255,.2);}
+.lab-card.cat-quantum{--accent:rgba(0,229,255,1);--accent-dim:rgba(0,229,255,.06);--accent-border:rgba(0,229,255,.18);}
+.lab-card.cat-nuclear{--accent:rgba(105,240,174,1);--accent-dim:rgba(105,240,174,.06);--accent-border:rgba(105,240,174,.18);}
+.lab-card.cat-mechanics{--accent:rgba(79,195,247,1);--accent-dim:rgba(79,195,247,.06);--accent-border:rgba(79,195,247,.18);}
+.lab-card.cat-optics{--accent:rgba(255,215,64,1);--accent-dim:rgba(255,215,64,.06);--accent-border:rgba(255,215,64,.18);}
+.lab-card.cat-electro{--accent:rgba(255,82,82,1);--accent-dim:rgba(255,82,82,.06);--accent-border:rgba(255,82,82,.18);}
+
+.lab-card.cat-relativity:hover{border-color:var(--accent-border);}
+.lab-card.cat-quantum:hover{border-color:var(--accent-border);}
+.lab-card.cat-nuclear:hover{border-color:var(--accent-border);}
+.lab-card.cat-mechanics:hover{border-color:var(--accent-border);}
+.lab-card.cat-optics:hover{border-color:var(--accent-border);}
+.lab-card.cat-electro:hover{border-color:var(--accent-border);}
+
+.lab-card.cat-relativity .card-stripe{background:linear-gradient(90deg,transparent,rgba(124,77,255,1),transparent);}
+.lab-card.cat-quantum    .card-stripe{background:linear-gradient(90deg,transparent,rgba(0,229,255,1),transparent);}
+.lab-card.cat-nuclear    .card-stripe{background:linear-gradient(90deg,transparent,rgba(105,240,174,1),transparent);}
+.lab-card.cat-mechanics  .card-stripe{background:linear-gradient(90deg,transparent,rgba(79,195,247,1),transparent);}
+.lab-card.cat-optics     .card-stripe{background:linear-gradient(90deg,transparent,rgba(255,215,64,1),transparent);}
+.lab-card.cat-electro    .card-stripe{background:linear-gradient(90deg,transparent,rgba(255,82,82,1),transparent);}
+
+.lab-card.cat-relativity .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(124,77,255,.08) 0%,transparent 65%);}
+.lab-card.cat-quantum    .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(0,229,255,.06) 0%,transparent 65%);}
+.lab-card.cat-nuclear    .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(105,240,174,.06) 0%,transparent 65%);}
+.lab-card.cat-mechanics  .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(79,195,247,.07) 0%,transparent 65%);}
+.lab-card.cat-optics     .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(255,215,64,.07) 0%,transparent 65%);}
+.lab-card.cat-electro    .card-glow{background:radial-gradient(ellipse at 20% 50%,rgba(255,82,82,.06) 0%,transparent 65%);}
+
+/* card inner */
+.card-inner{
+  padding:28px 26px 22px;
+  flex:1;display:flex;flex-direction:column;
+  position:relative;z-index:2;
+  background:linear-gradient(180deg, rgba(255,255,255,.025) 0%, transparent 60%);
+}
+
+/* card tag */
+.card-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.46rem;letter-spacing:3px;
+  padding:4px 12px;border-radius:2px;
+  background:var(--accent-dim,rgba(255,215,64,.06));
+  border:1px solid var(--accent-border,rgba(255,215,64,.18));
+  color:var(--accent,var(--amber));
+  margin-bottom:18px;align-self:flex-start;
+}
+.tag-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--accent,var(--amber));
+  box-shadow:0 0 6px var(--accent,var(--amber));
+}
+
+/* card icon */
+.card-icon{
+  font-size:2.2rem;margin-bottom:16px;
+  display:block;
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+  filter:drop-shadow(0 0 0px transparent);
+}
+.lab-card:hover .card-icon{
+  transform:scale(1.12);
+  filter:drop-shadow(0 0 12px var(--accent,var(--amber)));
+}
+
+/* card texts */
+.card-id{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.46rem;letter-spacing:3px;color:var(--muted);margin-bottom:6px;
+}
+.card-name{
+  font-family:'Exo 2',sans-serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--white);line-height:1.3;margin-bottom:10px;
+}
+.card-desc{
+  font-size:.8rem;color:var(--muted);line-height:1.9;flex:1;
+}
+
+/* card footer */
+.card-footer{
+  margin-top:20px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;z-index:2;
+}
+.card-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:.5px;
+  padding:3px 8px;border-radius:2px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  color:rgba(180,210,230,.3);
+  transition:.2s;direction:ltr;
+}
+.lab-card:hover .chip{
+  border-color:rgba(255,255,255,.1);
+  color:rgba(180,210,230,.55);
+}
+.card-arrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  color:var(--accent,var(--amber));
+  opacity:0;transform:translateX(8px);
+  transition:opacity .25s,transform .25s;
+  flex-shrink:0;
+}
+.lab-card:hover .card-arrow{opacity:1;transform:translateX(0);}
+
+/* ── STATUS BADGE ── */
+.status-badge{
+  position:absolute;top:16px;left:18px;z-index:10;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:2px;
+  padding:4px 10px;border-radius:2px;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.status-badge.open{
+  background:rgba(105,240,174,.06);
+  border:1px solid rgba(105,240,174,.2);
+  color:rgba(105,240,174,.7);
+}
+.status-badge.open .sb-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+.status-badge.coming{
+  background:rgba(255,215,64,.04);
+  border:1px solid rgba(255,215,64,.12);
+  color:rgba(255,215,64,.35);
+}
+.status-badge.coming .sb-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(255,215,64,.4);
+}
+
+/* coming-soon card style */
+.lab-card.coming-soon{
+  opacity:.5 !important;
+  filter:grayscale(.3);
+  cursor:pointer;
+}
+.lab-card.coming-soon.visible{opacity:.5 !important;}
+
+/* ═══════════════════════════════════
+   INFO SECTION (أسفل)
+═══════════════════════════════════ */
+.info-section{
+  margin-top:72px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+.info-card{
+  background:rgba(4,12,18,.9);
+  border:1px solid rgba(255,215,64,.08);
+  border-radius:3px;
+  padding:24px 22px;
+}
+.info-icon{font-size:1.4rem;margin-bottom:12px;display:block;}
+.info-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.85rem;font-weight:700;
+  color:var(--white);margin-bottom:8px;
+}
+.info-desc{font-size:.78rem;color:var(--muted);line-height:1.9;}
+
+/* ═══════════════════════════════════
+   STATUS BAR
+═══════════════════════════════════ */
+.status-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  height:30px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  background:rgba(2,6,8,.94);
+  border-top:1px solid rgba(255,215,64,.07);
+  backdrop-filter:blur(16px);
+  pointer-events:none;
+}
+.sb-item{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:2.5px;
+  color:var(--muted);
+  display:flex;align-items:center;gap:7px;
+}
+.sb-dot-live{
+  width:3px;height:3px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 5px var(--green);
+  animation:pulse 1.5s infinite;
+}
+.sb-dot-amber{
+  width:3px;height:3px;border-radius:50%;
+  background:var(--amber);
+  animation:pulse 2.2s .4s infinite;
+}
+
+/* ═══════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media(max-width:768px){
+  .wrapper{padding:0 16px 80px;}
+  header{padding:0 14px;}
+  .h-center{display:none;}
+  .labs-grid{grid-template-columns:1fr;}
+  .info-section{grid-template-columns:1fr;}
+  .hero-stats{flex-wrap:wrap;}
+}
+
+/* ═══════════════════════════════════
+   COMING SOON MODAL
+═══════════════════════════════════ */
+#cs-overlay{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,4,8,.85);
+  backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+}
+#cs-overlay.show{opacity:1;pointer-events:all;}
+#cs-modal{
+  position:relative;
+  background:rgba(4,12,18,.98);
+  border:1px solid rgba(255,215,64,.2);
+  border-radius:6px;
+  padding:44px 44px 36px;
+  max-width:440px;width:90%;
+  text-align:center;
+  transform:translateY(20px) scale(.97);
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 0 60px rgba(255,215,64,.06),0 32px 80px rgba(0,0,0,.6);
+}
+#cs-overlay.show #cs-modal{transform:translateY(0) scale(1);}
+
+/* top accent line */
+#cs-modal::before{
+  content:'';
+  position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,215,64,.5),transparent);
+}
+/* corner dots */
+#cs-modal::after{
+  content:'';
+  position:absolute;top:14px;right:14px;
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,215,64,.25);
+  box-shadow:0 0 8px rgba(255,215,64,.2);
+}
+
+.cs-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:3px;
+  padding:5px 14px;border-radius:2px;
+  background:rgba(255,215,64,.05);
+  border:1px solid rgba(255,215,64,.15);
+  color:rgba(255,215,64,.5);
+  margin-bottom:22px;
+}
+.cs-badge-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(255,215,64,.5);
+  animation:pulse 2s infinite;
+}
+.cs-icon{
+  font-size:3rem;display:block;margin-bottom:16px;
+  filter:drop-shadow(0 0 16px rgba(255,215,64,.25));
+  animation:csFloat 3s ease-in-out infinite;
+}
+@keyframes csFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+.cs-lab-id{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.44rem;letter-spacing:3px;
+  color:var(--muted);margin-bottom:8px;
+}
+.cs-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:1.25rem;font-weight:800;
+  color:var(--white);margin-bottom:18px;
+  line-height:1.3;
+}
+.cs-msg{
+  font-size:.88rem;color:var(--muted);line-height:2;
+  margin-bottom:28px;
+}
+.cs-msg span{color:var(--amber);}
+.cs-divider{
+  width:48px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,215,64,.3),transparent);
+  margin:0 auto 24px;
+}
+.cs-close{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;letter-spacing:3px;
+  padding:11px 32px;border-radius:3px;
+  background:rgba(255,215,64,.06);
+  border:1px solid rgba(255,215,64,.2);
+  color:var(--amber);cursor:pointer;
+  transition:.25s;
+}
+.cs-close:hover{
+  background:rgba(255,215,64,.12);
+  border-color:rgba(255,215,64,.4);
+  box-shadow:0 0 20px rgba(255,215,64,.08);
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:rgba(255,215,64,.2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUNDS -->
+<canvas id="lab-canvas"></canvas>
+<div class="noise"></div>
+<div class="grid-field"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div id="progress-bar"></div>
+
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <a class="h-back" href="../modern.html">← رجوع</a>
+  <div class="h-center">
+    <div class="h-pulse"></div>
+    PHYSICS LABORATORY · مختبر الفيزياء
+    <div class="h-pulse" style="background:var(--amber);box-shadow:0 0 8px var(--amber);animation-delay:.8s"></div>
+  </div>
+  <div class="h-logo">PHYS · LAB</div>
+</header>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="wrapper">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">EXPERIMENTAL PHYSICS · الفيزياء العملية</div>
+    <span class="hero-icon">🧪</span>
+    <div class="hero-title">
+      <span class="ar">مختبر الفيزياء</span>
+      <span class="en">PHYSICS LABORATORY</span>
+    </div>
+    <p class="hero-desc">
+      هنا تعيش التجربة بنفسك — كل بطاقة تجربة حقيقية تفاعلية
+      مع بياناتها وحساباتها وقوانينها. الفيزياء النظرية تصبح
+      فيزياء مرئية تلمسها بيدك.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-n" id="cnt-open">0</span>
+        <span class="stat-l">OPEN NOW</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n" id="cnt-total">18</span>
+        <span class="stat-l">EXPERIMENTS</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">6</span>
+        <span class="stat-l">CATEGORIES</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FILTER BAR ─── -->
+  <div class="sec-divider">
+    <div class="sec-line"></div>
+    <div class="sec-tag">التجارب · EXPERIMENTS</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterLabs('all',this)">الكل</button>
+    <button class="filter-btn" onclick="filterLabs('cat-relativity',this)">النسبية</button>
+    <button class="filter-btn" onclick="filterLabs('cat-optics',this)">البصريات</button>
+    <button class="filter-btn" onclick="filterLabs('cat-quantum',this)">الكم</button>
+    <button class="filter-btn" onclick="filterLabs('cat-mechanics',this)">الميكانيكا</button>
+    <button class="filter-btn" onclick="filterLabs('cat-nuclear',this)">النووية</button>
+    <button class="filter-btn" onclick="filterLabs('cat-electro',this)">الكهرباء</button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       LAB CARDS GRID
+  ═══════════════════════════════════ -->
+  <div class="labs-grid" id="labs-grid">
+
+    <!-- COMING: تجربة مايكلسون-مورلي -->
+    <div class="lab-card cat-optics coming-soon visible" data-cat="cat-optics" onclick="showComingSoon('تجربة مايكلسون-مورلي', 'LAB-OPT-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>OPTICS · بصريات</div>
+        <span class="card-icon">🔬</span>
+        <div class="card-id">LAB-OPT-01 · 1887</div>
+        <div class="card-name">تجربة مايكلسون-مورلي</div>
+        <p class="card-desc">
+          التجربة التي أسقطت نظرية الأثير وأثبتت ثبات سرعة الضوء.
+          مقياس التداخل، المسارات، النتيجة الصفرية الصادمة.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">Interferometer</span>
+            <span class="chip">Δt = 0</span>
+            <span class="chip">c = const</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: تجربة فرانك-هيرتز -->
+    <div class="lab-card cat-quantum coming-soon visible" data-cat="cat-quantum" onclick="showComingSoon('تجربة فرانك-هيرتز', 'LAB-QNT-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>QUANTUM · كم</div>
+        <span class="card-icon">⚡</span>
+        <div class="card-id">LAB-QNT-01 · 1914</div>
+        <div class="card-name">تجربة فرانك-هيرتز</div>
+        <p class="card-desc">
+          إثبات تكميم مستويات الطاقة في الذرة — الإلكترونات
+          تفقد طاقة محددة بالضبط عند اصطدامها بذرات الزئبق.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">E = hf</span>
+            <span class="chip">ΔE = 4.9 eV</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: التأثير الكهروضوئي -->
+    <div class="lab-card cat-quantum coming-soon visible" data-cat="cat-quantum" onclick="showComingSoon('التأثير الكهروضوئي', 'LAB-QNT-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>QUANTUM · كم</div>
+        <span class="card-icon">💡</span>
+        <div class="card-id">LAB-QNT-02 · 1887</div>
+        <div class="card-name">التأثير الكهروضوئي</div>
+        <p class="card-desc">
+          تجربة هرتز وتفسير آينشتاين — الضوء يطرد إلكترونات
+          من المعدن بطاقة تعتمد على التردد لا الشدة.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">KE = hf − φ</span>
+            <span class="chip">Photoelectric</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: ساعة الضوء -->
+    <div class="lab-card cat-relativity coming-soon visible" data-cat="cat-relativity" onclick="showComingSoon('ساعة الضوء التفاعلية', 'LAB-REL-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>RELATIVITY · نسبية</div>
+        <span class="card-icon">⏱️</span>
+        <div class="card-id">LAB-REL-01 · تمدد الزمن</div>
+        <div class="card-name">ساعة الضوء التفاعلية</div>
+        <p class="card-desc">
+          اضبط سرعة الصاروخ وشاهد كيف يمتد الزمن بالنسبة
+          للراصد الخارجي — بيثاغورس يُثبت النسبية بصرياً.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">T = γT₀</span>
+            <span class="chip">Light Clock</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: انحلال نووي -->
+    <div class="lab-card cat-nuclear coming-soon visible" data-cat="cat-nuclear" onclick="showComingSoon('منحنى الانحلال النووي', 'LAB-NUC-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>NUCLEAR · نووية</div>
+        <span class="card-icon">☢️</span>
+        <div class="card-id">LAB-NUC-01 · الانحلال</div>
+        <div class="card-name">منحنى الانحلال النووي</div>
+        <p class="card-desc">
+          أدخل النظير النووي واحصل على منحنى N(t) الكامل
+          مع عمر النصف والنشاط الإشعاعي خطوة بخطوة.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">N(t)=N₀e^−λt</span>
+            <span class="chip">t½ = ln2/λ</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: تجربة رذرفورد -->
+    <div class="lab-card cat-nuclear coming-soon visible" data-cat="cat-nuclear" onclick="showComingSoon('تجربة رذرفورد للتشتت', 'LAB-NUC-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>NUCLEAR · نووية</div>
+        <span class="card-icon">🎯</span>
+        <div class="card-id">LAB-NUC-02 · 1909</div>
+        <div class="card-name">تجربة رذرفورد للتشتت</div>
+        <p class="card-desc">
+          جسيمات ألفا تقصف رقائق الذهب — رصد زوايا التشتت
+          وكيف كشفت عن وجود النواة الصغيرة الكثيفة.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">Rutherford</span>
+            <span class="chip">α scattering</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: التداخل والحيود -->
+    <div class="lab-card cat-optics coming-soon visible" data-cat="cat-optics" onclick="showComingSoon('تجربة يونغ — الشق المزدوج', 'LAB-OPT-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>OPTICS · بصريات</div>
+        <span class="card-icon">🌊</span>
+        <div class="card-id">LAB-OPT-02 · التداخل</div>
+        <div class="card-name">تجربة يونغ — الشق المزدوج</div>
+        <p class="card-desc">
+          الضوء يتداخل مع نفسه — شاهد نمط التداخل يتشكّل
+          وغيّر طول الموجة والمسافة لترى أثرها.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">λ = yd/L</span>
+            <span class="chip">Double slit</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: حاسبة لورنتز -->
+    <div class="lab-card cat-relativity coming-soon visible" data-cat="cat-relativity" onclick="showComingSoon('تحويلات لورنتز', 'LAB-REL-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>RELATIVITY · نسبية</div>
+        <span class="card-icon">🌌</span>
+        <div class="card-id">LAB-REL-02 · لورنتز</div>
+        <div class="card-name">تحويلات لورنتز</div>
+        <p class="card-desc">
+          أدخل الإحداثيات والسرعة وشاهد كيف تتحوّل الأبعاد
+          والزمن بين الإطارَين — مع عامل γ المحسوب تلقائياً.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">x'=γ(x−vt)</span>
+            <span class="chip">t'=γ(t−vx/c²)</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: مستويات بور -->
+    <div class="lab-card cat-mechanics coming-soon visible" data-cat="cat-mechanics" onclick="showComingSoon('مستويات طاقة ذرة بور', 'LAB-MEC-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>MECHANICS · ميكانيكا</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- nucleus -->
+            <circle cx="21" cy="21" r="3.2" fill="#4fc3f7" opacity="0.95"/>
+            <circle cx="21" cy="21" r="1.6" fill="#fff" opacity="0.7"/>
+            <!-- orbit 1 -->
+            <ellipse cx="21" cy="21" rx="18" ry="6" stroke="#4fc3f7" stroke-width="0.8" opacity="0.5"/>
+            <!-- orbit 2 -->
+            <ellipse cx="21" cy="21" rx="18" ry="6" stroke="#4fc3f7" stroke-width="0.8" opacity="0.5" transform="rotate(60 21 21)"/>
+            <!-- orbit 3 -->
+            <ellipse cx="21" cy="21" rx="18" ry="6" stroke="#4fc3f7" stroke-width="0.8" opacity="0.5" transform="rotate(120 21 21)"/>
+            <!-- electrons -->
+            <circle cx="39" cy="21" r="1.8" fill="#ffd740" opacity="0.95"/>
+            <circle cx="12.5" cy="8.4" r="1.8" fill="#ffd740" opacity="0.95" transform="rotate(60 21 21)"/>
+            <circle cx="12.5" cy="8.4" r="1.8" fill="#ffd740" opacity="0.95" transform="rotate(120 21 21)"/>
+            <!-- glow rings -->
+            <circle cx="21" cy="21" r="3.2" fill="none" stroke="#4fc3f7" stroke-width="1.2" opacity="0.3"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-MEC-01 · بور</div>
+        <div class="card-name">مستويات طاقة ذرة بور</div>
+        <p class="card-desc">
+          اختر الانتقال بين المستويات وشاهد الفوتون المنبعث
+          — طيف هيدروجين وحساب طول الموجة تلقائياً.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">E_n = −13.6/n²</span>
+            <span class="chip">Bohr</span>
+          </div>
+          <span class="card-arrow">← ابدأ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: تجربة كومبتون -->
+    <div class="lab-card cat-quantum coming-soon visible" data-cat="cat-quantum" onclick="showComingSoon('تشتت كومبتون', 'LAB-QNT-03')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>QUANTUM · كم</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="21" r="3.5" fill="#00e5ff" opacity="0.9"/>
+            <line x1="13.5" y1="21" x2="28" y2="21" stroke="#00e5ff" stroke-width="1.2" opacity="0.6" stroke-dasharray="2 2"/>
+            <circle cx="31" cy="30" r="3" fill="#ffd740" opacity="0.9"/>
+            <line x1="28" y1="21" x2="31" y2="30" stroke="#ffd740" stroke-width="1" opacity="0.7"/>
+            <line x1="28" y1="21" x2="38" y2="13" stroke="#00e5ff" stroke-width="1" opacity="0.5" stroke-dasharray="2 2"/>
+            <circle cx="28" cy="21" r="2" fill="#fff" opacity="0.5"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-QNT-03 · 1923</div>
+        <div class="card-name">تشتت كومبتون</div>
+        <p class="card-desc">
+          الفوتون يرتطم بإلكترون حر ويفقد جزءاً من طاقته —
+          إثبات الطبيعة الجسيمية للضوء مع حساب إزاحة الطول الموجي.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">Δλ = h/mₑc(1−cosθ)</span>
+            <span class="chip">Compton</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: ازدواجية دي بروي -->
+    <div class="lab-card cat-quantum coming-soon visible" data-cat="cat-quantum" onclick="showComingSoon('ازدواجية دي برولي', 'LAB-QNT-04')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>QUANTUM · كم</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 21 Q10 10 16 21 Q22 32 28 21 Q34 10 40 21" stroke="#00e5ff" stroke-width="1.4" fill="none" opacity="0.8"/>
+            <circle cx="22" cy="21" r="3" fill="#00e5ff" opacity="0.7"/>
+            <circle cx="22" cy="21" r="1.4" fill="#fff" opacity="0.8"/>
+            <path d="M4 25 Q10 14 16 25 Q22 36 28 25 Q34 14 40 25" stroke="#00e5ff" stroke-width="0.5" fill="none" opacity="0.25"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-QNT-04 · 1924</div>
+        <div class="card-name">ازدواجية دي برولي</div>
+        <p class="card-desc">
+          الجسيمات تمتلك طبيعة موجية — احسب الطول الموجي
+          للإلكترون وشاهد كيف يتغير بتغير الزخم.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">λ = h/p</span>
+            <span class="chip">de Broglie</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: مبدأ هايزنبرغ -->
+    <div class="lab-card cat-quantum coming-soon visible" data-cat="cat-quantum" onclick="showComingSoon('مبدأ عدم اليقين — هايزنبرغ', 'LAB-QNT-05')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>QUANTUM · كم</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="21" cy="21" rx="16" ry="7" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.4"/>
+            <ellipse cx="21" cy="21" rx="10" ry="10" stroke="#00e5ff" stroke-width="0.7" fill="none" opacity="0.25"/>
+            <circle cx="21" cy="21" r="5" fill="rgba(0,229,255,0.12)" stroke="#00e5ff" stroke-width="1.2" opacity="0.7"/>
+            <circle cx="21" cy="21" r="2" fill="#00e5ff" opacity="0.5"/>
+            <line x1="6" y1="35" x2="36" y2="7" stroke="#ffd740" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.4"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-QNT-05 · 1927</div>
+        <div class="card-name">مبدأ عدم اليقين — هايزنبرغ</div>
+        <p class="card-desc">
+          لا يمكن معرفة الموضع والزخم بدقة في آنٍ واحد —
+          اضبط حدود القياس وشاهد العلاقة العكسية بينهما.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">Δx·Δp ≥ ℏ/2</span>
+            <span class="chip">Heisenberg</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: قانون نيوتن الثاني -->
+    <div class="lab-card cat-mechanics coming-soon visible" data-cat="cat-mechanics" onclick="showComingSoon('قانون نيوتن الثاني — المسطح المائل', 'LAB-MEC-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>MECHANICS · ميكانيكا</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="4" y1="36" x2="38" y2="36" stroke="#4fc3f7" stroke-width="1" opacity="0.4"/>
+            <line x1="4" y1="36" x2="22" y2="12" stroke="#4fc3f7" stroke-width="1.2" opacity="0.7"/>
+            <rect x="16" y="17" width="10" height="8" rx="1.5" fill="rgba(79,195,247,0.15)" stroke="#4fc3f7" stroke-width="1" transform="rotate(-40 21 21)"/>
+            <line x1="21" y1="21" x2="21" y2="30" stroke="#ffd740" stroke-width="1.2" opacity="0.7" marker-end="url(#arr)"/>
+            <line x1="21" y1="21" x2="30" y2="14" stroke="#69f0ae" stroke-width="1.2" opacity="0.7"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-MEC-02 · نيوتن</div>
+        <div class="card-name">قانون نيوتن الثاني</div>
+        <p class="card-desc">
+          جسم يتسارع على مستوى مائل — غيّر الزاوية والكتلة
+          واحسب القوة المحصلة والتسارع خطوة بخطوة.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">F = ma</span>
+            <span class="chip">Inclined Plane</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: حفظ الزخم -->
+    <div class="lab-card cat-mechanics coming-soon visible" data-cat="cat-mechanics" onclick="showComingSoon('حفظ الزخم — التصادمات', 'LAB-MEC-03')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>MECHANICS · ميكانيكا</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="13" cy="21" r="6" fill="rgba(79,195,247,0.15)" stroke="#4fc3f7" stroke-width="1.2" opacity="0.85"/>
+            <circle cx="29" cy="21" r="5" fill="rgba(255,215,64,0.12)" stroke="#ffd740" stroke-width="1.2" opacity="0.85"/>
+            <line x1="19" y1="21" x2="23" y2="21" stroke="#fff" stroke-width="0.8" opacity="0.3"/>
+            <line x1="4" y1="21" x2="7" y2="21" stroke="#4fc3f7" stroke-width="1.4" opacity="0.6"/>
+            <polygon points="7,19 11,21 7,23" fill="#4fc3f7" opacity="0.6"/>
+            <line x1="35" y1="21" x2="38" y2="21" stroke="#ffd740" stroke-width="1.4" opacity="0.6"/>
+            <polygon points="35,19 31,21 35,23" fill="#ffd740" opacity="0.6"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-MEC-03 · التصادم</div>
+        <div class="card-name">حفظ الزخم — التصادمات</div>
+        <p class="card-desc">
+          تصادم مرن وغير مرن — غيّر الكتلة والسرعة وشاهد
+          كيف يُحفظ الزخم وتتوزع الطاقة الحركية.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">m₁v₁ = m₂v₂</span>
+            <span class="chip">Collision</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: الحركة التوافقية البسيطة -->
+    <div class="lab-card cat-mechanics coming-soon visible" data-cat="cat-mechanics" onclick="showComingSoon('الحركة التوافقية البسيطة — البندول', 'LAB-MEC-04')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>MECHANICS · ميكانيكا</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="6" y1="6" x2="36" y2="6" stroke="#4fc3f7" stroke-width="1.2" opacity="0.5"/>
+            <line x1="21" y1="6" x2="30" y2="30" stroke="#4fc3f7" stroke-width="1" opacity="0.7"/>
+            <circle cx="30" cy="33" r="4.5" fill="rgba(79,195,247,0.18)" stroke="#4fc3f7" stroke-width="1.3" opacity="0.9"/>
+            <path d="M21 6 Q14 18 12 30" stroke="#4fc3f7" stroke-width="0.7" fill="none" opacity="0.25" stroke-dasharray="2 2"/>
+            <path d="M21 6 Q28 18 30 30" stroke="#4fc3f7" stroke-width="0.7" fill="none" opacity="0.25" stroke-dasharray="2 2"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-MEC-04 · البندول</div>
+        <div class="card-name">الحركة التوافقية — البندول</div>
+        <p class="card-desc">
+          بندول بسيط يتأرجح — اضبط الطول وزاوية الإطلاق
+          وشاهد منحنى الموضع والسرعة والتسارع في آنٍ واحد.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">T = 2π√(L/g)</span>
+            <span class="chip">SHM</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: قانون أوم -->
+    <div class="lab-card cat-electro coming-soon visible" data-cat="cat-electro" onclick="showComingSoon('قانون أوم — الدوائر الكهربائية', 'LAB-ELC-01')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>ELECTRO · كهرباء</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="17" y="15" width="8" height="12" rx="1" fill="rgba(255,82,82,0.12)" stroke="#ff5252" stroke-width="1.2" opacity="0.8"/>
+            <line x1="21" y1="6" x2="21" y2="15" stroke="#ff5252" stroke-width="1.2" opacity="0.7"/>
+            <line x1="21" y1="27" x2="21" y2="36" stroke="#ff5252" stroke-width="1.2" opacity="0.7"/>
+            <line x1="21" y1="6" x2="36" y2="6" stroke="#ff5252" stroke-width="1" opacity="0.5"/>
+            <line x1="36" y1="6" x2="36" y2="36" stroke="#ff5252" stroke-width="1" opacity="0.5"/>
+            <line x1="21" y1="36" x2="36" y2="36" stroke="#ff5252" stroke-width="1" opacity="0.5"/>
+            <line x1="8" y1="19" x2="8" y2="23" stroke="#ffd740" stroke-width="2.5" opacity="0.8"/>
+            <line x1="5" y1="21" x2="11" y2="21" stroke="#ffd740" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-ELC-01 · أوم</div>
+        <div class="card-name">قانون أوم — الدوائر الكهربائية</div>
+        <p class="card-desc">
+          غيّر الجهد والمقاومة وشاهد التيار يتغير فورياً —
+          مع رسم بياني V-I تفاعلي يُثبت الخطية.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">V = IR</span>
+            <span class="chip">Ohm's Law</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: قانون فاراداي -->
+    <div class="lab-card cat-electro coming-soon visible" data-cat="cat-electro" onclick="showComingSoon('قانون فاراداي — الحث الكهرومغناطيسي', 'LAB-ELC-02')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>ELECTRO · كهرباء</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="21" cy="21" rx="14" ry="6" stroke="#ff5252" stroke-width="1" fill="none" opacity="0.5"/>
+            <ellipse cx="21" cy="21" rx="10" ry="4.5" stroke="#ff5252" stroke-width="1" fill="none" opacity="0.4"/>
+            <ellipse cx="21" cy="21" rx="6" ry="3" stroke="#ff5252" stroke-width="1" fill="none" opacity="0.35"/>
+            <line x1="21" y1="7" x2="21" y2="14" stroke="#ffd740" stroke-width="1.5" opacity="0.8"/>
+            <polygon points="21,7 18,13 24,13" fill="#ffd740" opacity="0.8"/>
+            <line x1="7" y1="21" x2="35" y2="21" stroke="#ff5252" stroke-width="0.7" stroke-dasharray="2 2" opacity="0.3"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-ELC-02 · فاراداي</div>
+        <div class="card-name">قانون فاراداي — الحث الكهرومغناطيسي</div>
+        <p class="card-desc">
+          مغناطيس يتحرك داخل ملف — شاهد القوة الدافعة
+          الكهربائية تُولَد وتتغير مع السرعة وعدد اللفات.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">ε = −dΦ/dt</span>
+            <span class="chip">Faraday</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING: قانون كولوم -->
+    <div class="lab-card cat-electro coming-soon visible" data-cat="cat-electro" onclick="showComingSoon('قانون كولوم — القوى الكهربائية', 'LAB-ELC-03')">
+      <div class="status-badge coming"><span class="sb-dot"></span>SOON</div>
+      <div class="card-stripe"></div>
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-tag"><span class="tag-dot"></span>ELECTRO · كهرباء</div>
+        <span class="card-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="21" r="5.5" fill="rgba(255,82,82,0.15)" stroke="#ff5252" stroke-width="1.3" opacity="0.9"/>
+            <circle cx="30" cy="21" r="5.5" fill="rgba(79,195,247,0.12)" stroke="#4fc3f7" stroke-width="1.3" opacity="0.9"/>
+            <text x="10.5" y="24.5" font-size="7" fill="#ff5252" opacity="0.9" font-family="monospace">+</text>
+            <text x="28" y="24.5" font-size="7" fill="#4fc3f7" opacity="0.9" font-family="monospace">−</text>
+            <line x1="17.5" y1="21" x2="24.5" y2="21" stroke="#ffd740" stroke-width="1" opacity="0.5" stroke-dasharray="2 1.5"/>
+          </svg>
+        </span>
+        <div class="card-id">LAB-ELC-03 · كولوم</div>
+        <div class="card-name">قانون كولوم — القوى الكهربائية</div>
+        <p class="card-desc">
+          شحنتان متقابلتان — غيّر المسافة والشحنة وشاهد
+          كيف تتغير القوة وفق قانون التربيع العكسي.
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">F = kq₁q₂/r²</span>
+            <span class="chip">Coulomb</span>
+          </div>
+          <span class="card-arrow">← قريباً</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /labs-grid -->
+
+  <!-- INFO CARDS -->
+  <div class="info-section">
+    <div class="info-card">
+      <span class="info-icon">📐</span>
+      <div class="info-title">الفيزياء العملية</div>
+      <p class="info-desc">كل تجربة مبنية على البيانات الحقيقية وتُعطيك نفس النتائج التاريخية — ليست محاكاة مبسّطة بل نسخة تفاعلية من التجربة الأصلية.</p>
+    </div>
+    <div class="info-card">
+      <span class="info-icon">🔗</span>
+      <div class="info-title">مرتبطة بالدروس</div>
+      <p class="info-desc">كل بطاقة مختبر مرتبطة بدرسها النظري في البوابة الأكاديمية — التجربة تأتي بعد الفهم وتُرسّخه.</p>
+    </div>
+    <div class="info-card">
+      <span class="info-icon">⚗️</span>
+      <div class="info-title">قادم قريباً</div>
+      <p class="info-desc">التجارب تُضاف تدريجياً بالتوازي مع الدروس النظرية. كل درس جديد يُطلق تجربته المقابلة في المختبر.</p>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- COMING SOON MODAL -->
+<div id="cs-overlay" onclick="closeComingSoon(event)">
+  <div id="cs-modal">
+    <div class="cs-badge"><span class="cs-badge-dot"></span><span id="cs-id">LAB-XXX</span></div>
+    <span class="cs-icon" id="cs-icon">🔬</span>
+    <div class="cs-lab-id" id="cs-id-label">LAB-XXX-XX</div>
+    <div class="cs-title" id="cs-title">اسم التجربة</div>
+    <div class="cs-divider"></div>
+    <p class="cs-msg">
+      هذه التجربة قيد التطوير حالياً وستُطلق<br>
+      <span>بالتوازي مع درسها النظري</span> في البوابة الأكاديمية.<br>
+      ترقّب الإعلان قريباً!
+    </p>
+    <button class="cs-close" onclick="closeComingSoon()">← حسناً، سأنتظر</button>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="sb-item"><div class="sb-dot-live"></div>LAB · ONLINE</div>
+  <div class="sb-item">PHYSICS LABORATORY · 0 OPEN · 18 COMING</div>
+  <div class="sb-item"><div class="sb-dot-amber"></div>EXPERIMENTS · LOADING</div>
+</div>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script>
+/* ── CANVAS ── */
+const canvas = document.getElementById('lab-canvas');
+const ctx = canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();
+window.addEventListener('resize',resize);
+
+/* particles — equipment-like sparks */
+const sparks=[];
+for(let i=0;i<60;i++){
+  sparks.push({
+    x:Math.random(),y:Math.random(),
+    r:Math.random()*.9+.2,
+    op:Math.random()*.6+.1,
+    pulse:Math.random()*Math.PI*2,
+    sp:Math.random()*.004+.001,
+    amber:Math.random()>.5,
+  });
+}
+const lines=[];
+for(let i=0;i<18;i++){
+  lines.push({
+    x1:Math.random(),y1:Math.random(),
+    x2:Math.random(),y2:Math.random(),
+    op:Math.random()*.03+.005,
+    amber:Math.random()>.4,
+  });
+}
+let frame=0;
+function draw(){
+  frame++;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const bg=ctx.createRadialGradient(
+    canvas.width*.5,canvas.height*.35,0,
+    canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.95
+  );
+  bg.addColorStop(0,'rgba(3,10,6,1)');
+  bg.addColorStop(.4,'rgba(2,8,12,1)');
+  bg.addColorStop(1,'rgba(1,5,8,1)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* subtle circuit lines */
+  lines.forEach(l=>{
+    ctx.beginPath();
+    ctx.moveTo(l.x1*canvas.width,l.y1*canvas.height);
+    ctx.lineTo(l.x2*canvas.width,l.y2*canvas.height);
+    ctx.strokeStyle=l.amber
+      ? `rgba(255,215,64,${l.op})`
+      : `rgba(0,229,255,${l.op*.4})`;
+    ctx.lineWidth=.4;ctx.stroke();
+  });
+
+  /* central glow rings */
+  const cx=canvas.width*.5,cy=canvas.height*.28;
+  for(let r=1;r<8;r++){
+    const rad=r*Math.min(canvas.width,canvas.height)/22;
+    const warp=Math.sin(frame*.007+r*.5)*2;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,rad+warp,rad*.3+warp*.1,0,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(255,215,64,${Math.max(.002,.025-r*.003)})`;
+    ctx.lineWidth=.5;ctx.stroke();
+  }
+
+  /* sparks */
+  sparks.forEach(s=>{
+    s.pulse+=s.sp;
+    const op=s.op*(0.6+0.4*Math.sin(s.pulse));
+    ctx.beginPath();ctx.arc(s.x*canvas.width,s.y*canvas.height,s.r,0,Math.PI*2);
+    ctx.fillStyle=s.amber
+      ? `rgba(255,215,64,${op})`
+      : `rgba(0,229,255,${op*.45})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ── PROGRESS BAR ── */
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress-bar').style.width=pct+'%';
+});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'),i*70);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.06});
+/* reset and observe */
+document.querySelectorAll('.lab-card').forEach(c=>{
+  c.classList.remove('visible');
+  obs.observe(c);
+});
+
+/* ── FILTER ── */
+const filterTimers = new Map();
+function filterLabs(cat, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.lab-card');
+
+  // cancel all pending timers
+  filterTimers.forEach(t=>clearTimeout(t));
+  filterTimers.clear();
+
+  // step 1: instantly hide cards that don't belong
+  cards.forEach(c=>{
+    if(cat!=='all' && c.dataset.cat!==cat){
+      c.classList.remove('visible');
+      c.style.display='none';
+    }
+  });
+
+  // step 2: show matching cards on next frame
+  requestAnimationFrame(()=>{
+    cards.forEach((c,i)=>{
+      if(cat==='all' || c.dataset.cat===cat){
+        c.style.display='flex';
+        const t = setTimeout(()=>{
+          c.classList.add('visible');
+          filterTimers.delete(c);
+        }, i*50);
+        filterTimers.set(c,t);
+      }
+    });
+  });
+}
+
+/* ── COMING SOON MODAL ── */
+const labIcons = {
+  'LAB-OPT-01':'🔬','LAB-OPT-02':'🌊',
+  'LAB-QNT-01':'⚡','LAB-QNT-02':'💡','LAB-QNT-03':'✦','LAB-QNT-04':'〜','LAB-QNT-05':'◎',
+  'LAB-REL-01':'⏱️','LAB-REL-02':'🌌',
+  'LAB-NUC-01':'☢️','LAB-NUC-02':'🎯',
+  'LAB-MEC-01':'⚛','LAB-MEC-02':'📐','LAB-MEC-03':'⬤','LAB-MEC-04':'🔵',
+  'LAB-ELC-01':'⚡','LAB-ELC-02':'🔁','LAB-ELC-03':'⊕',
+};
+function showComingSoon(name, id){
+  document.getElementById('cs-icon').textContent = labIcons[id] || '🔬';
+  document.getElementById('cs-id').textContent = id;
+  document.getElementById('cs-id-label').textContent = id;
+  document.getElementById('cs-title').textContent = name;
+  const ov = document.getElementById('cs-overlay');
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeComingSoon(e){
+  if(e && e.target !== document.getElementById('cs-overlay') && !e.target.classList.contains('cs-close')) return;
+  document.getElementById('cs-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeComingSoon(); });
+
+
+function animCount(el,target,dur=900){
+  const start=performance.now();
+  (function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(e*target);
+    if(p<1)requestAnimationFrame(tick);
+  })(start);
+}
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      animCount(document.getElementById('cnt-open'),0);
+      animCount(document.getElementById('cnt-total'),18);
+      cObs.disconnect();
+    }
+  });
+},{threshold:.5});
+cObs.observe(document.querySelector('.hero'));
+</script>
+</body>
+</html>

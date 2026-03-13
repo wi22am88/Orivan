@@ -459,7 +459,7 @@ header {
   backdrop-filter:blur(16px);
   overflow:hidden;
 }
-.lab-card:hover .lab-body { border-color:rgba(255,215,64,.3); }
+.lab-card:hover .lab-body { border-color:rgba(105,240,174,.3); }
 
 /* lab stripe top */
 .lab-stripe {
@@ -796,7 +796,7 @@ header {
 
 <!-- ═══════════ HEADER ═══════════ -->
 <header>
-  <a class="h-back" href="physics.html">← BACK</a>
+  <a class="h-back" href="../physics.html">← رجوع</a>
   <div class="h-center">
     <div class="h-pulse"></div>
     MODERN PHYSICS · الفيزياء الحديثة
@@ -966,12 +966,8 @@ header {
   </div>
 
   <!-- LAB CARD -->
-  <div class="lab-card" onclick="openLabModal()" style="cursor:pointer">
-    <div class="lab-badge-lock"><div class="lab-badge-dot"></div>LOCKED</div>
-    <div class="lab-lock-overlay">
-      <span class="lab-lock-icon">🔒</span>
-      <span class="lab-lock-text">LOCKED</span>
-    </div>
+  <a class="lab-card" href="modern/Physics_Laboratory.html" id="lab" style="text-decoration:none;">
+    <div class="lab-badge-lock" style="color:rgba(105,240,174,.7);border-color:rgba(105,240,174,.25);"><div class="lab-badge-dot" style="background:var(--fission);box-shadow:0 0 6px var(--fission);"></div>OPEN · مفتوح</div>
     <div class="lab-stripe"></div>
     <div class="lab-bg-glow"></div>
     <div class="lab-body">
@@ -1006,32 +1002,32 @@ header {
       </div>
 
     </div>
-  </div>
+  </a>
 
 </div><!-- /wrapper -->
 
 <!-- ═══════════ LAB MODAL ═══════════ -->
 <div id="lab-modal">
   <div id="lab-modal-box">
-    <span class="modal-lock-emoji">🔒</span>
+    <span class="modal-lock-emoji">🧪</span>
     <div class="modal-eyebrow">
       <span class="modal-ey-line l"></span>
       PHYSICS LABORATORY
       <span class="modal-ey-line r"></span>
     </div>
     <div class="modal-ttl">مختبر الفيزياء</div>
-    <span class="modal-ttl-en">PHYSICS LAB · LOCKED</span>
+    <span class="modal-ttl-en">PHYSICS LAB · NOW OPEN</span>
     <p class="modal-body-txt">
-      هذا المختبر <strong>قيد الإعداد</strong> حالياً —<br>
-      يتم تطوير الأدوات التفاعلية وستكون<br>
-      متاحة قريباً. ترقّب التحديثات ✦
+      المختبر <strong>متاح الآن</strong> —<br>
+      أدوات تفاعلية للحل خطوةً بخطوة<br>
+      مع القوانين المستخدمة ✦
     </p>
     <div class="modal-divider">
-      <div class="modal-diamond"></div>
       <div class="modal-diamond active"></div>
-      <div class="modal-diamond"></div>
+      <div class="modal-diamond active"></div>
+      <div class="modal-diamond active"></div>
     </div>
-    <button class="modal-close-btn" onclick="closeLabModal()">← إغلاق</button>
+    <a class="modal-close-btn" href="modern/lab.html" style="display:inline-block;text-decoration:none;">ادخل المختبر →</a>
   </div>
 </div>
 
@@ -1039,7 +1035,7 @@ header {
 <div class="status-bar">
   <div class="sb-item"><div class="sb-dot live"></div>SYSTEM · ONLINE</div>
   <div class="sb-item">MODERN PHYSICS · 4 SUBJECTS · 1 LAB</div>
-  <div class="sb-item"><div class="sb-dot warn"></div>QUANTUM · INITIALIZED</div>
+  <div class="sb-item"><div class="sb-dot live" style="background:var(--fission);box-shadow:0 0 5px var(--fission);"></div>LAB · OPEN</div>
 </div>
 
 <!-- ═══════════ SCRIPTS ═══════════ -->

@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SR-02 · فشل تحويلات غاليليو — النسبية الخاصة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Exo+2:wght@100;300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+/* ═══════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════ */
+:root {
+  --bg:      #03050d;
+  --bg2:     #060a18;
+  --cyan:    #00e5ff;
+  --cyan2:   #80f4ff;
+  --cyan3:   #004d5e;
+  --electric:#4fc3f7;
+  --violet:  #7b61ff;
+  --amber:   #ffb300;
+  --green:   #00e676;
+  --red:     #ff4444;
+  --orange:  #ff6b35;
+  --white:   #f0f8ff;
+  --text:    #cce8f4;
+  --muted:   #4a6880;
+  --card:    rgba(4,14,30,0.93);
+  --border:  rgba(0,229,255,0.12);
+  --glow:    rgba(0,229,255,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUNDS ── */
+#sr-canvas{position:fixed;inset:0;z-index:0;}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px;}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 35%,rgba(0,3,10,.8) 100%);}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,255,.008) 3px,rgba(0,229,255,.008) 4px);}
+
+/* ── CORNERS ── */
+.corner{position:fixed;z-index:20;pointer-events:none;width:44px;height:44px;}
+.corner.tl{top:18px;left:18px;border-top:1px solid rgba(0,229,255,.5);border-left:1px solid rgba(0,229,255,.5);}
+.corner.tr{top:18px;right:18px;border-top:1px solid rgba(0,229,255,.5);border-right:1px solid rgba(0,229,255,.5);}
+.corner.bl{bottom:18px;left:18px;border-bottom:1px solid rgba(0,229,255,.3);border-left:1px solid rgba(0,229,255,.3);}
+.corner.br{bottom:18px;right:18px;border-bottom:1px solid rgba(0,229,255,.3);border-right:1px solid rgba(0,229,255,.3);}
+.corner::before{content:'';position:absolute;width:4px;height:4px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan);}
+.corner.tl::before{top:-2px;left:-2px;}
+.corner.tr::before{top:-2px;right:-2px;}
+.corner.bl::before{bottom:-2px;left:-2px;}
+.corner.br::before{bottom:-2px;right:-2px;}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 32px;
+  background:rgba(3,5,13,.88);
+  border-bottom:1px solid rgba(0,229,255,.1);
+  backdrop-filter:blur(20px);
+}
+.header-logo{font-family:'Exo 2',sans-serif;font-size:.65rem;font-weight:900;letter-spacing:5px;color:var(--cyan);text-shadow:0 0 14px rgba(0,229,255,.7);text-transform:uppercase;}
+.header-tag{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:2px;}
+.header-code{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--amber);background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.18);padding:4px 12px;border-radius:2px;letter-spacing:2px;}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;border:1px solid rgba(0,229,255,.12);padding:7px 18px;border-radius:4px;transition:.25s;background:none;font-family:'Tajawal',sans-serif;cursor:pointer;}
+.back-btn:hover{color:var(--cyan);border-color:var(--cyan);}
+
+/* ── PROGRESS BAR ── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;z-index:200;
+  background:linear-gradient(90deg,var(--amber),var(--red));
+  transition:width .1s linear;
+  box-shadow:0 0 12px var(--amber);
+  width:0%;
+}
+
+/* ── WRAPPER ── */
+.wrapper{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:0 32px 120px;}
+
+/* ═══════════════════════════════════════
+   LESSON HERO
+═══════════════════════════════════════ */
+.lesson-hero{
+  min-height:70vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 20px 60px;
+  position:relative;
+}
+.lesson-eyebrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;letter-spacing:6px;color:var(--amber);
+  margin-bottom:24px;
+  opacity:0;animation:fadeDown .7s .3s ease forwards;
+  display:flex;align-items:center;gap:16px;
+}
+.lesson-eyebrow::before,.lesson-eyebrow::after{content:'';width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--amber));}
+.lesson-eyebrow::after{background:linear-gradient(90deg,var(--amber),transparent);}
+.lesson-code-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:3px;
+  color:var(--amber);
+  background:rgba(255,179,0,.07);
+  border:1px solid rgba(255,179,0,.2);
+  padding:5px 14px;border-radius:2px;
+  margin-bottom:28px;
+  opacity:0;animation:fadeIn .6s .2s ease forwards;
+  display:inline-block;
+}
+.lesson-title{
+  opacity:0;animation:fadeUp .8s .5s ease forwards;
+  margin-bottom:16px;
+}
+.lesson-title .ar{
+  display:block;
+  font-family:'Exo 2',sans-serif;
+  font-size:clamp(2rem,6vw,4.5rem);
+  font-weight:900;
+  background:linear-gradient(135deg,#fff 10%,#ffe066 40%,var(--amber) 70%,#c87000 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 30px rgba(255,179,0,.22));
+  line-height:1.1;
+}
+.lesson-title .en{
+  display:block;font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.65rem,1.5vw,.9rem);letter-spacing:7px;
+  color:rgba(255,179,0,.4);margin-top:10px;
+}
+.lesson-intro{
+  max-width:600px;font-size:.95rem;color:var(--muted);line-height:2.1;
+  margin:20px 0 40px;
+  opacity:0;animation:fadeUp .7s .9s ease forwards;
+}
+
+/* lesson meta pills */
+.lesson-meta{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp .7s 1.1s ease forwards;
+  margin-bottom:48px;
+}
+.meta-pill{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:2px;
+  color:var(--muted);
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.1);
+  padding:5px 14px;border-radius:2px;
+  display:flex;align-items:center;gap:7px;
+}
+.meta-pill .dot{width:5px;height:5px;background:var(--amber);border-radius:50%;box-shadow:0 0 6px var(--amber);}
+
+/* TOC */
+.toc-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 32px;
+  background:transparent;border:1px solid var(--amber);
+  color:var(--amber);font-weight:700;font-size:.9rem;
+  border-radius:3px;cursor:pointer;font-family:'Tajawal',sans-serif;
+  text-decoration:none;transition:.3s;position:relative;overflow:hidden;
+  opacity:0;animation:fadeUp .7s 1.3s ease forwards;
+}
+.toc-btn::before{content:'';position:absolute;inset:0;background:var(--amber);transform:scaleX(0);transform-origin:right;transition:.35s cubic-bezier(.23,1,.32,1);}
+.toc-btn:hover::before{transform:scaleX(1);transform-origin:left;}
+.toc-btn:hover{color:#000;}
+.toc-btn span{position:relative;z-index:1;}
+
+/* scroll hint */
+.scroll-beam-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  margin-top:40px;
+  opacity:0;animation:fadeIn 1s 2s ease forwards;
+  color:var(--muted);font-size:.55rem;letter-spacing:4px;
+  font-family:'Share Tech Mono',monospace;
+}
+.scroll-beam{width:1px;height:50px;background:linear-gradient(to bottom,var(--amber),transparent);animation:beamPulse 1.6s ease-in-out infinite;}
+@keyframes beamPulse{0%,100%{opacity:.7;transform:scaleY(1)}50%{opacity:.2;transform:scaleY(.5)}}
+
+/* ═══════════════════════════════════════
+   TABLE OF CONTENTS
+═══════════════════════════════════════ */
+.toc-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:36px;
+  margin-bottom:72px;
+}
+.toc-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.85rem;font-weight:700;
+  color:var(--amber);letter-spacing:4px;
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.toc-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,179,0,.25),transparent);}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:0;}
+.toc-item{
+  display:flex;align-items:center;gap:16px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(0,229,255,.05);
+  text-decoration:none;color:var(--text);
+  transition:.2s;
+  cursor:pointer;
+}
+.toc-item:last-child{border-bottom:none;}
+.toc-item:hover{color:var(--amber);}
+.toc-item:hover .toc-num{color:var(--amber);border-color:rgba(255,179,0,.4);}
+.toc-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:2px;
+  color:var(--muted);
+  border:1px solid rgba(0,229,255,.12);
+  padding:3px 9px;border-radius:2px;
+  min-width:50px;text-align:center;
+  transition:.2s;
+}
+.toc-text{font-size:.88rem;}
+.toc-arrow{margin-right:auto;margin-left:0;color:rgba(255,179,0,.3);font-size:.7rem;transition:.2s;}
+.toc-item:hover .toc-arrow{color:var(--amber);}
+
+/* ═══════════════════════════════════════
+   SECTION BLOCK
+═══════════════════════════════════════ */
+.lesson-section{
+  margin-bottom:80px;
+  opacity:0;transform:translateY(32px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.lesson-section.visible{opacity:1;transform:none;}
+
+.sec-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:5px;
+  color:var(--amber);
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:18px;
+  opacity:.8;
+}
+.sec-label::before{content:'';width:24px;height:1px;background:var(--amber);}
+
+.sec-heading{
+  font-family:'Exo 2',sans-serif;
+  font-size:clamp(1.3rem,3vw,2rem);
+  font-weight:700;
+  color:var(--white);
+  margin-bottom:20px;
+  line-height:1.25;
+}
+
+.sec-body{
+  font-size:.93rem;
+  line-height:2.15;
+  color:var(--text);
+}
+.sec-body p{margin-bottom:18px;}
+.sec-body p:last-child{margin-bottom:0;}
+
+/* ── HIGHLIGHT BOXES ── */
+.highlight-box{
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.18);
+  border-right:3px solid var(--cyan);
+  padding:20px 24px;
+  border-radius:3px;
+  margin:28px 0;
+  position:relative;
+}
+.highlight-box.amber{border-right-color:var(--amber);background:rgba(255,179,0,.03);border-color:rgba(255,179,0,.15);}
+.highlight-box.amber .hb-tag{color:var(--amber);}
+.highlight-box.violet{border-right-color:var(--violet);background:rgba(123,97,255,.04);border-color:rgba(123,97,255,.18);}
+.highlight-box.violet .hb-tag{color:var(--violet);}
+.highlight-box.green{border-right-color:var(--green);background:rgba(0,230,118,.03);border-color:rgba(0,230,118,.15);}
+.highlight-box.green .hb-tag{color:var(--green);}
+.highlight-box.red{border-right-color:var(--red);background:rgba(255,68,68,.04);border-color:rgba(255,68,68,.18);}
+.highlight-box.red .hb-tag{color:var(--red);}
+.highlight-box.orange{border-right-color:var(--orange);background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.18);}
+.highlight-box.orange .hb-tag{color:var(--orange);}
+
+.hb-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--cyan);
+  margin-bottom:12px;display:block;
+}
+.hb-text{font-size:.9rem;line-height:2;color:var(--text);}
+
+/* ── FAILURE BOX — النقيض من postulate-box ── */
+.failure-box{
+  border-radius:4px;
+  padding:0;
+  margin:36px 0;
+  overflow:hidden;
+  position:relative;
+}
+.failure-box::after{
+  content:'';
+  position:absolute;inset:0;
+  border:1px solid rgba(255,68,68,.25);
+  border-radius:4px;
+  pointer-events:none;
+}
+.failure-header{
+  display:flex;align-items:center;gap:18px;
+  padding:18px 28px;
+  background:rgba(255,68,68,.06);
+  border-bottom:1px solid rgba(255,68,68,.15);
+}
+.failure-num{
+  font-family:'Exo 2',sans-serif;
+  font-size:2.2rem;font-weight:900;
+  color:rgba(255,68,68,.15);
+  line-height:1;
+}
+.failure-label-wrap .label-en{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--muted);margin-bottom:4px;
+}
+.failure-label-wrap .label-ar{
+  font-family:'Exo 2',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--red);
+}
+.failure-body{
+  padding:28px;
+  background:rgba(20,0,0,.7);
+  border-top:none;
+}
+.failure-statement{
+  font-size:1.05rem;
+  line-height:2.1;
+  color:var(--white);
+  font-weight:500;
+  margin-bottom:18px;
+}
+.failure-detail{
+  font-size:.85rem;line-height:2;color:var(--muted);
+}
+
+/* ── GALILEO TRANSFORM BOX ── */
+.transform-display{
+  background:rgba(0,5,15,.85);
+  border:1px solid rgba(0,229,255,.12);
+  border-radius:4px;
+  padding:32px 36px;
+  margin:28px 0;
+  position:relative;
+  overflow:hidden;
+}
+.transform-display::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(0,229,255,.04),transparent);
+}
+.transform-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:5px;color:var(--cyan);
+  margin-bottom:22px;display:block;
+  position:relative;z-index:1;
+}
+.transform-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  position:relative;z-index:1;
+}
+.transform-eq{
+  display:flex;flex-direction:column;gap:6px;
+  padding:14px 18px;
+  background:rgba(0,229,255,.03);
+  border:1px solid rgba(0,229,255,.08);
+  border-radius:3px;
+  direction:ltr;
+}
+.transform-eq.danger{
+  border-color:rgba(255,68,68,.2);
+  background:rgba(255,68,68,.03);
+}
+.transform-eq.danger .t-label{color:var(--red);}
+.t-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.45rem;letter-spacing:3px;color:var(--muted);
+}
+.t-formula{
+  font-family:'Share Tech Mono',monospace;
+  font-size:1rem;color:var(--cyan);
+  letter-spacing:2px;
+}
+.transform-eq.danger .t-formula{color:rgba(255,68,68,.9);}
+.transform-note{
+  grid-column:1/-1;
+  font-size:.78rem;color:var(--muted);
+  padding-top:14px;
+  border-top:1px solid rgba(0,229,255,.06);
+  line-height:1.9;
+  direction:rtl;
+  text-align:right;
+}
+
+/* ── FORMULA BLOCK ── */
+.formula-block{
+  background:rgba(0,5,15,.8);
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:4px;
+  padding:28px;
+  margin:28px 0;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.formula-block::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(0,229,255,.05),transparent);
+}
+.formula-block.amber-glow{border-color:rgba(255,179,0,.15);}
+.formula-block.amber-glow::before{background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(255,179,0,.05),transparent);}
+.formula-block.red-glow{border-color:rgba(255,68,68,.15);}
+.formula-block.red-glow::before{background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(255,68,68,.06),transparent);}
+.formula-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.48rem;letter-spacing:4px;
+  color:var(--muted);margin-bottom:16px;display:block;
+}
+.formula-main{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(1rem,3vw,1.8rem);
+  color:var(--cyan);
+  direction:ltr;
+  letter-spacing:3px;
+  text-shadow:0 0 20px rgba(0,229,255,.4);
+  position:relative;z-index:1;
+}
+.formula-main.amber{color:var(--amber);text-shadow:0 0 20px rgba(255,179,0,.4);}
+.formula-main.red{color:var(--red);text-shadow:0 0 20px rgba(255,68,68,.4);}
+.formula-main.strikethrough{text-decoration:line-through;opacity:.55;}
+.formula-note{
+  font-size:.78rem;color:var(--muted);margin-top:14px;
+  font-style:italic;line-height:1.8;
+  position:relative;z-index:1;
+}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{
+  width:100%;border-collapse:collapse;
+  margin:28px 0;
+  font-size:.82rem;
+}
+.compare-table th{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:3px;
+  color:var(--cyan);
+  padding:12px 18px;
+  background:rgba(0,229,255,.05);
+  border:1px solid rgba(0,229,255,.1);
+  text-align:right;
+}
+.compare-table th.amber-th{color:var(--amber);background:rgba(255,179,0,.04);}
+.compare-table th.red-th{color:var(--red);background:rgba(255,68,68,.04);}
+.compare-table td{
+  padding:12px 18px;
+  border:1px solid rgba(0,229,255,.07);
+  color:var(--text);
+  line-height:1.8;
+  vertical-align:top;
+}
+.compare-table tr:nth-child(even) td{background:rgba(0,229,255,.015);}
+.compare-table .ok-cell{color:var(--green);}
+.compare-table .fail-cell{color:var(--red);}
+.compare-table .warn-cell{color:var(--amber);}
+.compare-table .cyan-cell{color:var(--cyan);}
+
+/* ── THOUGHT EXPERIMENT ── */
+.thought-exp{
+  background:rgba(123,97,255,.05);
+  border:1px solid rgba(123,97,255,.2);
+  border-radius:4px;
+  padding:28px;
+  margin:32px 0;
+  position:relative;
+}
+.thought-exp::before{
+  content:'💭';
+  position:absolute;top:-14px;right:20px;
+  font-size:1.2rem;
+  background:var(--bg);
+  padding:0 8px;
+}
+.te-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--violet);
+  margin-bottom:14px;display:block;
+}
+.te-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--white);margin-bottom:14px;
+}
+.te-body{font-size:.88rem;line-height:2.1;color:var(--text);}
+.te-conclusion{
+  margin-top:16px;
+  padding:14px 18px;
+  background:rgba(123,97,255,.07);
+  border-right:2px solid var(--violet);
+  font-size:.85rem;line-height:1.9;
+  color:var(--text);
+}
+.te-conclusion.red-border{border-right-color:var(--red);background:rgba(255,68,68,.06);}
+.te-conclusion.amber-border{border-right-color:var(--amber);background:rgba(255,179,0,.05);}
+
+/* ── DERIVATION STEPS ── */
+.derivation{
+  background:rgba(0,5,15,.9);
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:4px;
+  padding:28px 32px;
+  margin:28px 0;
+  direction:ltr;
+}
+.deriv-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;color:var(--cyan);
+  margin-bottom:20px;
+  direction:rtl;text-align:right;
+}
+.deriv-step{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:12px 0;
+  border-bottom:1px solid rgba(0,229,255,.05);
+}
+.deriv-step:last-child{border-bottom:none;}
+.step-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;color:var(--muted);
+  border:1px solid rgba(0,229,255,.1);
+  padding:3px 8px;border-radius:2px;
+  flex-shrink:0;margin-top:2px;
+  min-width:32px;text-align:center;
+}
+.step-content{flex:1;}
+.step-eq{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.9rem;color:var(--cyan);
+  letter-spacing:1px;
+  margin-bottom:4px;
+}
+.step-note{
+  font-size:.75rem;color:var(--muted);
+  line-height:1.8;
+  direction:rtl;text-align:right;
+  font-family:'Tajawal',sans-serif;
+}
+
+/* ── LIGHT CLOCK SVG DIAGRAM ── */
+.diagram-box{
+  background:rgba(0,5,15,.9);
+  border:1px solid rgba(0,229,255,.12);
+  border-radius:4px;
+  padding:28px;
+  margin:28px 0;
+  text-align:center;
+  overflow:hidden;
+}
+.diagram-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;color:var(--muted);
+  margin-bottom:18px;display:block;
+}
+.diagram-box svg{
+  max-width:100%;
+  height:auto;
+}
+
+/* ── MICHELSON-MORLEY TIMELINE ── */
+.timeline{position:relative;padding-right:32px;margin:32px 0;}
+.timeline::before{
+  content:'';
+  position:absolute;right:0;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,var(--amber),rgba(255,179,0,.1));
+}
+.tl-item{
+  position:relative;
+  padding-right:28px;
+  padding-bottom:32px;
+}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{
+  position:absolute;right:-5px;top:4px;
+  width:10px;height:10px;
+  background:var(--bg);
+  border:1px solid var(--amber);
+  border-radius:50%;
+  box-shadow:0 0 10px rgba(255,179,0,.4);
+}
+.tl-year{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;letter-spacing:3px;
+  color:var(--amber);margin-bottom:7px;
+}
+.tl-event{font-size:.85rem;color:var(--text);line-height:1.9;}
+.tl-event strong{color:var(--white);}
+.tl-result{
+  display:inline-block;
+  margin-top:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  padding:4px 12px;border-radius:2px;
+}
+.tl-result.fail{background:rgba(255,68,68,.08);color:var(--red);border:1px solid rgba(255,68,68,.2);}
+.tl-result.pass{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+
+/* ── INTERACTIVE DEMO ── */
+.demo-box{
+  background:rgba(0,5,15,.9);
+  border:1px solid rgba(0,229,255,.15);
+  border-radius:4px;
+  padding:32px;
+  margin:32px 0;
+}
+.demo-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;letter-spacing:4px;
+  color:var(--cyan);margin-bottom:20px;display:block;
+}
+.demo-controls{display:flex;flex-direction:column;gap:20px;margin-bottom:24px;}
+.demo-slider-wrap{width:100%;}
+.demo-slider-label{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:2px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.demo-slider-label span{color:var(--cyan);font-size:.8rem;}
+.demo-slider{
+  -webkit-appearance:none;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--cyan) var(--val,50%),rgba(0,229,255,.15) var(--val,50%));
+  border-radius:2px;outline:none;
+}
+.demo-slider.amber-track{
+  background:linear-gradient(90deg,var(--amber) var(--val2,50%),rgba(255,179,0,.15) var(--val2,50%));
+}
+.demo-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;
+  background:var(--cyan);border-radius:50%;cursor:pointer;
+  box-shadow:0 0 10px rgba(0,229,255,.6);
+}
+.demo-slider.amber-track::-webkit-slider-thumb{
+  background:var(--amber);
+  box-shadow:0 0 10px rgba(255,179,0,.6);
+}
+.demo-results{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.result-panel{
+  background:rgba(0,229,255,.04);
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:3px;
+  padding:18px 20px;
+  direction:ltr;
+}
+.result-panel.fail-panel{
+  background:rgba(255,68,68,.04);
+  border-color:rgba(255,68,68,.18);
+}
+.result-panel.pass-panel{
+  background:rgba(0,230,118,.03);
+  border-color:rgba(0,230,118,.15);
+}
+.rp-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.48rem;letter-spacing:3px;color:var(--muted);
+  margin-bottom:12px;
+}
+.rp-title.fail{color:var(--red);}
+.rp-title.pass{color:var(--green);}
+.rp-value{
+  font-family:'Share Tech Mono',monospace;
+  font-size:1.3rem;color:var(--cyan);
+  margin-bottom:6px;
+}
+.rp-value.fail-val{color:var(--red);}
+.rp-value.pass-val{color:var(--green);}
+.rp-note{font-size:.72rem;color:var(--muted);line-height:1.7;}
+.demo-verdict{
+  margin-top:16px;
+  padding:14px 18px;
+  border-radius:3px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;
+  letter-spacing:1px;
+  direction:rtl;
+  text-align:right;
+  font-family:'Tajawal',sans-serif;
+  font-size:.85rem;
+  line-height:1.8;
+}
+.demo-verdict.bad{background:rgba(255,68,68,.07);border:1px solid rgba(255,68,68,.2);color:var(--red);}
+.demo-verdict.good{background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.18);color:var(--green);}
+
+/* ── CONSEQUENCE CARDS ── */
+.consequence-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+  margin:28px 0;
+}
+.cons-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:22px;
+  transition:.3s;
+  position:relative;overflow:hidden;
+}
+.cons-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);
+  transform:scaleX(0);transition:.35s;
+}
+.cons-card:hover::before{transform:scaleX(1);}
+.cons-card:hover{border-color:rgba(255,179,0,.25);transform:translateY(-3px);}
+.cons-icon{font-size:1.5rem;margin-bottom:12px;}
+.cons-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.85rem;font-weight:700;
+  color:var(--white);margin-bottom:8px;
+}
+.cons-desc{font-size:.77rem;color:var(--muted);line-height:1.9;}
+.cons-eq{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;color:rgba(255,179,0,.5);
+  margin-top:12px;direction:ltr;
+}
+
+/* ── SUMMARY BOX ── */
+.summary-box{
+  background:rgba(255,179,0,.03);
+  border:1px solid rgba(255,179,0,.18);
+  border-radius:4px;
+  padding:36px;
+  margin-top:56px;
+  position:relative;
+  overflow:hidden;
+}
+.summary-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,179,0,.04),transparent);
+}
+.summary-title{
+  font-family:'Exo 2',sans-serif;
+  font-size:.8rem;font-weight:700;
+  letter-spacing:5px;color:var(--amber);
+  margin-bottom:24px;
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:14px;
+}
+.summary-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,179,0,.25),transparent);}
+.summary-list{
+  list-style:none;display:flex;flex-direction:column;gap:10px;
+  position:relative;z-index:1;
+}
+.summary-list li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:.88rem;line-height:1.9;
+  color:var(--text);
+}
+.summary-list li::before{
+  content:'→';color:var(--amber);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;flex-shrink:0;margin-top:4px;
+}
+
+/* ── DIVIDER ── */
+.div-line{height:1px;background:linear-gradient(90deg,transparent,rgba(255,179,0,.2),transparent);margin:48px 0;}
+
+/* ── NAV FOOTER ── */
+.lesson-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:28px 0;
+  border-top:1px solid rgba(255,179,0,.08);
+  margin-top:72px;
+}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--muted);
+  font-family:'Tajawal',sans-serif;font-size:.85rem;
+  padding:10px 20px;
+  border:1px solid rgba(0,229,255,.1);
+  border-radius:3px;transition:.25s;
+}
+.nav-btn:hover{color:var(--amber);border-color:rgba(255,179,0,.3);}
+
+/* ── QUIZ SECTION ── */
+.quiz-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:36px;
+  margin-top:72px;
+}
+.quiz-header{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;letter-spacing:5px;
+  color:var(--amber);
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.quiz-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,179,0,.2),transparent);}
+.quiz-q{
+  background:rgba(255,179,0,.02);
+  border:1px solid rgba(255,179,0,.08);
+  border-radius:3px;
+  padding:20px 24px;
+  margin-bottom:14px;
+  cursor:pointer;
+  transition:.25s;
+  position:relative;
+}
+.quiz-q:hover{border-color:rgba(255,179,0,.2);}
+.quiz-q .q-text{font-size:.9rem;color:var(--text);line-height:1.9;margin-bottom:12px;}
+.quiz-q .q-answer{
+  font-size:.82rem;color:var(--muted);line-height:1.9;
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+  border-top:0px solid transparent;
+  padding-top:0;
+}
+.quiz-q.open .q-answer{max-height:400px;border-top:1px solid rgba(255,179,0,.08);padding-top:12px;}
+.q-toggle{
+  position:absolute;top:18px;left:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;color:rgba(255,179,0,.4);
+  transition:.25s;
+}
+.quiz-q.open .q-toggle{color:var(--amber);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes crashPulse{0%,100%{opacity:1}50%{opacity:.4;}}
+
+.crash-icon{
+  display:inline-block;
+  animation:crashPulse 2s ease-in-out infinite;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .wrapper{padding:0 18px 80px;}
+  header{padding:10px 14px;}
+  .header-tag{display:none;}
+  .transform-grid{grid-template-columns:1fr;}
+  .demo-results{grid-template-columns:1fr;}
+  .compare-table{font-size:.75rem;}
+  .compare-table th,.compare-table td{padding:9px 12px;}
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:rgba(255,179,0,.2);border-radius:2px;}
+
+/* ── MathJax overrides ── */
+mjx-container{
+  color: var(--cyan) !important;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+}
+mjx-container[display="true"]{
+  margin: 8px auto !important;
+  overflow-x: auto;
+}
+.formula-main mjx-container{
+  font-size: 1.05em !important;
+}
+.formula-main.amber mjx-container{color: var(--amber) !important;}
+.formula-main.red mjx-container{color: var(--red) !important;}
+.formula-note mjx-container{
+  color: rgba(0,229,255,.75) !important;
+  font-size: .92em !important;
+}
+.hb-text mjx-container,
+.failure-detail mjx-container,
+.te-body mjx-container,
+.summary-list mjx-container,
+.q-answer mjx-container,
+.step-note mjx-container{
+  color: var(--cyan2) !important;
+  font-size: .95em !important;
+}
+.compare-table mjx-container{
+  color: var(--cyan) !important;
+  font-size: .88em !important;
+}
+.step-eq mjx-container{
+  color: var(--cyan) !important;
+  font-size: 1em !important;
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUNDS -->
+<canvas id="sr-canvas"></canvas>
+<div class="noise"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<!-- READING PROGRESS -->
+<div id="progress-bar"></div>
+
+<!-- CORNERS -->
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- HEADER -->
+<header>
+  <a class="back-btn" href="../special_relativity.html">← رجوع</a>
+  <div class="header-tag">FOUNDATIONS · CHAPTER 01</div>
+  <div class="header-code">SR-02</div>
+</header>
+
+<!-- CONTENT -->
+<div class="wrapper">
+
+  <!-- ══ HERO ══ -->
+  <section class="lesson-hero">
+    <div class="lesson-eyebrow">GALILEO · NEWTON · MAXWELL · 1887 · COLLAPSE</div>
+    <div class="lesson-code-badge">SR-02 · GALILEAN FAILURE</div>
+
+    <div class="lesson-title">
+      <span class="ar">فشل تحويلات غاليليو</span>
+      <span class="en">THE GALILEAN BREAKDOWN</span>
+    </div>
+
+    <p class="lesson-intro">
+      لمئتي سنة كانت تحويلات غاليليو ركيزةً لا تُزعزع. إنها تصف كيف يرى راصدان مختلفان
+      نفس الحدث الفيزيائي. لكن حين طُبِّقت على الضوء — انهارت. هذا الدرس يُثبت
+      ذلك الانهيار خطوةً خطوة، رياضياً وتجريبياً وفكرياً.
+    </p>
+
+    <div class="lesson-meta">
+      <div class="meta-pill"><span class="dot"></span>الباب الأول</div>
+      <div class="meta-pill"><span class="dot"></span>الجسر نحو لورنتز</div>
+      <div class="meta-pill"><span class="dot"></span>رياضيات + تجربة</div>
+      <div class="meta-pill"><span class="dot"></span>مستوى أكاديمي</div>
+    </div>
+
+    <a href="#toc" class="toc-btn"><span>📋 محتويات الدرس</span></a>
+
+    <div class="scroll-beam-wrap">
+      <span>SCROLL</span>
+      <div class="scroll-beam"></div>
+    </div>
+  </section>
+
+  <!-- ══ TABLE OF CONTENTS ══ -->
+  <div class="toc-section reveal" id="toc">
+    <div class="toc-title">CONTENTS · محتويات الدرس</div>
+    <ul class="toc-list">
+      <li class="toc-item" onclick="scrollToSec('sec1')"><span class="toc-num">01</span><span class="toc-text">أين نحن في الرحلة؟ — الربط بـ SR-01</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec2')"><span class="toc-num">02</span><span class="toc-text">تحويلات غاليليو — البناء الكامل</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec3')"><span class="toc-num">03</span><span class="toc-text">قانون جمع السرعات الغاليلي — الاشتقاق</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec4')"><span class="toc-num">04</span><span class="toc-text">الاصطدام المميت — الضوء يكسر كل شيء</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec5')"><span class="toc-num">05</span><span class="toc-text">تجربة فكرية — ساعة الضوء تكشف التناقض</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec6')"><span class="toc-num">06</span><span class="toc-text">تجربة مايكلسون-مورلي — الإثبات التجريبي</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec7')"><span class="toc-num">07</span><span class="toc-text">لورنتز وبوانكاريه — الصحيحون رياضياً، الخاطئون فيزيائياً</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec8')"><span class="toc-num">08</span><span class="toc-text">حجة التماثل — لماذا لا يمكن إنقاذ غاليليو؟</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec9')"><span class="toc-num">09</span><span class="toc-text">حاسبة تفاعلية — غاليليو vs النسبية</span><span class="toc-arrow">↑</span></li>
+      <li class="toc-item" onclick="scrollToSec('sec10')"><span class="toc-num">10</span><span class="toc-text">أسئلة المراجعة والتثبيت</span><span class="toc-arrow">↑</span></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 1 — الربط بـ SR-01
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec1">
+    <div class="sec-label">SECTION 01 · CONTEXT</div>
+    <h2 class="sec-heading">أين نحن في الرحلة؟<br>الربط بما سبق</h2>
+
+    <div class="sec-body">
+      <p>
+        في SR-01 وضعنا الأساس: مسلّمتان بسيطتان تبدوان مقبولتين تماماً.
+        الأولى تقول إن قوانين الفيزياء نفسها في كل الأطر القصورية.
+        الثانية تقول إن سرعة الضوء c ثابتة لجميع المراقبين.
+      </p>
+      <p>
+        لكن الفيزياء الكلاسيكية كانت لها طريقتها الخاصة لوصف نفس الموقف — وهي
+        <strong>تحويلات غاليليو</strong>. هذه التحويلات كانت تعمل بشكل مثالي
+        لكل شيء في حياتنا اليومية لمئتي سنة. السؤال الآن:
+      </p>
+
+      <div class="highlight-box amber">
+        <span class="hb-tag">السؤال المحوري لهذا الدرس</span>
+        <div class="hb-text">
+          هل تحويلات غاليليو متوافقة مع المسلّمتين؟<br>
+          أي: هل يمكن أن يكون غاليليو وآينشتاين كلاهما صحيحَين في نفس الوقت؟<br><br>
+          الجواب: <strong style="color:var(--red)">لا.</strong> وهذا الدرس يُثبت ذلك تفصيلياً.
+        </div>
+      </div>
+
+      <div class="consequence-grid">
+        <div class="cons-card">
+          <div class="cons-icon">✅</div>
+          <div class="cons-title">SR-01 — الأساس</div>
+          <div class="cons-desc">المسلّمتان: ثبات قوانين الفيزياء + ثبات c. هذا ما أثبتناه كنقطة انطلاق.</div>
+          <div class="cons-eq">POSTULATES ESTABLISHED</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">💥</div>
+          <div class="cons-title">SR-02 — هنا نحن</div>
+          <div class="cons-desc">نُثبت أن غاليليو لا يستطيع التعايش مع هذه المسلّمات. الفيزياء الكلاسيكية تنكسر.</div>
+          <div class="cons-eq">GALILEO BREAKS DOWN</div>
+        </div>
+        <div class="cons-card">
+          <div class="cons-icon">🔧</div>
+          <div class="cons-title">SR-03 — القادم</div>
+          <div class="cons-desc">نشتق تحويلات لورنتز — البديل الصحيح الذي يحترم المسلّمتين تماماً.</div>
+          <div class="cons-eq">LORENTZ TRANSFORMS</div>
+        </div>
+      </div>
+
+      <p>
+        الدرس مُهيكَل على ثلاثة مستويات من الإثبات: أولاً رياضياً بالاشتقاق المباشر،
+        ثانياً فكرياً بتجربة ساعة الضوء، ثالثاً تجريبياً بتجربة مايكلسون-مورلي التاريخية.
+        كل مستوى يُثبت نفس الحقيقة من زاوية مختلفة.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 2 — تحويلات غاليليو الكاملة
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec2">
+    <div class="sec-label">SECTION 02 · GALILEAN FRAMEWORK</div>
+    <h2 class="sec-heading">تحويلات غاليليو<br>البناء الكامل</h2>
+
+    <div class="sec-body">
+      <p>
+        لنضع الإطار الرياضي بدقة. تخيّل إطارَين مرجعيَّين: الإطار
+        <strong style="color:var(--cyan)">S</strong> وهو "ساكن"،
+        والإطار <strong style="color:var(--amber)">S'</strong> وهو يتحرك بسرعة ثابتة
+        <strong>v</strong> في اتجاه المحور x بالنسبة لـ S.
+        عند اللحظة t=0، الإطاران متطابقان (أصل الإحداثيات في نفس المكان).
+      </p>
+
+      <div class="diagram-box">
+        <span class="diagram-label">REFERENCE FRAMES · الإطاران المرجعيان</span>
+        <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:200px;">
+          <!-- Frame S -->
+          <line x1="80" y1="160" x2="310" y2="160" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+          <line x1="80" y1="160" x2="80" y2="30" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+          <text x="315" y="165" fill="#00e5ff" font-family="Share Tech Mono" font-size="13" opacity="0.9">x</text>
+          <text x="72" y="24" fill="#00e5ff" font-family="Share Tech Mono" font-size="13" opacity="0.9">y</text>
+          <text x="56" y="175" fill="#00e5ff" font-family="Share Tech Mono" font-size="11" opacity="0.7">O</text>
+          <text x="55" y="196" fill="#00e5ff" font-family="Share Tech Mono" font-size="10" opacity="0.5">S (ساكن)</text>
+          <!-- Frame S' -->
+          <line x1="370" y1="160" x2="600" y2="160" stroke="rgba(255,179,0,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <line x1="370" y1="160" x2="370" y2="30" stroke="rgba(255,179,0,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="606" y="165" fill="#ffb300" font-family="Share Tech Mono" font-size="13" opacity="0.9">x'</text>
+          <text x="362" y="24" fill="#ffb300" font-family="Share Tech Mono" font-size="13" opacity="0.9">y'</text>
+          <text x="346" y="175" fill="#ffb300" font-family="Share Tech Mono" font-size="11" opacity="0.7">O'</text>
+          <text x="325" y="196" fill="#ffb300" font-family="Share Tech Mono" font-size="10" opacity="0.5">S' (متحرك بسرعة v)</text>
+          <!-- Arrow showing motion -->
+          <line x1="200" y1="100" x2="280" y2="100" stroke="rgba(255,179,0,0.6)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text x="218" y="90" fill="#ffb300" font-family="Share Tech Mono" font-size="11" opacity="0.8">v →</text>
+          <!-- Event point -->
+          <circle cx="490" cy="80" r="5" fill="#00e5ff" opacity="0.9"/>
+          <text x="500" y="76" fill="#cce8f4" font-family="Share Tech Mono" font-size="11" opacity="0.8">حدث P</text>
+          <text x="500" y="90" fill="rgba(0,229,255,0.5)" font-family="Share Tech Mono" font-size="10">(x, y, t)</text>
+          <text x="500" y="105" fill="rgba(255,179,0,0.5)" font-family="Share Tech Mono" font-size="10">(x', y', t')</text>
+          <!-- Arrow marker -->
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,179,0,0.6)"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <p>
+        السؤال الجوهري: الراصد في S يُحدد الحدث P بالإحداثيات (x, y, z, t).
+        ما الإحداثيات التي يُحددها راصد S' لنفس الحدث P؟
+        غاليليو يُجيب على هذا السؤال بأربع معادلات بسيطة:
+      </p>
+
+      <div class="transform-display">
+        <span class="transform-title">GALILEAN TRANSFORMATIONS · تحويلات غاليليو</span>
+        <div class="transform-grid">
+          <div class="transform-eq">
+            <span class="t-label">SPACE-X</span>
+            <span class="t-formula">x' = x − vt</span>
+          </div>
+          <div class="transform-eq">
+            <span class="t-label">SPACE-Y</span>
+            <span class="t-formula">y' = y</span>
+          </div>
+          <div class="transform-eq">
+            <span class="t-label">SPACE-Z</span>
+            <span class="t-formula">z' = z</span>
+          </div>
+          <div class="transform-eq danger">
+            <span class="t-label">TIME — الافتراض الخطير</span>
+            <span class="t-formula">t' = t</span>
+          </div>
+          <div class="transform-note">
+            المعادلة الأخيرة <span style="color:var(--red)">t' = t</span> هي الافتراض الخفي المميت:
+            الزمن مطلق ومتطابق في كل الأطر. غاليليو ونيوتن قبلاها كبداهة واضحة.
+            آينشتاين هو من رأى فيها خطأً جوهرياً.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        لاحظ أن x' = x − vt منطقية تماماً: إذا كان الحدث عند x في S،
+        وقد تحرك إطار S' مسافة vt في هذه الأثناء، فالحدث يبدو في S' عند
+        مسافة أقل بمقدار vt. هذا ما يراه أي شخص يومياً من نافذة القطار.
+      </p>
+
+      <div class="highlight-box green">
+        <span class="hb-tag">التحقق — المعكوس بسيط</span>
+        <div class="hb-text">
+          لإيجاد المعكوس (من S' إلى S)، ببساطة استبدل الإشارة:
+          \(x = x' + vt\), \(y = y'\), \(z = z'\), \(t = t'\).
+          هذا التناظر البسيط سيكون له معنى عميق حين نقارنه بتحويلات لورنتز لاحقاً.
+        </div>
+      </div>
+
+      <p>
+        هذه التحويلات تعمل بشكل مثالي لكل ما في حياتنا: القطارات، الطائرات، الكرات،
+        الأصوات. لكن المشكلة تظهر حين نسأل: ماذا تُعطي إذا طبّقناها على الضوء؟
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 3 — قانون جمع السرعات
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec3">
+    <div class="sec-label">SECTION 03 · VELOCITY ADDITION</div>
+    <h2 class="sec-heading">قانون جمع السرعات الغاليلي<br>الاشتقاق من المبادئ الأولى</h2>
+
+    <div class="sec-body">
+      <p>
+        من تحويلات غاليليو، يمكن اشتقاق قانون جمع السرعات مباشرةً عن طريق
+        المشتق بالنسبة للزمن. إذا كان جسم يتحرك في S بسرعة \(u_x = dx/dt\)،
+        ما سرعته في S'؟
+      </p>
+
+      <div class="derivation">
+        <div class="deriv-title">DERIVATION · اشتقاق قانون جمع السرعات</div>
+        <div class="deriv-step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <div class="step-eq">x' = x − vt</div>
+            <div class="step-note">نبدأ من تحويل المكان في غاليليو</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <div class="step-eq">dx'/dt' = dx/dt − v · (dt/dt')</div>
+            <div class="step-note">نأخذ المشتق بالنسبة لـ t' على كلا الطرفين</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <div class="step-eq">t' = t  ⟹  dt/dt' = 1</div>
+            <div class="step-note">لأن t' = t (الزمن المطلق)، فمشتق t بالنسبة لـ t' يساوي 1</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <div class="step-eq">u'_x = u_x − v</div>
+            <div class="step-note">إذن السرعة في S' تساوي السرعة في S ناقص سرعة الإطار</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-block">
+        <span class="formula-tag">GALILEAN VELOCITY ADDITION · جمع السرعات الغاليلي</span>
+        <div class="formula-main">\[u'_x = u_x - v\]</div>
+        <div class="formula-note">أو بصيغة أخرى: \(u_x = u'_x + v\) — السرعة المُلاحَظة تساوي السرعة المحلية زائد سرعة الإطار</div>
+      </div>
+
+      <p>
+        هذه المعادلة نستخدمها كل يوم دون أن ندرك ذلك. ثلاثة أمثلة تُبيّن نجاحها المذهل:
+      </p>
+
+      <div class="highlight-box" style="margin-bottom:0;border-radius:3px 3px 0 0;border-bottom:none;">
+        <span class="hb-tag">تنبيه — قراءة الجدول</span>
+        <div class="hb-text" style="font-size:.82rem;">
+          الأعمدة الثلاثة الأولى تصف الموقف من منظور الراصد <strong style="color:var(--cyan)">S الخارجي الساكن</strong>.
+          العمود الرابع يُجيب: ماذا يرى راصد <strong style="color:var(--amber)">S' المتحرك مع الإطار</strong> للجسم نفسه؟
+          الصف الأخير (الضوء) يكشف التناقض: غاليليو يُعطي S' سرعة <strong style="color:var(--red)">0.5c</strong>
+          للضوء، لكن المسلّمة الثانية تقول S' يجب أن يرى الضوء بسرعة <strong style="color:var(--cyan)">c</strong> دائماً.
+        </div>
+      </div>
+      <table class="compare-table" style="border-radius:0 0 3px 3px;margin-top:0;">
+        <thead>
+          <tr>
+            <th>الموقف</th>
+            <th>سرعة الجسم في S<br><span style="font-size:.44rem;opacity:.6;font-weight:normal">(الراصد الخارجي)</span></th>
+            <th>سرعة الإطار S'<br><span style="font-size:.44rem;opacity:.6;font-weight:normal">(v — المتحرك مع المصدر)</span></th>
+            <th class="amber-th">سرعة الجسم في S'<br><span style="font-size:.44rem;opacity:.6;font-weight:normal">غاليليو: u' = u − v</span></th>
+            <th class="green-th" style="color:var(--green)">ما تُعطيه التجربة في S'</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>كرة في قطار</td>
+            <td>130 كم/س</td>
+            <td>100 كم/س (القطار)</td>
+            <td class="warn-cell">30 كم/س</td>
+            <td class="ok-cell">✓ 30 كم/س</td>
+          </tr>
+          <tr>
+            <td>صوت من طائرة</td>
+            <td>1140 كم/س</td>
+            <td>900 كم/س (الطائرة)</td>
+            <td class="warn-cell">240 كم/س</td>
+            <td class="ok-cell">✓ 240 كم/س</td>
+          </tr>
+          <tr>
+            <td>طلقة من سيارة</td>
+            <td>1500 م/ث</td>
+            <td>30 م/ث (السيارة)</td>
+            <td class="warn-cell">1470 م/ث</td>
+            <td class="ok-cell">✓ 1470 م/ث</td>
+          </tr>
+          <tr style="background:rgba(255,68,68,.04);">
+            <td><strong style="color:var(--red)">ضوء من صاروخ</strong></td>
+            <td><strong style="color:var(--cyan)">c</strong><br><span style="font-size:.72rem;color:var(--muted)">ثابت في S</span></td>
+            <td><strong>0.5c</strong><br><span style="font-size:.72rem;color:var(--muted)">(سرعة الصاروخ)</span></td>
+            <td class="fail-cell">
+              <strong>0.5c</strong><br>
+              <span style="font-size:.72rem;">u' = c − 0.5c</span>
+            </td>
+            <td class="fail-cell">
+              <strong>✗ c دائماً!</strong><br>
+              <span style="font-size:.72rem;">ليس 0.5c — التجربة تُكذّب غاليليو</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box red" style="margin-top:0;border-radius:0 0 3px 3px;border-top:none;">
+        <span class="hb-tag">لماذا هذا فشل؟ — التناقض بجملتين</span>
+        <div class="hb-text" style="font-size:.85rem;">
+          غاليليو يقول: راصد على الصاروخ (S') يرى الضوء بسرعة <strong style="color:var(--red)">c − 0.5c = 0.5c</strong>.<br>
+          المسلّمة الثانية تقول: نفس الراصد يجب أن يرى الضوء بسرعة <strong style="color:var(--cyan)">c</strong> بالضبط.<br>
+          <strong style="color:var(--red)">0.5c ≠ c — لا يمكن أن يكون كلاهما صحيحاً في آنٍ واحد.</strong>
+        </div>
+      </div>
+
+      <p style="margin-top:28px;">
+        الجدول يُظهر بوضوح أين يكسر غاليليو. ثلاثة مواقف: نجاح تام.
+        الموقف الرابع — الضوء — فشل كامل لا يقبل الجدل.
+        وهذا الفشل هو نقطة انطلاق كل ما يأتي بعده.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 4 — الاصطدام المميت
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec4">
+    <div class="sec-label">SECTION 04 · THE FATAL COLLISION</div>
+    <h2 class="sec-heading">الاصطدام المميت <span class="crash-icon">💥</span><br>الضوء يكسر تحويلات غاليليو</h2>
+
+    <div class="sec-body">
+      <p>
+        لنُثبت الفشل رياضياً بالكامل. ليست مجرد ملاحظة جدولية — إنما
+        إثبات أن تحويلات غاليليو <strong>تستحيل</strong> إذا كانت سرعة
+        الضوء ثابتة في كل الأطر.
+      </p>
+
+      <div class="failure-box">
+        <div class="failure-header">
+          <div class="failure-num">⚠</div>
+          <div class="failure-label-wrap">
+            <div class="label-en">THE CORE CONTRADICTION</div>
+            <div class="label-ar">التناقض الجوهري</div>
+          </div>
+        </div>
+        <div class="failure-body">
+          <div class="failure-statement">
+            إذا طبّقنا جمع السرعات الغاليلي على الضوء:
+            يكون المراقب في S' يرى الضوء بسرعة (c − v).
+            لكن المسلّمة الثانية تقول يجب أن يراه بسرعة c.
+            هذان الشرطان لا يمكن أن يتحققا معاً.
+          </div>
+          <div class="failure-detail">
+            غاليليو + ثبات c = تناقض مباشر.
+            إما أن ترفض غاليليو، أو ترفض ثبات c.
+            التجربة تُثبت أن c ثابتة — إذن يجب رفض غاليليو.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        لنرَ هذا بشكل أكثر عمقاً. معادلات ماكسويل الكهرومغناطيسية تصف موجة الضوء
+        بالمعادلة التفاضلية:
+      </p>
+
+      <div class="formula-block">
+        <span class="formula-tag">WAVE EQUATION · معادلة موجة الضوء (ماكسويل)</span>
+        <div class="formula-main">\[\frac{\partial^2 E}{\partial x^2} = \frac{1}{c^2}\frac{\partial^2 E}{\partial t^2}\]</div>
+        <div class="formula-note">هذه المعادلة تتنبأ بموجة تسير بسرعة c بالنسبة لأي إطار مرجعي تُكتب فيه</div>
+      </div>
+
+      <p>
+        الآن نطبّق تحويل غاليليو: نستبدل \(x = x' + vt\) و \(t = t'\).
+        بعد التعويض والتبسيط، المعادلة تتحوّل إلى:
+      </p>
+
+      <div class="derivation">
+        <div class="deriv-title">MAXWELL UNDER GALILEO · ماكسويل تحت تحويل غاليليو</div>
+        <div class="deriv-step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <div class="step-eq">∂/∂x = ∂/∂x'</div>
+            <div class="step-note">لأن x = x' + vt، نجد أن المشتق بالنسبة لـ x يساوي المشتق بالنسبة لـ x'</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <div class="step-eq">∂/∂t = ∂/∂t' + v·(∂/∂x')</div>
+            <div class="step-note">لأن t = t' ولأن x يعتمد على t عبر vt، يظهر حد إضافي في مشتق الزمن</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <div class="step-eq">∂²E/∂x'² = (1/c²)(∂/∂t' + v·∂/∂x')²E</div>
+            <div class="step-note">بعد التعويض، نحصل على معادلة مختلفة تماماً عن الأصلية!</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <div class="step-eq">∂²E/∂x'² = (1/c²)∂²E/∂t'² + (2v/c²)∂²E/∂t'∂x' + (v²/c²)∂²E/∂x'²</div>
+            <div class="step-note" style="color:var(--red);">المعادلة تغيّرت! ظهرت حدود إضافية تجعلها غير متطابقة في S و S' — تناقض مباشر مع المسلّمة الأولى</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box red">
+        <span class="hb-tag">الخلاصة الرياضية — لا مفر منها</span>
+        <div class="hb-text">
+          معادلة ماكسويل في الإطار S تُعطي سرعة ضوء = c.<br>
+          نفس المعادلة بعد تحويل غاليليو تُعطي سرعة ضوء ≠ c في S'.<br><br>
+          إذن: <strong style="color:var(--red)">معادلات ماكسويل لا تحافظ على صيغتها تحت تحويلات غاليليو.</strong><br>
+          هذا يتناقض مباشرةً مع المسلّمة الأولى (قوانين الفيزياء نفسها في كل الأطر).
+        </div>
+      </div>
+
+      <div class="formula-block red-glow">
+        <span class="formula-tag">CONTRADICTION · التناقض بصيغة رياضية</span>
+        <div class="formula-main red">\[c' = c - v \neq c\]</div>
+        <div class="formula-note">
+          هذا ما يقوله غاليليو. لكن التجربة (وآينشتاين) يقولان c' = c دائماً.<br>
+          استحالة التوفيق بين الاثنين تعني: <strong style="color:var(--red)">على الفيزياء الكلاسيكية أن تُعاد كتابتها.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 5 — ساعة الضوء
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec5">
+    <div class="sec-label">SECTION 05 · THOUGHT EXPERIMENT</div>
+    <h2 class="sec-heading">تجربة فكرية<br>ساعة الضوء تكشف التناقض</h2>
+
+    <div class="sec-body">
+      <p>
+        تُعدّ ساعة الضوء من أبلغ التجارب الفكرية في تاريخ الفيزياء.
+        إنها تُجسّد التناقض الغاليلي بطريقة بصرية لا تقبل الجدل.
+        الفكرة بسيطة: ساعة تعمل بنبضة ضوئية تتردد بين مرآتين.
+      </p>
+
+      <div class="diagram-box">
+        <span class="diagram-label">LIGHT CLOCK DIAGRAM · ساعة الضوء</span>
+        <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:260px;">
+          <!-- Left: Rest frame S' -->
+          <text x="80" y="22" fill="rgba(0,229,255,0.6)" font-family="Share Tech Mono" font-size="10" text-anchor="middle">الإطار S' (الساكن على الصاروخ)</text>
+          <!-- Mirrors -->
+          <rect x="20" y="35" width="120" height="8" rx="1" fill="none" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+          <rect x="20" y="215" width="120" height="8" rx="1" fill="none" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+          <!-- Light path vertical -->
+          <line x1="80" y1="43" x2="80" y2="215" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>
+          <polygon points="76,215 84,215 80,205" fill="#00e5ff" opacity="0.8"/>
+          <!-- Labels -->
+          <text x="95" y="135" fill="rgba(0,229,255,0.7)" font-family="Share Tech Mono" font-size="11">L</text>
+          <text x="52" y="250" fill="rgba(0,229,255,0.6)" font-family="Share Tech Mono" font-size="10">T₀ = 2L/c</text>
+
+          <!-- Divider -->
+          <line x1="200" y1="20" x2="200" y2="260" stroke="rgba(255,179,0,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+
+          <!-- Right: Moving frame S -->
+          <text x="460" y="22" fill="rgba(255,179,0,0.6)" font-family="Share Tech Mono" font-size="10" text-anchor="middle">الإطار S (الراصد الخارجي)</text>
+          <!-- Mirror 1 at left -->
+          <rect x="280" y="35" width="100" height="8" rx="1" fill="none" stroke="rgba(255,179,0,0.4)" stroke-width="1.5"/>
+          <!-- Mirror 2 at right (moved) -->
+          <rect x="440" y="215" width="100" height="8" rx="1" fill="none" stroke="rgba(255,179,0,0.4)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <!-- Diagonal light path -->
+          <line x1="330" y1="43" x2="490" y2="215" stroke="#ffb300" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>
+          <!-- Labels -->
+          <text x="390" y="120" fill="rgba(255,179,0,0.7)" font-family="Share Tech Mono" font-size="11" transform="rotate(42,390,120)">d &gt; L</text>
+          <!-- vt arrow -->
+          <line x1="330" y1="240" x2="490" y2="240" stroke="rgba(255,179,0,0.5)" stroke-width="1"/>
+          <polygon points="487,237 495,240 487,243" fill="rgba(255,179,0,0.5)"/>
+          <text x="400" y="255" fill="rgba(255,179,0,0.5)" font-family="Share Tech Mono" font-size="9" text-anchor="middle">vt</text>
+          <!-- Pythagorean label -->
+          <text x="540" y="135" fill="rgba(255,179,0,0.6)" font-family="Share Tech Mono" font-size="10">d = √(L²+(vt)²)</text>
+          <text x="540" y="155" fill="rgba(255,179,0,0.6)" font-family="Share Tech Mono" font-size="10">d &gt; L</text>
+        </svg>
+      </div>
+
+      <div class="thought-exp">
+        <span class="te-label">THOUGHT EXPERIMENT · ساعة الضوء</span>
+        <div class="te-title">⏱️ ساعة الضوء على صاروخ</div>
+        <div class="te-body">
+          <strong>الإعداد:</strong> صاروخ يحمل ساعة ضوء: مرآتان عموديتان تفصل بينهما مسافة L،
+          ونبضة ضوء تتردد بينهما. كل تردد واحد = "نبضة" واحدة من الساعة.<br><br>
+
+          <strong>في S' (الساكن مع الصاروخ):</strong>
+          الضوء يسير رأسياً بسرعة c، المسافة L، إذن زمن نبضة واحدة:
+          \(T_0 = \dfrac{2L}{c}\).<br><br>
+
+          <strong>في S (الراصد الخارجي) — بافتراض غاليليو (t=t'):</strong>
+          الصاروخ يتحرك أفقياً بسرعة v. الضوء يجب أن يقطع مسافة قُطرية أكبر من L
+          (مسار مائل بدلاً من عمودي). بالنظرية الفيثاغورسية:
+          المسافة الفعلية \(d = \sqrt{L^2 + (vt)^2} > L\).<br><br>
+
+          <strong>الآن المشكلة:</strong> إذا كانت t' = t (غاليليو)، فالراصد الخارجي
+          يرى الضوء يقطع مسافة d أكبر في نفس الزمن T₀. هذا يعني أن سرعة الضوء
+          في S تساوي d/T₀ × ½ وهي أكبر من c.
+
+          <div class="te-conclusion red-border">
+            <strong style="color:var(--red)">نتيجة محظورة بالمسلّمة الثانية:</strong>
+            غاليليو يستلزم أن يرى الراصد الخارجي الضوء بسرعة أكبر من c.
+            هذا مستحيل. إذن يجب أن يكون زمن الراصد الخارجي <em>أطول</em> من T₀
+            — أي <strong style="color:var(--cyan)">t ≠ t'</strong> — وهذا ينهار معه افتراض غاليليو الأساسي.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        هذه التجربة الفكرية لا تتطلب أي مختبر. هي تستخدم فقط: ثبات c
+        (مسلّمة ثانية) + هندسة بيثاغورس الأساسية + تعريف السرعة.
+        النتيجة لا مفر منها: <strong>إما أن يختلف الزمن بين الإطارين،
+        أو أن تتغير سرعة الضوء.</strong> التجربة أثبتت أن c ثابتة —
+        إذن الزمن يجب أن يختلف.
+      </p>
+
+      <div class="formula-block amber-glow">
+        <span class="formula-tag">RESULT FROM LIGHT CLOCK · نتيجة ساعة الضوء</span>
+        <div class="formula-main amber">\[T = \frac{T_0}{\sqrt{1 - v^2/c^2}} = \gamma \, T_0\]</div>
+        <div class="formula-note">
+          هذا هو تمدد الزمن — سنشتقه كاملاً في SR-04. لكن هنا نرى جذوره:
+          ثبات c يُجبرنا على قبوله رياضياً.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 6 — مايكلسون-مورلي
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec6">
+    <div class="sec-label">SECTION 06 · EXPERIMENTAL PROOF</div>
+    <h2 class="sec-heading">تجربة مايكلسون-مورلي<br>الإثبات التجريبي للفشل</h2>
+
+    <div class="sec-body">
+      <p>
+        حتى الآن أثبتنا الفشل رياضياً وفكرياً. لكن الفيزياء علم تجريبي —
+        يحتاج برهاناً من المختبر. تجربة مايكلسون-مورلي عام 1887 هي
+        أشهر تجربة في تاريخ الفيزياء الحديثة — لأنها كانت تسعى لإثبات
+        شيء، فأثبتت عكسه تماماً.
+      </p>
+
+      <!-- فكرة التجربة -->
+      <div class="highlight-box amber">
+        <span class="hb-tag">فرضية الأثير — نقطة الانطلاق</span>
+        <div class="hb-text">
+          في القرن التاسع عشر، كان العلماء يعتقدون أن الضوء — كالصوت — يحتاج
+          وسطاً يسير فيه. سمّوه <strong style="color:var(--amber)">"الأثير"</strong>.
+          إذا كان الأثير موجوداً وساكناً في الفضاء، فالأرض تتحرك فيه بسرعة
+          ~30 كم/ث في مدارها حول الشمس. وبحسب تحويلات غاليليو: سرعة الضوء
+          يجب أن تختلف باختلاف اتجاه القياس — أسرع حين يسير "مع تيار الأثير"
+          وأبطأ حين يسير "ضده".
+        </div>
+      </div>
+
+      <p>
+        الفكرة المركزية للتجربة بسيطة جداً — تقوم على سؤال واحد فقط:
+      </p>
+
+      <div class="thought-exp">
+        <span class="te-label">CORE IDEA · فكرة التجربة</span>
+        <div class="te-title">💡 هل سرعة الضوء تختلف بحسب الاتجاه؟</div>
+        <div class="te-body">
+          تخيّل أنك تقيس سرعة الضوء في اتجاهَين مختلفَين في نفس اللحظة:
+          <strong>اتجاه A</strong> موازٍ لحركة الأرض (مع التيار المفترض للأثير)،
+          و<strong>اتجاه B</strong> عمودي عليه (عبر التيار).<br><br>
+          إذا كان الأثير موجوداً وغاليليو صحيح: الضوء في الاتجاهَين سيصل
+          في أوقات مختلفة قليلاً — فرق محسوب نظرياً يساوي تقريباً
+          \(\Delta t \approx \dfrac{Lv^2}{c^3}\) حيث v سرعة الأرض وL طول المسار.
+          هذا الفارق صغير جداً لكنه يمكن رصده بجهاز دقيق يُسمى
+          <em>مقياس التداخل (Interferometer)</em>.<br><br>
+          إذا كان الأثير غير موجود وثبات c صحيح: الضوء في كلا الاتجاهَين
+          يصل في نفس الوقت — فرق صفر.
+
+          <div class="te-conclusion red-border">
+            <strong style="color:var(--amber)">نتيجة مايكلسون-مورلي 1887:</strong>
+            فرق = <strong style="color:var(--red)">صفر مطلق</strong>.
+            لا فارق بين الاتجاهَين. لا أثير. سرعة الضوء ثابتة في كل الاتجاهات —
+            بغض النظر عن حركة الأرض أو أي مراقب آخر.
+          </div>
+        </div>
+      </div>
+
+      <!-- نتيجتان متضادتان -->
+      <div class="transform-display" style="margin:28px 0;">
+        <span class="transform-title">PREDICTED vs MEASURED · المتوقع مقابل المقاس</span>
+        <div class="transform-grid">
+          <div class="transform-eq danger">
+            <span class="t-label">توقّع غاليليو + الأثير</span>
+            <span class="t-formula" style="font-size:.85rem;">Δt = Lv²/c³ ≠ 0</span>
+          </div>
+          <div class="transform-eq" style="border-color:rgba(0,230,118,.2);background:rgba(0,230,118,.03);">
+            <span class="t-label" style="color:var(--green);">ما قاسته التجربة فعلاً</span>
+            <span class="t-formula" style="color:var(--green);font-size:.85rem;">Δt = 0</span>
+          </div>
+          <div class="transform-note" style="color:var(--red);">
+            الفارق المتوقع لحركة الأرض (~30 كم/ث) كان في نطاق دقة الجهاز تماماً —
+            لكنه لم يُرصَد أبداً. النتيجة: <strong>لا أثير، ثبات c مؤكَّد تجريبياً، غاليليو فاشل مع الضوء.</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <span class="hb-tag">ملاحظة تاريخية مهمة</span>
+        <div class="hb-text">
+          آينشتاين لم يذكر تجربة مايكلسون-مورلي صراحةً في ورقته البحثية عام 1905.
+          لاحقاً قال إنه كان يعلم بها لكنها لم تكن المحرّك الرئيسي لتفكيره —
+          تحرّكه كان فلسفياً: التناقض الجمالي في معادلات ماكسويل حين تُطبَّق في أطر مختلفة.
+          التجربة كانت تأكيداً تجريبياً، لا نقطة انطلاق.
+        </div>
+      </div>
+
+      <!-- بطاقة توجيه المختبر -->
+      <div style="
+        margin:36px 0 8px;
+        background:rgba(255,215,64,.04);
+        border:1px solid rgba(255,215,64,.2);
+        border-radius:4px;
+        padding:28px 32px;
+        position:relative;
+        overflow:hidden;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:28px;
+        flex-wrap:wrap;
+      ">
+        <!-- خط أعلى -->
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;
+          background:linear-gradient(90deg,transparent,rgba(255,215,64,.5),transparent);"></div>
+        <!-- توهّج خلفي -->
+        <div style="position:absolute;inset:0;pointer-events:none;
+          background:radial-gradient(ellipse at 10% 50%,rgba(255,215,64,.06) 0%,transparent 65%);"></div>
+
+        <div style="position:relative;z-index:1;flex:1;min-width:200px;">
+          <div style="
+            font-family:'Share Tech Mono',monospace;
+            font-size:.48rem;letter-spacing:4px;
+            color:rgba(255,215,64,.5);
+            margin-bottom:10px;
+            display:flex;align-items:center;gap:8px;
+          ">
+            <span style="width:4px;height:4px;border-radius:50%;
+              background:rgba(255,215,64,.8);
+              box-shadow:0 0 8px rgba(255,215,64,.8);
+              display:inline-block;
+              animation:crashPulse 1.8s ease-in-out infinite;">
+            </span>
+            PHYSICS LABORATORY · مختبر الفيزياء
+          </div>
+          <div style="font-size:1rem;font-weight:700;color:#fff8e1;margin-bottom:8px;">
+            شاهد التجربة بعينك
+          </div>
+          <p style="font-size:.82rem;color:rgba(200,180,120,.55);line-height:1.9;">
+            بطاقة مختبر الفيزياء تحتوي على التجربة كاملةً بشكل تفاعلي —
+            جهاز مايكلسون-مورلي، الحسابات، وتصوير النتائج خطوةً بخطوة.
+          </p>
+        </div>
+
+        <div style="position:relative;z-index:1;flex-shrink:0;text-align:center;">
+          <a href="../modern.html#lab"
+            style="
+              display:inline-flex;align-items:center;gap:12px;
+              padding:14px 28px;
+              background:rgba(255,215,64,.06);
+              border:1px solid rgba(255,215,64,.35);
+              border-radius:3px;
+              color:rgba(255,215,64,.9);
+              font-family:'Share Tech Mono',monospace;
+              font-size:.65rem;letter-spacing:3px;
+              text-decoration:none;
+              transition:.3s;
+              white-space:nowrap;
+            "
+            onmouseover="this.style.background='rgba(255,215,64,.12)';this.style.borderColor='rgba(255,215,64,.7)';this.style.boxShadow='0 0 22px rgba(255,215,64,.12)'"
+            onmouseout="this.style.background='rgba(255,215,64,.06)';this.style.borderColor='rgba(255,215,64,.35)';this.style.boxShadow='none'"
+          >
+            <span>🧪</span>
+            <span>ENTER LAB · ادخل المختبر</span>
+            <span style="font-size:.8rem;">→</span>
+          </a>
+          <div style="
+            margin-top:8px;
+            font-family:'Share Tech Mono',monospace;
+            font-size:.44rem;letter-spacing:2px;
+            color:rgba(255,215,64,.3);
+          ">MICHELSON-MORLEY · INTERACTIVE</div>
+        </div>
+      </div>
+
+      <p>
+        الأهم من التجربة ذاتها هو ما رفضه العلماء الآخرون تقبّله: المنطق الصريح يقول
+        إن الأثير غير موجود وغاليليو يفشل مع الضوء. لكن لورنتز وبوانكاريه حاولا
+        إنقاذ الفيزياء القديمة بحل آخر — نناقشه الآن.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 7 — لورنتز وبوانكاريه
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec7">
+    <div class="sec-label">SECTION 07 · LORENTZ & POINCARÉ</div>
+    <h2 class="sec-heading">لورنتز وبوانكاريه<br>الصواب الرياضي مع الخطأ الفيزيائي</h2>
+
+    <div class="sec-body">
+      <p>
+        قصة لورنتز وبوانكاريه مثيرة للاهتمام العلمي: وصلا إلى نفس معادلات
+        آينشتاين، لكنهما فسّراها بطريقة مختلفة كلياً.
+        فهم هذا الفرق ضروري لاستيعاب ما أضافه آينشتاين حقاً.
+      </p>
+
+      <div class="highlight-box violet">
+        <span class="hb-tag">موقف لورنتز من نتيجة مايكلسون-مورلي</span>
+        <div class="hb-text">
+          لورنتز قال: الأثير موجود، لكن الأجسام المتحركة فيه تنكمش ميكانيكياً
+          في اتجاه الحركة بمقدار يُلغي بالضبط أي فارق يُمكن قياسه.
+          هذا الانكماش ليس وهماً — هو تشوّه مادي حقيقي للأجسام بسبب تفاعلها
+          مع الأثير. النتيجة صفر لأن الجهاز نفسه ينكمش!
+        </div>
+      </div>
+
+      <p>
+        لورنتز كتب معادلاته الشهيرة (تحويلات لورنتز) كـ"عوامل تصحيح" رياضية
+        تُفسّر هذا الانكماش المادي المفترض. المعادلات صحيحة رياضياً — لكن
+        التفسير الفيزيائي غلط تماماً. إليك المقارنة:
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>البُعد</th>
+            <th class="amber-th">هندريك لورنتز (1904)</th>
+            <th class="cyan-cell" style="color:var(--cyan);background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.1)">ألبرت آينشتاين (1905)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>الأثير</strong></td>
+            <td class="warn-cell">موجود — وسط مادي حقيقي</td>
+            <td class="ok-cell">غير موجود — مفهوم غير ضروري</td>
+          </tr>
+          <tr>
+            <td><strong>انكماش الطول</strong></td>
+            <td class="warn-cell">تشوّه مادي للأجسام بسبب الأثير</td>
+            <td class="ok-cell">تغيّر في طبيعة المكان نفسه</td>
+          </tr>
+          <tr>
+            <td><strong>تمدد الزمن</strong></td>
+            <td class="warn-cell">"زمن محلي" رياضي لا معنى فيزيائي له</td>
+            <td class="ok-cell">الزمن الفعلي يمر بمعدل أبطأ حقاً</td>
+          </tr>
+          <tr>
+            <td><strong>المعادلات</strong></td>
+            <td class="cyan-cell">نفس معادلات لورنتز بالضبط</td>
+            <td class="cyan-cell">نفس معادلات لورنتز بالضبط</td>
+          </tr>
+          <tr>
+            <td><strong>نقطة البداية</strong></td>
+            <td class="warn-cell">أضاف تصحيحات إلى غاليليو</td>
+            <td class="ok-cell">بنى من المسلّمتين بدون افتراضات مسبقة</td>
+          </tr>
+          <tr>
+            <td><strong>الإطار المطلق</strong></td>
+            <td class="warn-cell">موجود (إطار الأثير)</td>
+            <td class="ok-cell">غير موجود — كل الأطر متكافئة</td>
+          </tr>
+          <tr>
+            <td><strong>الفيزياء المُنتجة</strong></td>
+            <td class="warn-cell">تصحيح يُنقذ نيوتن</td>
+            <td class="ok-cell">نظرية جديدة كلياً تُحل محل نيوتن</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box amber">
+        <span class="hb-tag">الفرق الجوهري في جملة واحدة</span>
+        <div class="hb-text">
+          لورنتز قال: <em>"الأجسام تتشوّه لأنها تتحرك في وسط مادي."</em><br>
+          آينشتاين قال: <em>"الزمان والمكان أنفسهما نسبيان — لأن هذا هو طبيعة الكون."</em><br><br>
+          نفس المعادلات. تفسير مختلف كلياً. وتفسير آينشتاين هو الصحيح.
+        </div>
+      </div>
+
+      <p>
+        بوانكاريه ذهب أبعد من لورنتز — كتب عن "مبدأ النسبية" وشكّك بوجود الأثير.
+        لكنه لم يقطع الخطوة الأخيرة: لم يقل صراحةً إن الزمن نفسه نسبي.
+        آينشتاين في عمر 26 كان الوحيد الذي أخذ الفكرة حتى نهايتها المنطقية.
+      </p>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 8 — حجة التماثل
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec8">
+    <div class="sec-label">SECTION 08 · SYMMETRY ARGUMENT</div>
+    <h2 class="sec-heading">حجة التماثل<br>لماذا لا يمكن إنقاذ غاليليو؟</h2>
+
+    <div class="sec-body">
+      <p>
+        هناك حجة عميقة من مبدأ التماثل تُثبت أن غاليليو لا يمكن إنقاذه حتى
+        بـ"عوامل التصحيح". الفكرة: تحويلات فيزيائية حقيقية يجب أن تُشكّل
+        <strong>مجموعة رياضية</strong> — أي يجب أن تكون قابلة للعكس والتركيب
+        بشكل متسق.
+      </p>
+
+      <div class="thought-exp">
+        <span class="te-label">SYMMETRY ARGUMENT · حجة التماثل</span>
+        <div class="te-title">🔄 اختبار التناظر</div>
+        <div class="te-body">
+          في الفيزياء الكلاسيكية، الحركة نسبية: إذا رأى S أن S' يتحرك بسرعة +v،
+          فيجب أن يرى S' أن S يتحرك بسرعة −v. هذا التناظر يجب أن ينعكس في المعادلات.<br><br>
+          <strong>في غاليليو:</strong><br>
+          من S إلى S': \(x' = x - vt\), \(t' = t\)<br>
+          من S' إلى S: \(x = x' + vt'\), \(t = t'\)<br><br>
+          يبدو متناظراً. لكن أضف الآن ثبات c:<br><br>
+          في S: موجة ضوئية عند \(x = ct\)<br>
+          في S' (بغاليليو): \(x' = ct - vt = (c-v)t = (c-v)t'\)<br>
+          أي سرعة الضوء في S' = (c−v)<br><br>
+          في S' باتجاه معاكس: موجة ضوئية عند \(x' = -ct'\)<br>
+          في S (بغاليليو): \(x = x' + vt' = -ct' + vt' = -(c-v)t\)<br>
+          أي سرعة الضوء في S باتجاه معاكس = (c−v)
+
+          <div class="te-conclusion amber-border">
+            <strong style="color:var(--amber)">عدم الاتساق:</strong>
+            راصد S يرى الضوء بسرعة c في اتجاه، و(c−v) في الاتجاه المعاكس!
+            هذا يتعارض مع المسلّمة الأولى (نفس القوانين في كل الأطر) وليس فقط الثانية.
+            التماثل منكسر — لا يمكن إنقاذ غاليليو دون كسر أحد المسلّمتين.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        الاستنتاج النهائي من كل ما سبق:
+      </p>
+
+      <div class="highlight-box red">
+        <span class="hb-tag">الحكم النهائي — لا مفر</span>
+        <div class="hb-text">
+          ثلاثة براهين مستقلة، نتيجة واحدة:<br><br>
+          ١. <strong>الرياضيات:</strong> غاليليو يُغيّر صيغة معادلات ماكسويل بين الأطر<br>
+          ٢. <strong>الفكر:</strong> ساعة الضوء تُثبت أن t'≠t إذا كان c ثابتاً<br>
+          ٣. <strong>التجربة:</strong> مايكلسون-مورلي لا تجد أي تأثير للحركة على c<br><br>
+          <strong style="color:var(--red)">تحويلات غاليليو فاشلة مع الضوء. يجب استبدالها.</strong>
+        </div>
+      </div>
+
+      <p>
+        السؤال الطبيعي التالي: ما هو البديل الصحيح؟ ما هي التحويلات التي
+        تحترم المسلّمتين وتكون متناظرة وقابلة للعكس وتُعطي c ثابتة في كل الأطر؟
+        هذا بالضبط ما سنشتقه في SR-03 — تحويلات لورنتز.
+      </p>
+
+      <div class="formula-block">
+        <span class="formula-tag">PREVIEW · نظرة على SR-03</span>
+        <div class="formula-main">\[x' = \gamma(x - vt) \qquad t' = \gamma\!\left(t - \frac{vx}{c^2}\right)\]</div>
+        <div class="formula-note">
+          هذه هي تحويلات لورنتز التي سنشتقها في الدرس القادم.
+          لاحظ الاختلاف عن غاليليو: معادلة t' لم تعد t' = t —
+          الزمن تغيّر! وهذا كل شيء.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 9 — الحاسبة التفاعلية
+  ══════════════════════════════════════ -->
+  <div class="lesson-section reveal" id="sec9">
+    <div class="sec-label">SECTION 09 · INTERACTIVE</div>
+    <h2 class="sec-heading">حاسبة تفاعلية<br>غاليليو vs النسبية — المقارنة الحية</h2>
+
+    <div class="sec-body">
+      <p>
+        استخدم الحاسبة أدناه لرؤية الفرق بين نتائج غاليليو والنسبية الخاصة
+        في الوقت الفعلي. اسحب المنزلقَين ولاحظ كيف ينهار غاليليو بالقرب من c.
+      </p>
+
+      <div class="demo-box">
+        <span class="demo-label">VELOCITY ADDITION CALCULATOR · حاسبة جمع السرعات</span>
+
+        <div class="demo-controls">
+          <div class="demo-slider-wrap">
+            <div class="demo-slider-label">
+              سرعة الإطار S' بالنسبة لـ S
+              <span id="vFrameDisplay">0.500c</span>
+            </div>
+            <input type="range" class="demo-slider" id="vFrameSlider"
+              min="1" max="99" value="50"
+              oninput="updateCalc()"
+              style="--val:50%">
+          </div>
+          <div class="demo-slider-wrap">
+            <div class="demo-slider-label">
+              سرعة الجسم داخل S'
+              <span id="vObjDisplay" style="color:var(--amber)">0.500c</span>
+            </div>
+            <input type="range" class="demo-slider amber-track" id="vObjSlider"
+              min="1" max="99" value="50"
+              oninput="updateCalc()"
+              style="--val2:50%">
+          </div>
+        </div>
+
+        <div class="demo-results">
+          <div class="result-panel fail-panel">
+            <div class="rp-title fail">GALILEO RESULT · نتيجة غاليليو</div>
+            <div class="rp-value fail-val" id="galileoResult">1.000c</div>
+            <div class="rp-note" id="galileoNote">السرعة المُلاحظة في S بجمع بسيط: u = v + u'</div>
+          </div>
+          <div class="result-panel pass-panel">
+            <div class="rp-title pass">RELATIVITY RESULT · نتيجة النسبية</div>
+            <div class="rp-value pass-val" id="relatResult">0.800c</div>
+            <div class="rp-note" id="relatNote">السرعة المُلاحظة بقانون آينشتاين: دائماً &lt; c</div>
+          </div>
+        </div>
+
+        <div class="demo-verdict bad" id="demoVerdict">
+          غاليليو يُعطي سرعة أكبر من c — مستحيل فيزيائياً! النسبية تصحح ذلك وتبقي السرعة دون c دائماً.
+        </div>
+
+        <div style="margin-top:18px;padding:16px 20px;background:rgba(0,229,255,.03);border:1px solid rgba(0,229,255,.07);border-radius:3px;direction:ltr;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:3px;color:var(--muted);margin-bottom:10px;">FORMULAS USED</div>
+          <div style="font-size:.78rem;color:rgba(0,229,255,.6);line-height:2;">
+            Galileo: <span style="color:var(--red)">u = v + u'</span><br>
+            Einstein: <span style="color:var(--green)">u = (v + u') / (1 + v·u'/c²)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box green">
+        <span class="hb-tag">لاحظ هذا في الحاسبة</span>
+        <div class="hb-text">
+          عند سرعات منخفضة (مثلاً v=0.01c, u'=0.01c): النتيجتان متطابقتان تقريباً.
+          هذا يُفسّر لماذا غاليليو نجح لمئتي سنة — في الحياة اليومية نحن بعيدون جداً عن c.<br><br>
+          عند سرعات عالية (مثلاً v=0.9c, u'=0.9c):
+          غاليليو يُعطي 1.8c (مستحيل)، النسبية تُعطي 0.994c (صحيح).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <!-- ══ QUIZ ══ -->
+  <div class="quiz-section reveal" id="sec10">
+    <div class="quiz-header">REVIEW QUESTIONS · أسئلة المراجعة والتثبيت</div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">١. ما هي التحويلات الأربعة لغاليليو؟ وأيها هو الافتراض الجوهري الخطير؟</div>
+      <div class="q-answer">
+        التحويلات الأربعة: \(x' = x - vt\)، \(y' = y\)، \(z' = z\)، \(t' = t\).
+        الافتراض الخطير هو <strong>t' = t</strong> — أي أن الزمن مطلق ومتطابق في كل الأطر.
+        هذا الافتراض الضمني الذي لم يُناقَش لمئتي سنة هو ما يتعارض مع ثبات c وما
+        سيُسقطه آينشتاين ليُحلّ محله \(t' = \gamma(t - vx/c^2)\).
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٢. أثبت رياضياً أن جمع السرعات الغاليلي يُعطي \(c' \neq c\) للضوء المنبعث من صاروخ بسرعة \(0.7c\).</div>
+      <div class="q-answer">
+        صاروخ يسير بسرعة \(v = 0.7c\) يُطلق ضوءاً بسرعة \(u' = c\) في اتجاه حركته.
+        قانون جمع غاليليو: \(u = u' + v = c + 0.7c = 1.7c\).
+        لكن المسلّمة الثانية تقول الراصد الخارجي يجب أن يقيس الضوء بسرعة \(c\) وليس \(1.7c\).
+        التناقض واضح: غاليليو \(\neq\) مسلّمة آينشتاين الثانية.
+        قانون آينشتاين يُعطي: \(u = \dfrac{c + 0.7c}{1 + (c)(0.7c)/c^2} = \dfrac{1.7c}{1.7} = c\). ✓
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٣. ما الذي صمّمت تجربة مايكلسون-مورلي لإثباته؟ وما الذي وجدته فعلاً؟</div>
+      <div class="q-answer">
+        صُمِّمت لقياس حركة الأرض في "الأثير" — الوسط المفترض الذي يسير فيه الضوء.
+        بحسب الفيزياء الكلاسيكية (غاليليو + نيوتن)، يجب أن يكون هناك فارق في سرعة الضوء
+        بين الاتجاه الموازي لحركة الأرض والاتجاه العمودي عليه، مقداره \(\Delta t \approx Lv^2/c^3\).
+        ما وجدته: فارق صفر مطلق في كل الاتجاهات وكل فصول السنة.
+        المعنى: سرعة الضوء ثابتة بصرف النظر عن الحركة — تحويلات غاليليو خاطئة مع الضوء.
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٤. في تجربة ساعة الضوء: إذا كانت \(L = 1\) متر و \(v = 0.6c\)، ما الفارق بين ما يتوقعه غاليليو وما تقوله النسبية؟</div>
+      <div class="q-answer">
+        في S' (الصاروخ): \(T_0 = 2L/c = 2/c\) (يعني زمن نبضة واحدة).
+        <br>بحسب غاليليو (t = t'): الراصد الخارجي يرى نفس الزمن T₀، لكن الضوء يقطع مسافة قُطرية
+        \(d = \sqrt{L^2 + (vT_0/2)^2} = \sqrt{1 + 0.36/c^2 \cdot c^2} = \sqrt{1.36}\) متر في كل اتجاه.
+        إذن سرعة الضوء في S = \(d/(T_0/2) = c\sqrt{1.36} \approx 1.166c\) — أكبر من c، مستحيل!
+        <br>بحسب النسبية: \(\gamma = 1/\sqrt{1-0.36} = 1/0.8 = 1.25\)، إذن \(T = \gamma T_0 = 1.25 T_0\).
+        الزمن في S أطول — والضوء يقطع المسافة الأطول في زمن أطول، فتبقى سرعته c تماماً.
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٥. ما الفرق الجوهري بين تفسير لورنتز وتفسير آينشتاين لتحويلات لورنتز، رغم أن المعادلات نفسها؟</div>
+      <div class="q-answer">
+        لورنتز فسّر انكماش الطول وتمدد الزمن كظواهر مادية ناتجة عن تفاعل الأجسام مع "الأثير":
+        الأجسام تنكمش ميكانيكياً والزمن المحلي مجرد رياضيات لا معنى فيزيائي له.
+        عنده لا يزال هناك إطار مطلق (إطار الأثير) يمكن الرجوع إليه.
+        <br>آينشتاين فسّرها كتغيّر في طبيعة الزمكان نفسه: لا أثير، لا إطار مطلق.
+        الزمن فعلاً يمر بمعدل مختلف، والمكان فعلاً ينكمش — وذلك لكل المراقبين بالتساوي.
+        التحويلات ليست "تصحيحات" بل هي الوصف الحقيقي للواقع الفيزيائي.
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٦. لماذا نجحت تحويلات غاليليو لمئتي سنة إذا كانت خاطئة؟</div>
+      <div class="q-answer">
+        لأن الخطأ فيها يتناسب مع \(v^2/c^2\). في حياتنا اليومية، أسرع وسيلة نقل
+        تسير بحوالي 0.00001c (3 كم/ث). هذا يعني \(v^2/c^2 \approx 10^{-10}\) —
+        خطأ بنسبة واحد في عشرة مليارات. لا جهاز قياس في القرن السابع عشر أو الثامن عشر
+        كان قادراً على رصد هذا الفرق. غاليليو ونيوتن كانوا محقّين عملياً في نطاق تجاربهم.
+        النسبية تُعطي نفس نتائج نيوتن تماماً عند \(v \ll c\) — وهذا شرط أساسي لأي نظرية فيزيائية جديدة.
+      </div>
+    </div>
+
+    <div class="quiz-q" onclick="this.classList.toggle('open')">
+      <div class="q-toggle">▶ اضغط للإجابة</div>
+      <div class="q-text">٧. ما الافتراض الضمني الخفي الذي يجعل غاليليو متوافقاً مع نيوتن لكن غير متوافق مع آينشتاين؟</div>
+      <div class="q-answer">
+        الافتراض الضمني هو وجود <strong>زمن كوني مطلق</strong> يدق بنفس المعدل لجميع المراقبين
+        في كل الأطر — وهو ما يُعبّر عنه بـ \(t' = t\) في تحويلات غاليليو.
+        نيوتن صرّح بهذا في "برنسيبيا": "الزمن المطلق يسير بمعدل ثابت بغض النظر عن أي شيء خارجي."
+        غاليليو ونيوتن لم يتصوّرا أن هذا قد يكون خاطئاً لأن كل تجاربهم كانت في نطاق سرعات
+        صغيرة جداً مقارنة بـ c. آينشتاين أسقط هذا الافتراض واستبدله بـ \(t' = \gamma(t - vx/c^2)\).
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUMMARY ══ -->
+  <div class="summary-box reveal">
+    <div class="summary-title">LESSON SUMMARY · ملخص الدرس</div>
+    <ul class="summary-list">
+      <li>تحويلات غاليليو الأربعة: \(x'=x-vt\)، \(y'=y\)، \(z'=z\)، \(t'=t\) — المعادلة الأخيرة هي الخطأ الجوهري</li>
+      <li>قانون جمع السرعات الغاليلي \(u'=u-v\) يعمل بدقة تامة لكل الأجسام اليومية لكنه يُعطي \(c'\neq c\) للضوء</li>
+      <li>تطبيق غاليليو على معادلات ماكسويل يُغيّر صيغتها بين الأطر — تناقض مباشر مع المسلّمة الأولى</li>
+      <li>تجربة ساعة الضوء: ثبات c + هندسة بيثاغورس يُثبتان أن \(t'\neq t\) — الزمن يجب أن يختلف</li>
+      <li>تجربة مايكلسون-مورلي 1887: لا فارق في سرعة الضوء بين الاتجاهات — تأكيد تجريبي لثبات c وفشل غاليليو</li>
+      <li>لورنتز كتب نفس المعادلات الصحيحة لكن فسّرها كتشوّه مادي؛ آينشتاين فسّرها كتغيّر في طبيعة الزمكان</li>
+      <li>الفرق بين النظريتين يصبح ضئيلاً جداً \(\sim v^2/c^2\) عند سرعات منخفضة — لذا نجح غاليليو لمئتي سنة</li>
+      <li>الدرس القادم SR-03: اشتقاق تحويلات لورنتز من المسلّمتين — البديل الصحيح لغاليليو</li>
+    </ul>
+  </div>
+
+  <!-- ══ NAV ══ -->
+  <div class="lesson-nav">
+    <a class="nav-btn" href="SR-01.html">
+      ← SR-01 · مسلّمتا آينشتاين
+    </a>
+    <div style="text-align:center;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:3px;color:var(--muted);margin-bottom:4px;">NEXT LESSON</div>
+      <div style="font-size:.8rem;color:var(--text);">SR-03 · اشتقاق تحويلات لورنتز</div>
+    </div>
+    <a class="nav-btn" href="SR-03.html">
+      SR-03 →
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid rgba(255,179,0,.07);padding:28px 32px;text-align:center;position:relative;z-index:10;">
+  <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:5px;color:rgba(255,179,0,.22);">SR-02 · فشل تحويلات غاليليو · بوابة المعرفة · 1887</div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ── CANVAS ── */
+const canvas = document.getElementById('sr-canvas');
+const ctx = canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();
+window.addEventListener('resize',resize);
+
+/* Particles */
+const photons=[];
+for(let i=0;i<80;i++){
+  photons.push({
+    x:Math.random(),y:Math.random(),
+    r:Math.random()*.9+.1,
+    op:Math.random()*.5+.04,
+    pulse:Math.random()*Math.PI*2,
+    sp:Math.random()*.003+.001,
+    hue:Math.random()>.7 ? 40 : 185, /* amber + cyan mix */
+    amber: Math.random()>.65,
+  });
+}
+
+let frame=0;
+function draw(){
+  frame++;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const bg=ctx.createRadialGradient(canvas.width*.5,canvas.height*.3,0,canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.9);
+  bg.addColorStop(0,'rgba(0,12,28,1)');
+  bg.addColorStop(.4,'rgba(0,6,18,1)');
+  bg.addColorStop(1,'rgba(2,4,12,1)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const cx=canvas.width*.5,cy=canvas.height*.2;
+  for(let l=0;l<20;l++){
+    const angle=(l/20)*Math.PI*2;
+    const len=Math.min(canvas.width,canvas.height)*.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len*.45);
+    ctx.strokeStyle=`rgba(0,200,230,${0.01-l*.0001})`;ctx.lineWidth=.3;ctx.stroke();
+  }
+  for(let ring=1;ring<12;ring++){
+    const r=ring*Math.min(canvas.width,canvas.height)/28;
+    const warp=Math.sin(frame*.006+ring*.4)*3;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,r+warp,r*.35+warp*.15,0,0,Math.PI*2);
+    /* amber tint instead of cyan */
+    const a=Math.max(.002,.022-ring*.0015);
+    ctx.strokeStyle=`rgba(255,170,0,${a})`;ctx.lineWidth=.4;ctx.stroke();
+  }
+  photons.forEach(p=>{
+    p.pulse+=p.sp;
+    const op=p.op*(0.65+0.35*Math.sin(p.pulse));
+    ctx.beginPath();ctx.arc(p.x*canvas.width,p.y*canvas.height,p.r,0,Math.PI*2);
+    if(p.amber){
+      ctx.fillStyle=`hsla(40,100%,65%,${op})`;
+    } else {
+      ctx.fillStyle=`hsla(185,100%,75%,${op*0.5})`;
+    }
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ── PROGRESS BAR ── */
+const bar=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  bar.style.width=pct+'%';
+});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*40);obs.unobserve(e.target);}
+  });
+},{threshold:.05});
+document.querySelectorAll('.reveal,.lesson-section').forEach(r=>obs.observe(r));
+
+/* ── SMOOTH SCROLL ── */
+function scrollToSec(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+/* ── INTERACTIVE CALCULATOR ── */
+function updateCalc(){
+  const vFrameSlider = document.getElementById('vFrameSlider');
+  const vObjSlider   = document.getElementById('vObjSlider');
+
+  const v  = parseFloat(vFrameSlider.value) / 100;
+  const u  = parseFloat(vObjSlider.value)   / 100;
+
+  /* Update slider fill */
+  const vPct = (parseFloat(vFrameSlider.value) - 1) / 98 * 100;
+  const uPct = (parseFloat(vObjSlider.value)   - 1) / 98 * 100;
+  vFrameSlider.style.setProperty('--val',  vPct + '%');
+  vObjSlider.style.setProperty('--val2', uPct + '%');
+
+  /* Display values */
+  document.getElementById('vFrameDisplay').textContent = v.toFixed(3) + 'c';
+  document.getElementById('vObjDisplay').textContent   = u.toFixed(3) + 'c';
+
+  /* Galileo */
+  const galileo = v + u;
+
+  /* Einstein */
+  const einstein = (v + u) / (1 + v * u);
+
+  /* Display */
+  document.getElementById('galileoResult').textContent  = galileo.toFixed(4) + 'c';
+  document.getElementById('relatResult').textContent    = einstein.toFixed(4) + 'c';
+
+  const galileoNote = document.getElementById('galileoNote');
+  const relatNote   = document.getElementById('relatNote');
+  const verdict     = document.getElementById('demoVerdict');
+  const failPanel   = document.querySelector('.fail-panel');
+  const passPanel   = document.querySelector('.pass-panel');
+
+  if(galileo > 1){
+    galileoNote.textContent = '⚠ تتجاوز سرعة الضوء! — مستحيل فيزيائياً';
+    document.getElementById('galileoResult').className = 'rp-value fail-val';
+    verdict.className = 'demo-verdict bad';
+    verdict.textContent = 'غاليليو يُعطي ' + galileo.toFixed(3) + 'c — يتجاوز سرعة الضوء! هذا مستحيل. النسبية تُصحّح ذلك وتُعطي ' + einstein.toFixed(3) + 'c دائماً < c.';
+  } else if(galileo > 0.99){
+    galileoNote.textContent = 'تقترب بشدة من c — غير قابل للتحقيق';
+    document.getElementById('galileoResult').className = 'rp-value fail-val';
+    verdict.className = 'demo-verdict bad';
+    verdict.textContent = 'الفرق بين النتيجتين ملحوظ عند هذه السرعات العالية. النسبية أكثر دقة.';
+  } else {
+    galileoNote.textContent = 'قريب من النتيجة الصحيحة عند سرعات منخفضة';
+    document.getElementById('galileoResult').className = 'rp-value';
+    document.getElementById('galileoResult').style.color = 'var(--amber)';
+    verdict.className = 'demo-verdict good';
+    verdict.textContent = 'عند سرعات منخفضة، غاليليو والنسبية يتفقان تقريباً. الفرق بينهما = ' + Math.abs(galileo - einstein).toFixed(5) + 'c فقط.';
+  }
+
+  relatNote.textContent = 'السرعة المُلاحظة: دائماً < c. الفرق عن غاليليو = ' + Math.abs(galileo - einstein).toFixed(5) + 'c';
+}
+
+/* Initialize */
+updateCalc();
+</script>
+</body>
+</html>
