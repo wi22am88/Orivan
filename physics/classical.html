@@ -499,7 +499,7 @@ header {
 .el.wide .el-sym { font-size:3.5rem; }
 .el.wide .el-body { flex:1; }
 
-/* ── INTRO CARD CLS·00 ── */
+/* ── INTRO CARD CLS-00 ── */
 .el.el-intro {
   border-color: rgba(0,255,157,.15) !important;
   box-shadow: 0 2px 16px rgba(0,0,0,.5), inset 0 1px 0 rgba(0,255,157,.06) !important;
@@ -935,13 +935,13 @@ header {
   <!-- PERIODIC GRID S1 -->
   <div class="pgrid s1" id="g1">
 
-    <!-- CLS·00 INTRO — ما هي الفيزياء؟ -->
-    <div class="el s1 el-intro wide" onclick="location.href='cls00.html'">
+    <!-- CLS-00 INTRO — ما هي الفيزياء؟ -->
+    <div class="el s1 el-intro wide" onclick="location.href='classical/CLS-00.html'">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-inner">
         <div style="display:flex;flex-direction:column;justify-content:center;height:100%;gap:10px;">
           <div class="el-top" style="margin-bottom:0">
-            <div class="el-num" style="font-size:.55rem;letter-spacing:2px;color:var(--green);opacity:1;">CLS·00</div>
+            <div class="el-num" style="font-size:.55rem;letter-spacing:2px;color:var(--green);opacity:1;">CLS-00</div>
             <div class="el-cat" style="background:rgba(0,255,157,.07);border-color:rgba(0,255,157,.25);color:rgba(0,255,157,.8);">FOUNDATION</div>
           </div>
           <div style="display:flex;align-items:center;gap:18px;">
@@ -1311,7 +1311,7 @@ header {
 
   <!-- ════ LAB CARD ════ -->
   <div style="margin-top:48px;">
-    <div class="el el-lab wide" onclick="location.href='lab.html'" style="max-width:100%;aspect-ratio:auto;min-height:130px;">
+    <div class="el el-lab wide" onclick="location.href='classical/lab.html'" style="max-width:100%;aspect-ratio:auto;min-height:130px;">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-inner" style="flex-direction:row;align-items:center;gap:22px;padding:22px 24px;">
         <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:60px;height:60px;flex-shrink:0;color:var(--e);">
@@ -1340,7 +1340,7 @@ header {
 
 </div><!-- /page -->
 
-<!-- ══════ INTRO MODAL CLS·00 ══════ -->
+<!-- ══════ INTRO MODAL CLS-00 ══════ -->
 <div id="ov-intro" onclick="dismissIntro(event)">
   <div id="mo-intro">
     <div id="mo-intro-bar"></div>
@@ -1499,7 +1499,7 @@ header {
 <!-- STATUS BAR -->
 <div class="sbar">
   <div class="sbi"><div class="sbd g"></div>CLASSICAL · ONLINE</div>
-  <div class="sbi">PHYS·CLS · 2 SEM · 16 TOPICS · CLS·00 UNLOCKED</div>
+  <div class="sbi">PHYS·CLS · 2 SEM · 16 TOPICS · CLS-00 UNLOCKED</div>
   <div class="sbi"><div class="sbd a"></div>CONTENT BUILDING</div>
 </div>
 
@@ -1578,7 +1578,7 @@ document.querySelectorAll('.el').forEach(el=>{
   el.addEventListener('mouseleave',()=>{ el.style.transform=''; });
 });
 
-/* ══ INTRO MODAL CLS·00 ══ */
+/* ══ INTRO MODAL CLS-00 ══ */
 function openIntro(){
   document.getElementById('ov-intro').classList.add('on');
   document.body.style.overflow='hidden';
