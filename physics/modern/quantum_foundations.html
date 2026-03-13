@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أسس نظرية الكم · Quantum Foundations</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   ROOT
+══════════════════════════════════════════ */
+:root {
+  --ink:      #07090f;
+  --paper:    #0b0e18;
+  --surface:  rgba(14,18,32,0.94);
+  --rim:      rgba(255,255,255,0.06);
+  --rim2:     rgba(255,255,255,0.03);
+
+  /* wave accent colours */
+  --w1:       #c9a84c;   /* موجة 1 — ذهبي نحاسي */
+  --w1b:      #e8c87a;
+  --w2:       #7eb8d4;   /* موجة 2 — أزرق فضي */
+  --w2b:      #a8d4e8;
+  --w3:       #9b72cf;   /* موجة 3 — بنفسجي */
+  --w3b:      #c4a0f0;
+
+  --txt:      #d8e4f0;
+  --muted:    #3a4d63;
+  --faint:    rgba(255,255,255,0.035);
+
+  --font-ar:  'Tajawal', sans-serif;
+  --font-mono:'DM Mono', monospace;
+  --font-ser: 'Playfair Display', serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--ink);
+  color: var(--txt);
+  font-family: var(--font-ar);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ══════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════ */
+#c-dot {
+  position:fixed; width:7px; height:7px; border-radius:50%;
+  background:#fff; transform:translate(-50%,-50%);
+  pointer-events:none; z-index:9999;
+  transition:width .15s,height .15s,background .2s;
+  mix-blend-mode:exclusion;
+}
+#c-ring {
+  position:fixed; width:32px; height:32px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.28);
+  transform:translate(-50%,-50%);
+  pointer-events:none; z-index:9998;
+  transition:width .3s,height .3s,border-color .3s;
+}
+body:has(.wave-card:hover) #c-dot  { width:12px;height:12px; }
+body:has(.wave-card:hover) #c-ring { width:50px;height:50px;border-color:rgba(255,255,255,.5); }
+body:has(.topic-card:hover) #c-dot { width:10px;height:10px; }
+body:has(.topic-card:hover) #c-ring{ width:44px;height:44px; }
+
+/* ══════════════════════════════════════════
+   BG LAYERS
+══════════════════════════════════════════ */
+#bg-cv { position:fixed; inset:0; z-index:0; }
+
+.paper-texture {
+  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+.scan { position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.025) 3px,rgba(0,0,0,.025) 4px); }
+.vignette { position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(4,5,12,.88) 100%); }
+
+/* corner marks */
+.mk { position:fixed;width:22px;height:22px;z-index:20;pointer-events:none; }
+.mk.tl{top:18px;left:18px;border-top:1px solid var(--w1);border-left:1px solid var(--w1);}
+.mk.tr{top:18px;right:18px;border-top:1px solid var(--w2);border-right:1px solid var(--w2);}
+.mk.bl{bottom:18px;left:18px;border-bottom:1px solid var(--w3);border-left:1px solid var(--w3);}
+.mk.br{bottom:18px;right:18px;border-bottom:1px solid var(--w1);border-right:1px solid var(--w1);}
+
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+header {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 36px; height:58px;
+  background:rgba(7,9,15,0.9);
+  border-bottom:1px solid var(--rim);
+  backdrop-filter:blur(24px) saturate(1.3);
+}
+.h-logo {
+  font-family:var(--font-mono);
+  font-size:.58rem; letter-spacing:5px; color:var(--w1);
+  text-shadow:0 0 18px rgba(201,168,76,.4);
+}
+.h-crumb {
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:3px; color:var(--muted);
+}
+.h-crumb-sep { color:rgba(255,255,255,.12); }
+.h-crumb-cur { color:rgba(201,168,76,.6); }
+.h-back {
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:2px;
+  color:var(--muted); text-decoration:none;
+  border:1px solid var(--rim); padding:6px 14px; border-radius:3px;
+  transition:all .25s;
+}
+.h-back:hover { color:var(--w1); border-color:rgba(201,168,76,.3); }
+
+/* ══════════════════════════════════════════
+   WRAPPER
+══════════════════════════════════════════ */
+.wrap {
+  position:relative; z-index:5;
+  max-width:1060px; margin:0 auto;
+  padding:72px 28px 140px;
+}
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.hero {
+  display:grid; grid-template-columns:1fr auto;
+  gap:40px; align-items:start;
+  margin-bottom:100px;
+  animation:fadeUp .9s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+
+.hero-left {}
+.hero-prefix {
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:5px;
+  color:var(--muted); display:flex; align-items:center; gap:12px;
+  margin-bottom:22px;
+}
+.hero-prefix-line { width:36px; height:1px; background:linear-gradient(90deg,var(--w1),transparent); }
+
+.hero-title {
+  font-family:var(--font-ser);
+  font-size:clamp(2.4rem,5.5vw,4.4rem);
+  font-weight:900; line-height:1.05;
+  letter-spacing:-1px;
+  color:#fff;
+  margin-bottom:8px;
+  position:relative;
+}
+.hero-title-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(135deg,rgba(201,168,76,.12),transparent 60%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  font-family:var(--font-ser);
+  font-size:clamp(2.4rem,5.5vw,4.4rem);
+  font-weight:900; line-height:1.05;
+}
+
+.hero-en {
+  font-family:var(--font-mono); font-size:.65rem; letter-spacing:7px;
+  color:rgba(201,168,76,.35); display:block; margin-bottom:24px;
+}
+
+.hero-desc {
+  font-size:.95rem; line-height:2;
+  color:rgba(200,220,240,.4);
+  max-width:500px; margin-bottom:32px;
+}
+
+.hero-timeline-pill {
+  display:inline-flex; align-items:center; gap:0;
+  border:1px solid var(--rim);
+  border-radius:3px; overflow:hidden;
+}
+.tp-item {
+  padding:8px 18px; text-align:center;
+  border-left:1px solid var(--rim);
+  font-family:var(--font-mono); font-size:.48rem; letter-spacing:2px;
+}
+.tp-item:first-child { border-left:none; }
+.tp-year { display:block; font-size:.75rem; font-weight:500; margin-bottom:3px; }
+.tp-who  { color:var(--muted); }
+
+/* right side — big equation */
+.hero-right {
+  display:flex; flex-direction:column; align-items:center; gap:24px;
+  padding-top:8px;
+}
+.hero-eq-box {
+  background:var(--faint);
+  border:1px solid rgba(201,168,76,.12);
+  border-radius:4px; padding:28px 36px;
+  text-align:center; position:relative;
+  overflow:hidden;
+}
+.hero-eq-box::before {
+  content:''; position:absolute; top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--w1),transparent);
+}
+.hero-eq {
+  font-family:var(--font-ser);
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  color:var(--w1b);
+  text-shadow:0 0 30px rgba(201,168,76,.3);
+  display:block; letter-spacing:3px;
+  margin-bottom:8px;
+}
+.hero-eq-label {
+  font-family:var(--font-mono); font-size:.46rem; letter-spacing:4px; color:var(--muted);
+}
+.hero-eq-sub {
+  font-family:var(--font-mono); font-size:.42rem; letter-spacing:2px;
+  color:rgba(201,168,76,.3); margin-top:6px; display:block;
+}
+
+/* ══════════════════════════════════════════
+   WAVE DIVIDER
+══════════════════════════════════════════ */
+.wave-div {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:36px;
+}
+.wd-line { flex:1; height:1px; }
+.wd-label {
+  font-family:var(--font-mono); font-size:.48rem; letter-spacing:4px;
+  white-space:nowrap; padding:5px 14px; border-radius:2px;
+  border:1px solid;
+}
+
+/* wave 1 */
+.wd-w1 .wd-line { background:linear-gradient(90deg,transparent,rgba(201,168,76,.25),transparent); }
+.wd-w1 .wd-label { color:var(--w1); border-color:rgba(201,168,76,.2); background:rgba(201,168,76,.04); }
+/* wave 2 */
+.wd-w2 .wd-line { background:linear-gradient(90deg,transparent,rgba(126,184,212,.25),transparent); }
+.wd-w2 .wd-label { color:var(--w2); border-color:rgba(126,184,212,.2); background:rgba(126,184,212,.04); }
+/* wave 3 */
+.wd-w3 .wd-line { background:linear-gradient(90deg,transparent,rgba(155,114,207,.25),transparent); }
+.wd-w3 .wd-label { color:var(--w3); border-color:rgba(155,114,207,.2); background:rgba(155,114,207,.04); }
+
+/* ══════════════════════════════════════════
+   WAVE HEADER CARD
+══════════════════════════════════════════ */
+.wave-card {
+  position:relative; overflow:hidden; border-radius:4px;
+  padding:24px 28px; margin-bottom:16px;
+  display:grid; grid-template-columns:auto 1fr auto;
+  align-items:center; gap:22px;
+  cursor:none;
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
+  animation:fadeUp .6s ease both;
+}
+.wave-card:hover { transform:translateX(-4px); }
+
+.wave-card::before {
+  content:''; position:absolute;inset:0;
+  opacity:.55;
+}
+.wave-card::after {
+  content:''; position:absolute;top:0;bottom:0;right:0;width:3px;
+  transition:opacity .3s;
+}
+.wave-card:hover::after { opacity:1; }
+
+/* wave 1 card */
+.wc-1 { background:linear-gradient(135deg,rgba(201,168,76,.06) 0%,rgba(201,168,76,.02) 100%); border:1px solid rgba(201,168,76,.15); }
+.wc-1::after { background:var(--w1); opacity:.4; }
+.wc-1:hover { border-color:rgba(201,168,76,.32); box-shadow:0 8px 40px rgba(201,168,76,.08); }
+
+/* wave 2 card */
+.wc-2 { background:linear-gradient(135deg,rgba(126,184,212,.06) 0%,rgba(126,184,212,.02) 100%); border:1px solid rgba(126,184,212,.15); }
+.wc-2::after { background:var(--w2); opacity:.4; }
+.wc-2:hover { border-color:rgba(126,184,212,.32); box-shadow:0 8px 40px rgba(126,184,212,.08); }
+
+/* wave 3 card */
+.wc-3 { background:linear-gradient(135deg,rgba(155,114,207,.06) 0%,rgba(155,114,207,.02) 100%); border:1px solid rgba(155,114,207,.15); }
+.wc-3::after { background:var(--w3); opacity:.4; }
+.wc-3:hover { border-color:rgba(155,114,207,.32); box-shadow:0 8px 40px rgba(155,114,207,.08); }
+
+.wc-num {
+  font-family:var(--font-ser);
+  font-size:3.5rem; font-weight:900; line-height:1;
+  opacity:.12; letter-spacing:-2px;
+  user-select:none; flex-shrink:0;
+  transition:opacity .3s;
+}
+.wave-card:hover .wc-num { opacity:.2; }
+.wc-1 .wc-num { color:var(--w1); }
+.wc-2 .wc-num { color:var(--w2); }
+.wc-3 .wc-num { color:var(--w3); }
+
+.wc-body { flex:1; }
+.wc-tag {
+  font-family:var(--font-mono); font-size:.46rem; letter-spacing:4px;
+  margin-bottom:7px; display:flex; align-items:center; gap:8px;
+}
+.wc-tag-dot { width:4px;height:4px;border-radius:50%; flex-shrink:0; animation:tdot 2s ease-in-out infinite; }
+@keyframes tdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
+.wc-1 .wc-tag { color:var(--w1); } .wc-1 .wc-tag-dot { background:var(--w1); box-shadow:0 0 6px var(--w1); }
+.wc-2 .wc-tag { color:var(--w2); } .wc-2 .wc-tag-dot { background:var(--w2); box-shadow:0 0 6px var(--w2); }
+.wc-3 .wc-tag { color:var(--w3); } .wc-3 .wc-tag-dot { background:var(--w3); box-shadow:0 0 6px var(--w3); }
+
+.wc-title { font-size:1.2rem; font-weight:800; color:#eef4ff; margin-bottom:5px; }
+.wc-years { font-family:var(--font-mono); font-size:.52rem; letter-spacing:2px; color:var(--muted); }
+.wc-desc { font-size:.8rem; color:rgba(180,210,230,.38); line-height:1.8; margin-top:8px; }
+
+.wc-meta { text-align:center; flex-shrink:0; }
+.wc-count {
+  font-family:var(--font-ser); font-size:2rem; font-weight:700; line-height:1;
+  display:block; margin-bottom:3px;
+}
+.wc-1 .wc-count { color:rgba(201,168,76,.6); }
+.wc-2 .wc-count { color:rgba(126,184,212,.6); }
+.wc-3 .wc-count { color:rgba(155,114,207,.6); }
+.wc-count-label { font-family:var(--font-mono); font-size:.42rem; letter-spacing:2px; color:var(--muted); }
+
+/* ══════════════════════════════════════════
+   TOPIC CARDS GRID
+══════════════════════════════════════════ */
+.topics-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:12px;
+  margin-bottom:56px;
+  padding-right:0;
+}
+
+.topic-card {
+  position:relative; overflow:hidden; border-radius:4px;
+  background:rgba(10,13,22,0.96);
+  border:1px solid var(--rim);
+  padding:24px 22px 20px;
+  display:flex; flex-direction:column; gap:0;
+  cursor:none;
+  transition:transform .3s cubic-bezier(.16,1,.3,1), border-color .3s, box-shadow .3s;
+  animation:fadeUp .55s ease both;
+  text-decoration:none;
+}
+.topic-card:hover { transform:translateY(-5px); }
+
+/* top accent */
+.tc-bar {
+  position:absolute;top:0;left:0;right:0;height:2px;
+  transform:scaleX(0); transform-origin:right;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.topic-card:hover .tc-bar { transform:scaleX(1); transform-origin:left; }
+
+/* glow */
+.tc-glow {
+  position:absolute;inset:0;opacity:0;pointer-events:none;
+  transition:opacity .35s; border-radius:4px;
+}
+.topic-card:hover .tc-glow { opacity:1; }
+
+/* scientist badge */
+.tc-scientist {
+  position:absolute; top:14px; left:16px;
+  font-family:var(--font-mono); font-size:.42rem; letter-spacing:2px;
+  padding:3px 9px; border-radius:2px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  color:rgba(255,255,255,.2);
+  transition:all .25s;
+}
+.topic-card:hover .tc-scientist { color:rgba(255,255,255,.45); border-color:rgba(255,255,255,.12); }
+
+.tc-icon { font-size:2rem; display:block; margin:32px 0 14px; transition:transform .3s; }
+.topic-card:hover .tc-icon { transform:scale(1.1); }
+
+.tc-code {
+  font-family:var(--font-mono); font-size:.46rem; letter-spacing:3px;
+  margin-bottom:8px; transition:opacity .25s;
+}
+.tc-name { font-size:.95rem; font-weight:800; color:#e8f2ff; margin-bottom:8px; line-height:1.3; }
+.tc-name-en { font-family:var(--font-mono); font-size:.44rem; letter-spacing:2px; color:var(--muted); margin-bottom:12px; }
+.tc-desc { font-size:.76rem; color:rgba(160,195,220,.35); line-height:1.85; flex:1; }
+
+.tc-eq {
+  margin-top:16px; padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.04);
+  font-family:var(--font-ser); font-size:1rem; letter-spacing:2px;
+  text-align:center; transition:opacity .25s;
+  opacity:.5;
+}
+.topic-card:hover .tc-eq { opacity:.9; }
+
+.tc-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:14px; padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.04);
+}
+.tc-year {
+  font-family:var(--font-mono); font-size:.48rem; letter-spacing:2px; color:var(--muted);
+  display:flex; align-items:center; gap:5px;
+}
+.tc-arr {
+  font-family:var(--font-mono); font-size:.6rem;
+  opacity:0; transform:translateX(6px);
+  transition:opacity .25s, transform .25s;
+}
+.topic-card:hover .tc-arr { opacity:1; transform:translateX(0); }
+
+/* ── Wave 1 topic styles ── */
+.tw-1 .tc-bar  { background:linear-gradient(90deg,transparent,var(--w1),transparent); }
+.tw-1 .tc-glow { background:radial-gradient(ellipse at 20% 30%,rgba(201,168,76,.07),transparent 65%); }
+.tw-1 .tc-code { color:var(--w1); }
+.tw-1 .tc-eq   { color:var(--w1b); }
+.tw-1 .tc-arr  { color:var(--w1); }
+.tw-1:hover { border-color:rgba(201,168,76,.22); box-shadow:0 12px 40px rgba(201,168,76,.07); }
+.tw-1:hover .tc-icon { filter:drop-shadow(0 0 12px rgba(201,168,76,.5)); }
+
+/* ── Wave 2 topic styles ── */
+.tw-2 .tc-bar  { background:linear-gradient(90deg,transparent,var(--w2),transparent); }
+.tw-2 .tc-glow { background:radial-gradient(ellipse at 20% 30%,rgba(126,184,212,.07),transparent 65%); }
+.tw-2 .tc-code { color:var(--w2); }
+.tw-2 .tc-eq   { color:var(--w2b); }
+.tw-2 .tc-arr  { color:var(--w2); }
+.tw-2:hover { border-color:rgba(126,184,212,.22); box-shadow:0 12px 40px rgba(126,184,212,.07); }
+.tw-2:hover .tc-icon { filter:drop-shadow(0 0 12px rgba(126,184,212,.5)); }
+
+/* ── Wave 3 topic styles ── */
+.tw-3 .tc-bar  { background:linear-gradient(90deg,transparent,var(--w3),transparent); }
+.tw-3 .tc-glow { background:radial-gradient(ellipse at 20% 30%,rgba(155,114,207,.07),transparent 65%); }
+.tw-3 .tc-code { color:var(--w3); }
+.tw-3 .tc-eq   { color:var(--w3b); }
+.tw-3 .tc-arr  { color:var(--w3); }
+.tw-3:hover { border-color:rgba(155,114,207,.22); box-shadow:0 12px 40px rgba(155,114,207,.07); }
+.tw-3:hover .tc-icon { filter:drop-shadow(0 0 12px rgba(155,114,207,.5)); }
+
+/* ══════════════════════════════════════════
+   TIMELINE CONNECTOR (vertical line between waves)
+══════════════════════════════════════════ */
+.timeline-connector {
+  display:flex; align-items:center; justify-content:center;
+  height:48px; margin-bottom:8px; position:relative;
+}
+.tc-vert {
+  width:1px; height:100%;
+  background:linear-gradient(to bottom, transparent, rgba(255,255,255,.08), transparent);
+  position:relative;
+}
+.tc-vert::before {
+  content:''; position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  box-shadow:0 0 8px rgba(255,255,255,.08);
+}
+
+/* ══════════════════════════════════════════
+   BOTTOM SUMMARY
+══════════════════════════════════════════ */
+.summary-bar {
+  margin-top:72px;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  animation:fadeUp .6s .4s ease both;
+}
+.sb-cell {
+  background:var(--faint);
+  border:1px solid var(--rim);
+  border-radius:4px; padding:24px 20px;
+  text-align:center; position:relative; overflow:hidden;
+}
+.sb-cell::after {
+  content:''; position:absolute; bottom:0;left:0;right:0;height:1px;
+  transform:scaleX(0); transition:transform .4s;
+}
+.sb-cell:nth-child(1)::after { background:var(--w1); }
+.sb-cell:nth-child(2)::after { background:var(--w2); }
+.sb-cell:nth-child(3)::after { background:var(--w3); }
+.sb-cell:hover::after { transform:scaleX(1); }
+.sb-n {
+  font-family:var(--font-ser);
+  font-size:2.2rem; font-weight:700; line-height:1;
+  display:block; margin-bottom:6px;
+}
+.sb-cell:nth-child(1) .sb-n { color:rgba(201,168,76,.7); }
+.sb-cell:nth-child(2) .sb-n { color:rgba(126,184,212,.7); }
+.sb-cell:nth-child(3) .sb-n { color:rgba(155,114,207,.7); }
+.sb-l { font-family:var(--font-mono); font-size:.48rem; letter-spacing:3px; color:var(--muted); }
+
+/* ══════════════════════════════════════════
+   STATUS BAR
+══════════════════════════════════════════ */
+.status {
+  position:fixed; bottom:0;left:0;right:0; z-index:50;
+  height:30px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 28px;
+  background:rgba(5,7,14,.94);
+  border-top:1px solid var(--rim);
+  backdrop-filter:blur(20px);
+  pointer-events:none;
+}
+.st-item {
+  font-family:var(--font-mono); font-size:.44rem; letter-spacing:3px; color:var(--muted);
+  display:flex; align-items:center; gap:7px;
+}
+.st-dot { width:3px;height:3px;border-radius:50%; }
+.st-dot.g { background:var(--w1); box-shadow:0 0 5px var(--w1); animation:tdot 1.8s infinite; }
+.st-dot.b { background:var(--w2); animation:tdot 2.2s .4s infinite; }
+.st-dot.p { background:var(--w3); animation:tdot 2s .8s infinite; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media(max-width:720px){
+  .hero { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .wave-card { grid-template-columns:auto 1fr; }
+  .wc-meta { display:none; }
+  .topics-grid { grid-template-columns:1fr; }
+  .summary-bar { grid-template-columns:1fr; }
+  header { padding:0 16px; }
+  .wrap { padding:40px 16px 80px; }
+  .h-crumb { display:none; }
+}
+
+/* ══════════════════════════════════════════
+   LOCK OVERLAY ON TOPIC CARDS
+══════════════════════════════════════════ */
+.topic-card {
+  cursor: none;
+}
+.tc-lock {
+  position:absolute; inset:0;
+  background:rgba(5,7,14,0.55);
+  backdrop-filter:blur(1.5px);
+  border-radius:4px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:8px;
+  opacity:0;
+  transition:opacity .3s ease;
+  z-index:10;
+  pointer-events:none;
+}
+.topic-card:hover .tc-lock {
+  opacity:1;
+}
+.tc-lock-icon {
+  font-size:1.5rem;
+  filter:drop-shadow(0 0 8px currentColor);
+}
+.tc-lock-text {
+  font-family:var(--font-mono);
+  font-size:.46rem;
+  letter-spacing:3px;
+  color:rgba(255,255,255,.5);
+}
+
+/* badge قفل ثابت في الزاوية */
+.tc-badge-lock {
+  position:absolute; top:12px; right:14px;
+  width:22px; height:22px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(10,13,22,0.9);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.7rem;
+  z-index:5;
+  transition:border-color .3s, box-shadow .3s;
+}
+.tw-1 .tc-badge-lock { color:var(--w1); }
+.tw-2 .tc-badge-lock { color:var(--w2); }
+.tw-3 .tc-badge-lock { color:var(--w3); }
+.topic-card:hover .tc-badge-lock {
+  border-color:rgba(255,255,255,.28);
+  box-shadow:0 0 10px rgba(255,255,255,.08);
+}
+
+/* ══════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════ */
+#modal-overlay {
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(4,5,12,0.82);
+  backdrop-filter:blur(12px) saturate(1.2);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s ease;
+}
+#modal-overlay.open {
+  opacity:1; pointer-events:all;
+}
+#modal-box {
+  position:relative;
+  background:rgba(10,13,22,0.97);
+  border-radius:6px;
+  padding:40px 44px 36px;
+  max-width:400px; width:90%;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.07);
+  transform:translateY(24px) scale(.97);
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+  overflow:hidden;
+}
+#modal-overlay.open #modal-box {
+  transform:translateY(0) scale(1);
+}
+#modal-box::before {
+  content:''; position:absolute; top:0;left:0;right:0;height:1px;
+}
+.modal-accent-w1::before { background:linear-gradient(90deg,transparent,var(--w1),transparent); }
+.modal-accent-w2::before { background:linear-gradient(90deg,transparent,var(--w2),transparent); }
+.modal-accent-w3::before { background:linear-gradient(90deg,transparent,var(--w3),transparent); }
+
+.modal-lock-big {
+  font-size:2.6rem; display:block; margin-bottom:16px;
+  animation:lockBounce .5s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes lockBounce{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+
+.modal-code {
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:4px;
+  margin-bottom:10px;
+}
+.modal-accent-w1 .modal-code { color:var(--w1); }
+.modal-accent-w2 .modal-code { color:var(--w2); }
+.modal-accent-w3 .modal-code { color:var(--w3); }
+
+.modal-title {
+  font-size:1.1rem; font-weight:800; color:#eef4ff;
+  margin-bottom:8px; line-height:1.3;
+}
+.modal-sub {
+  font-family:var(--font-mono); font-size:.46rem; letter-spacing:2px;
+  color:var(--muted); margin-bottom:20px; display:block;
+}
+.modal-msg {
+  font-size:.82rem; line-height:1.9;
+  color:rgba(180,210,230,.45);
+  margin-bottom:28px;
+}
+.modal-msg strong {
+  font-weight:700;
+}
+.modal-accent-w1 .modal-msg strong { color:rgba(201,168,76,.8); }
+.modal-accent-w2 .modal-msg strong { color:rgba(126,184,212,.8); }
+.modal-accent-w3 .modal-msg strong { color:rgba(155,114,207,.8); }
+
+.modal-close {
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:3px;
+  padding:10px 30px; border-radius:3px; cursor:pointer;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.5);
+  transition:all .25s;
+}
+.modal-close:hover {
+  color:#fff; border-color:rgba(255,255,255,.25);
+  background:rgba(255,255,255,.07);
+}
+.modal-accent-w1 .modal-close:hover { border-color:rgba(201,168,76,.4); color:var(--w1b); }
+.modal-accent-w2 .modal-close:hover { border-color:rgba(126,184,212,.4); color:var(--w2b); }
+.modal-accent-w3 .modal-close:hover { border-color:rgba(155,114,207,.4); color:var(--w3b); }
+
+/* sparkle dots in modal bg */
+.modal-sparkle {
+  position:absolute; border-radius:50%; pointer-events:none; opacity:.12;
+  animation:sparkFloat 4s ease-in-out infinite alternate;
+}
+@keyframes sparkFloat{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+</style>
+</head>
+<body>
+
+<div id="c-dot"></div>
+<div id="c-ring"></div>
+
+<canvas id="bg-cv"></canvas>
+<div class="paper-texture"></div>
+<div class="scan"></div>
+<div class="vignette"></div>
+<div class="mk tl"></div><div class="mk tr"></div>
+<div class="mk bl"></div><div class="mk br"></div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <a class="h-back" href="modern.html">← رجوع</a>
+  <div class="h-crumb">
+    <span>الفيزياء الحديثة</span>
+    <span class="h-crumb-sep">/</span>
+    <span class="h-crumb-cur">أسس الكم</span>
+  </div>
+  <div class="h-logo">QF · 1900</div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-prefix">
+        <span class="hero-prefix-line"></span>
+        QUANTUM FOUNDATIONS · أسس نظرية الكم
+      </div>
+      <h1 class="hero-title">
+        أسس نظرية الكم
+        <span class="hero-title-glow">أسس نظرية الكم</span>
+      </h1>
+      <span class="hero-en">QUANTUM FOUNDATIONS</span>
+      <p class="hero-desc">
+        ثلاث موجات من الاكتشافات بين 1900 و1927 هزّت الفيزياء الكلاسيكية من جذورها —
+        وأرست القواعد التي بُنيت عليها كل فيزياء القرن العشرين
+      </p>
+      <div class="hero-timeline-pill">
+        <div class="tp-item" style="color:var(--w1)">
+          <span class="tp-year">1900</span>
+          <span class="tp-who">بلانك</span>
+        </div>
+        <div class="tp-item" style="color:var(--w2)">
+          <span class="tp-year">1913</span>
+          <span class="tp-who">بور</span>
+        </div>
+        <div class="tp-item" style="color:var(--w3)">
+          <span class="tp-year">1927</span>
+          <span class="tp-who">هايزنبرغ</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-eq-box">
+        <span class="hero-eq">E = hf</span>
+        <span class="hero-eq-label">PLANCK · 1900</span>
+        <span class="hero-eq-sub">h = 6.626 × 10⁻³⁴ J·s</span>
+      </div>
+      <div class="hero-eq-box" style="border-color:rgba(126,184,212,.12)">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--w2),transparent)"></div>
+        <span class="hero-eq" style="color:var(--w2b);text-shadow:0 0 30px rgba(126,184,212,.3)">λ = h/mv</span>
+        <span class="hero-eq-label">DE BROGLIE · 1924</span>
+        <span class="hero-eq-sub">ازدواجية الموجة والجسيم</span>
+      </div>
+      <div class="hero-eq-box" style="border-color:rgba(155,114,207,.12)">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--w3),transparent)"></div>
+        <span class="hero-eq" style="color:var(--w3b);text-shadow:0 0 30px rgba(155,114,207,.3);font-size:clamp(1.1rem,2vw,1.7rem)">Δx · Δp ≥ ℏ/2</span>
+        <span class="hero-eq-label">HEISENBERG · 1927</span>
+        <span class="hero-eq-sub">مبدأ عدم اليقين</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ WAVE 1 ════ -->
+  <div class="wave-div wd-w1" style="animation:fadeUp .5s .1s ease both;opacity:0;animation-fill-mode:forwards">
+    <div class="wd-line"></div>
+    <div class="wd-label">الموجة الأولى · أزمة الفيزياء الكلاسيكية</div>
+    <div class="wd-line"></div>
+  </div>
+
+  <div class="wave-card wc-1" style="animation-delay:.12s">
+    <div class="wc-num">01</div>
+    <div class="wc-body">
+      <div class="wc-tag"><span class="wc-tag-dot"></span>WAVE ONE · 1900–1905</div>
+      <div class="wc-title">أزمة الفيزياء الكلاسيكية</div>
+      <div class="wc-years">1900 — 1905 · بلانك · آينشتاين</div>
+      <div class="wc-desc">
+        فشل الفيزياء الكلاسيكية في تفسير ظاهرتين أشعل ثورة الكم — إشعاع الجسم الأسود والتأثير الكهروضوئي
+      </div>
+    </div>
+    <div class="wc-meta">
+      <span class="wc-count">2</span>
+      <span class="wc-count-label">TOPICS</span>
+    </div>
+  </div>
+
+  <div class="topics-grid">
+
+    <!-- QF-01 إشعاع الجسم الأسود -->
+    <div class="topic-card tw-1" onclick="openModal('QF-01','إشعاع الجسم الأسود','BLACKBODY RADIATION','w1')" style="animation-delay:.16s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w1)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">PLANCK · 1900</div>
+      <span class="tc-icon">☀️</span>
+      <div class="tc-code">QF-01</div>
+      <div class="tc-name">إشعاع الجسم الأسود</div>
+      <div class="tc-name-en">BLACKBODY RADIATION</div>
+      <p class="tc-desc">
+        الجسم المُسخَّن يشعّ طاقة — لكن الفيزياء الكلاسيكية تنبأت بكارثة الأشعة فوق البنفسجية. بلانك حل المشكلة بافتراض أن الطاقة تُشعّ بكميات منفصلة
+      </p>
+      <div class="tc-eq">E = hf</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w1);opacity:.5">●</span> 1900</div>
+        <span class="tc-arr" style="color:var(--w1)">← ادرس</span>
+      </div>
+    </div>
+
+    <!-- QF-02 التأثير الكهروضوئي -->
+    <div class="topic-card tw-1" onclick="openModal('QF-02','التأثير الكهروضوئي','PHOTOELECTRIC EFFECT','w1')" style="animation-delay:.2s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w1)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">EINSTEIN · 1905</div>
+      <span class="tc-icon">⚡</span>
+      <div class="tc-code">QF-02</div>
+      <div class="tc-name">التأثير الكهروضوئي</div>
+      <div class="tc-name-en">PHOTOELECTRIC EFFECT</div>
+      <p class="tc-desc">
+        الضوء ينتزع إلكترونات من المعدن — لكن الطاقة تعتمد على التردد لا الشدة. آينشتاين أثبت أن الضوء جسيمات (فوتونات) وليس موجات فقط
+      </p>
+      <div class="tc-eq">KE = hf − φ</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w1);opacity:.5">●</span> 1905</div>
+        <span class="tc-arr" style="color:var(--w1)">← ادرس</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- connector -->
+  <div class="timeline-connector"><div class="tc-vert"></div></div>
+
+  <!-- ════ WAVE 2 ════ -->
+  <div class="wave-div wd-w2" style="animation:fadeUp .5s .22s ease both;opacity:0;animation-fill-mode:forwards">
+    <div class="wd-line"></div>
+    <div class="wd-label">الموجة الثانية · نموذج الذرة</div>
+    <div class="wd-line"></div>
+  </div>
+
+  <div class="wave-card wc-2" style="animation-delay:.24s">
+    <div class="wc-num">02</div>
+    <div class="wc-body">
+      <div class="wc-tag"><span class="wc-tag-dot"></span>WAVE TWO · 1911–1913</div>
+      <div class="wc-title">بناء نموذج الذرة</div>
+      <div class="wc-years">1911 — 1913 · رذرفورد · بور</div>
+      <div class="wc-desc">
+        اكتشاف النواة طرح سؤالاً: لماذا لا تسقط الإلكترونات؟ — بور أجاب بمستويات الطاقة المحددة
+      </div>
+    </div>
+    <div class="wc-meta">
+      <span class="wc-count">2</span>
+      <span class="wc-count-label">TOPICS</span>
+    </div>
+  </div>
+
+  <div class="topics-grid">
+
+    <!-- QF-03 نموذج رذرفورد -->
+    <div class="topic-card tw-2" onclick="openModal('QF-03','نموذج رذرفورد','RUTHERFORD MODEL','w2')" style="animation-delay:.27s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w2)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">RUTHERFORD · 1911</div>
+      <span class="tc-icon">🎯</span>
+      <div class="tc-code">QF-03</div>
+      <div class="tc-name">نموذج رذرفورد</div>
+      <div class="tc-name-en">RUTHERFORD MODEL</div>
+      <p class="tc-desc">
+        تجربة تشتت جسيمات ألفا كشفت أن النواة صغيرة كثيفة موجبة الشحنة، والإلكترونات تدور حولها — لكن النموذج كلاسيكي وغير مستقر
+      </p>
+      <div class="tc-eq">r ≈ 10⁻¹⁵ m</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w2);opacity:.5">●</span> 1911</div>
+        <span class="tc-arr" style="color:var(--w2)">← ادرس</span>
+      </div>
+    </div>
+
+    <!-- QF-04 نموذج بور -->
+    <div class="topic-card tw-2" onclick="openModal('QF-04','نموذج بور للهيدروجين','BOHR MODEL · HYDROGEN','w2')" style="animation-delay:.31s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w2)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">BOHR · 1913</div>
+      <span class="tc-icon">⚛️</span>
+      <div class="tc-code">QF-04</div>
+      <div class="tc-name">نموذج بور للهيدروجين</div>
+      <div class="tc-name-en">BOHR MODEL · HYDROGEN</div>
+      <p class="tc-desc">
+        مستويات الطاقة محددة ومكمَّمة — الإلكترون يقفز بين المستويات مُصدِراً فوتوناً. يفسر طيف الهيدروجين بدقة مذهلة
+      </p>
+      <div class="tc-eq">Eₙ = −13.6/n² eV</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w2);opacity:.5">●</span> 1913</div>
+        <span class="tc-arr" style="color:var(--w2)">← ادرس</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- connector -->
+  <div class="timeline-connector"><div class="tc-vert"></div></div>
+
+  <!-- ════ WAVE 3 ════ -->
+  <div class="wave-div wd-w3" style="animation:fadeUp .5s .36s ease both;opacity:0;animation-fill-mode:forwards">
+    <div class="wd-line"></div>
+    <div class="wd-label">الموجة الثالثة · الطبيعة الموجية للمادة</div>
+    <div class="wd-line"></div>
+  </div>
+
+  <div class="wave-card wc-3" style="animation-delay:.38s">
+    <div class="wc-num">03</div>
+    <div class="wc-body">
+      <div class="wc-tag"><span class="wc-tag-dot"></span>WAVE THREE · 1923–1927</div>
+      <div class="wc-title">الطبيعة الموجية للمادة</div>
+      <div class="wc-years">1923 — 1927 · كومبتون · دي بروي · هايزنبرغ</div>
+      <div class="wc-desc">
+        إذا الضوء يتصرف كجسيم — فلماذا لا تتصرف المادة كموجة؟ الخطوة الأجرأ في تاريخ الفيزياء
+      </div>
+    </div>
+    <div class="wc-meta">
+      <span class="wc-count">3</span>
+      <span class="wc-count-label">TOPICS</span>
+    </div>
+  </div>
+
+  <div class="topics-grid">
+
+    <!-- QF-05 تأثير كومبتون -->
+    <div class="topic-card tw-3" onclick="openModal('QF-05','تأثير كومبتون','COMPTON SCATTERING','w3')" style="animation-delay:.41s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w3)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">COMPTON · 1923</div>
+      <span class="tc-icon">💥</span>
+      <div class="tc-code">QF-05</div>
+      <div class="tc-name">تأثير كومبتون</div>
+      <div class="tc-name-en">COMPTON SCATTERING</div>
+      <p class="tc-desc">
+        تشتت الأشعة السينية على الإلكترونات — أثبت أن الفوتون له زخم حقيقي p = h/λ ويتصادم كجسيم مادي
+      </p>
+      <div class="tc-eq">Δλ = λ꜀(1 − cosθ)</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w3);opacity:.5">●</span> 1923</div>
+        <span class="tc-arr" style="color:var(--w3)">← ادرس</span>
+      </div>
+    </div>
+
+    <!-- QF-06 موجة دي بروي -->
+    <div class="topic-card tw-3" onclick="openModal('QF-06','موجة دي بروي','DE BROGLIE WAVELENGTH','w3')" style="animation-delay:.45s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w3)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">DE BROGLIE · 1924</div>
+      <span class="tc-icon">〰️</span>
+      <div class="tc-code">QF-06</div>
+      <div class="tc-name">موجة دي بروي</div>
+      <div class="tc-name-en">DE BROGLIE WAVELENGTH</div>
+      <p class="tc-desc">
+        كل جسيم مادي له طول موجي مقترن بزخمه — الإلكترون موجة والبروتون موجة وكل شيء له طبيعة مزدوجة
+      </p>
+      <div class="tc-eq">λ = h / mv</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w3);opacity:.5">●</span> 1924</div>
+        <span class="tc-arr" style="color:var(--w3)">← ادرس</span>
+      </div>
+    </div>
+
+    <!-- QF-07 مبدأ عدم اليقين -->
+    <div class="topic-card tw-3" onclick="openModal('QF-07','مبدأ عدم اليقين','UNCERTAINTY PRINCIPLE','w3')" style="animation-delay:.49s;cursor:pointer">
+      <div class="tc-lock"><span class="tc-lock-icon" style="color:var(--w3)">🔒</span><span class="tc-lock-text">LOCKED</span></div>
+      <div class="tc-badge-lock">🔒</div>
+      <div class="tc-bar"></div>
+      <div class="tc-glow"></div>
+      <div class="tc-scientist">HEISENBERG · 1927</div>
+      <span class="tc-icon">🎲</span>
+      <div class="tc-code">QF-07</div>
+      <div class="tc-name">مبدأ عدم اليقين</div>
+      <div class="tc-name-en">UNCERTAINTY PRINCIPLE</div>
+      <p class="tc-desc">
+        لا يمكن معرفة الموضع والزخم بدقة مطلقة في آنٍ واحد — ليس قصوراً في الأدوات بل حقيقة أصيلة في طبيعة الكون
+      </p>
+      <div class="tc-eq">Δx · Δp ≥ ℏ/2</div>
+      <div class="tc-footer">
+        <div class="tc-year"><span style="color:var(--w3);opacity:.5">●</span> 1927</div>
+        <span class="tc-arr" style="color:var(--w3)">← ادرس</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-bar">
+    <div class="sb-cell">
+      <span class="sb-n">3</span>
+      <span class="sb-l">WAVES · موجات</span>
+    </div>
+    <div class="sb-cell">
+      <span class="sb-n">7</span>
+      <span class="sb-l">TOPICS · مواضيع</span>
+    </div>
+    <div class="sb-cell">
+      <span class="sb-n">27</span>
+      <span class="sb-l">YEARS · 1900–1927</span>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- STATUS -->
+<div class="status">
+  <div class="st-item"><div class="st-dot g"></div>الموجة الأولى · أزمة كلاسيكية</div>
+  <div class="st-item">QF · 7 TOPICS · 3 WAVES · 1900–1927</div>
+  <div class="st-item"><div class="st-dot p"></div>الموجة الثالثة · طبيعة الكون</div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div class="modal-sparkle" style="width:80px;height:80px;top:-20px;right:-20px;background:var(--w1);animation-delay:0s"></div>
+    <div class="modal-sparkle" style="width:50px;height:50px;bottom:-10px;left:-10px;background:var(--w3);animation-delay:2s"></div>
+    <span class="modal-lock-big">🔒</span>
+    <div id="modal-code" class="modal-code">QF-00</div>
+    <div id="modal-title" class="modal-title">الدرس</div>
+    <span id="modal-sub" class="modal-sub">COMING SOON</span>
+    <p class="modal-msg">
+      هذا الدرس <strong>قيد الإعداد</strong> حالياً —<br>
+      يتم العمل على المحتوى وسيكون متاحاً قريباً.<br>
+      <br>
+      ترقّب التحديثات القادمة ✦
+    </p>
+    <button class="modal-close" onclick="closeModal()">← إغلاق</button>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+/* ── MODAL ── */
+const modalOverlay = document.getElementById('modal-overlay');
+const modalBox     = document.getElementById('modal-box');
+
+function openModal(code, title, sub, wave) {
+  document.getElementById('modal-code').textContent  = code;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-sub').textContent   = sub;
+  modalBox.className = 'modal-accent-' + wave;
+  modalOverlay.classList.add('open');
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('open');
+}
+
+modalOverlay.addEventListener('click', function(e){
+  if(e.target === modalOverlay) closeModal();
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeModal();
+});
+
+/* ── CURSOR ── */
+const cdot  = document.getElementById('c-dot');
+const cring = document.getElementById('c-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cdot.style.left=mx+'px'; cdot.style.top=my+'px';
+});
+(function loop(){
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  cring.style.left=rx+'px'; cring.style.top=ry+'px';
+  requestAnimationFrame(loop);
+})();
+
+/* ── CANVAS BG ── */
+const cv  = document.getElementById('bg-cv');
+const ctx = cv.getContext('2d');
+let W,H,stars=[],orbs=[];
+
+function resize(){
+  W=cv.width=window.innerWidth;
+  H=cv.height=window.innerHeight;
+  initAll();
+}
+
+function initAll(){
+  /* stars */
+  stars=[];
+  const n=Math.floor(W*H/1600);
+  for(let i=0;i<n;i++){
+    const m=Math.random();
+    stars.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:m<.6?.3:m<.85?.6:m<.95?.9:1.3,
+      a:Math.random(), da:(Math.random()-.5)*.003,
+      hue:30+Math.random()*40, /* warm gold tones */
+    });
+  }
+  /* orbs — warm palette matching gold/blue/purple */
+  orbs=[
+    {x:W*.08, y:H*.3,  r:W*.28, col:'rgba(201,168,76,',  s:.00018, ph:0},
+    {x:W*.9,  y:H*.55, r:W*.26, col:'rgba(126,184,212,', s:.00014, ph:2.4},
+    {x:W*.5,  y:H*.9,  r:W*.22, col:'rgba(155,114,207,', s:.00022, ph:4},
+    {x:W*.72, y:H*.12, r:W*.18, col:'rgba(201,140,60,',  s:.00016, ph:1.2},
+  ];
+}
+
+let pmx=0,pmy=0;
+document.addEventListener('mousemove',e=>{pmx=e.clientX;pmy=e.clientY;});
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#07090f'; ctx.fillRect(0,0,W,H);
+
+  const ox=(pmx/(W||1)-.5)*24;
+  const oy=(pmy/(H||1)-.5)*16;
+
+  /* orbs */
+  for(const o of orbs){
+    o.ph+=o.s;
+    const nx=o.x+Math.sin(o.ph)*60;
+    const ny=o.y+Math.cos(o.ph*.7)*45;
+    const g=ctx.createRadialGradient(nx,ny,0,nx,ny,o.r);
+    g.addColorStop(0, o.col+'0.055)');
+    g.addColorStop(.5,o.col+'0.018)');
+    g.addColorStop(1, o.col+'0)');
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(nx,ny,o.r,0,Math.PI*2); ctx.fill();
+  }
+
+  /* stars — warm twinkle */
+  for(const s of stars){
+    s.a+=s.da; if(s.a>1||s.a<0)s.da*=-1;
+    s.a=Math.max(0,Math.min(1,s.a));
+    const sx=s.x+ox*.12, sy=s.y+oy*.08;
+    ctx.globalAlpha=.2+s.a*.75;
+    ctx.fillStyle=`hsl(${s.hue},45%,88%)`;
+    ctx.beginPath(); ctx.arc(sx,sy,s.r,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize',resize);
+resize(); draw();
+
+/* ── CARD TILT ── */
+document.querySelectorAll('.topic-card,.wave-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const dx=(e.clientX-r.left-r.width/2)/(r.width/2);
+    const dy=(e.clientY-r.top-r.height/2)/(r.height/2);
+    const isWave=card.classList.contains('wave-card');
+    card.style.transform=`perspective(800px) rotateY(${dx*(isWave?3:5)}deg) rotateX(${-dy*(isWave?2:4)}deg) translateY(-5px)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';
+    card.style.transform='';
+  });
+  card.addEventListener('mouseenter',()=>{
+    card.style.transition='transform .1s ease';
+  });
+});
+</script>
+</body>
+</html>

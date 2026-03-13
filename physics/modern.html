@@ -3,275 +3,1238 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الفيزياء الحديثة | البوابة التعليمية</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+<title>الفيزياء الحديثة · Modern Physics</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
+/* ════════════════════════════════════════
+   ROOT & RESET
+════════════════════════════════════════ */
 :root {
-  --bg:    #020817;
-  --c1:    #00d4ff;
-  --c2:    #7c3aed;
-  --c3:    #f59e0b;
-  --c4:    #10b981;
-  --c5:    #ff4757;
-  --text:  #e2e8f0;
-  --muted: #64748b;
-  --card:  rgba(15,23,42,0.9);
-  --border:rgba(124,58,237,0.2);
+  --void:    #03040a;
+  --deep:    #060912;
+  --surface: rgba(8,12,28,0.92);
+  --glass:   rgba(255,255,255,0.032);
+  --rim:     rgba(255,255,255,0.07);
+
+  /* accent palette */
+  --ion:     #4fc3f7;   /* أسس الكم — ice blue */
+  --warp:    #7c4dff;   /* النسبية — violet */
+  --quanta:  #00e5ff;   /* ميكانيكا الكم — cyan */
+  --fission: #69f0ae;   /* النووية — green */
+  --lab:     #ffd740;   /* المختبر — amber */
+
+  --txt:     #dce8f5;
+  --muted:   #3d5068;
+  --faint:   rgba(255,255,255,0.04);
+
+  --font-ar: 'Tajawal', sans-serif;
+  --font-en: 'Space Mono', monospace;
+  --font-hd: 'Bebas Neue', sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
 
-#bg-canvas{position:fixed;inset:0;z-index:0;}
-.grid-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);
-  background-size:50px 50px;}
-.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);}
-.corner{position:fixed;width:36px;height:36px;z-index:10;pointer-events:none;}
-.corner.tl{top:14px;left:14px;border-top:2px solid var(--c2);border-left:2px solid var(--c2);}
-.corner.tr{top:14px;right:14px;border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
-.corner.bl{bottom:14px;left:14px;border-bottom:2px solid var(--c3);border-left:2px solid var(--c3);}
-.corner.br{bottom:14px;right:14px;border-bottom:2px solid var(--c4);border-right:2px solid var(--c4);}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--void);
+  color: var(--txt);
+  font-family: var(--font-ar);
+  overflow-x: hidden;
+  min-height: 100vh;
+  cursor: none;
+}
 
-/* ── HEADER ── */
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:12px 28px;background:rgba(2,8,23,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-.logo{font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:900;color:var(--c2);
-  letter-spacing:3px;text-shadow:0 0 10px rgba(124,58,237,.5);}
-.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;text-decoration:none;
-  cursor:pointer;border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:8px;transition:all .2s;background:none;}
-.back-btn:hover{color:var(--c2);border-color:var(--c2);}
-.header-title{font-size:.85rem;color:var(--text);letter-spacing:1px;}
+/* ════════════════════════════════════════
+   CUSTOM CURSOR
+════════════════════════════════════════ */
+#cur { position:fixed; z-index:9999; pointer-events:none; mix-blend-mode:exclusion; }
+#cur-dot {
+  position:fixed; width:8px; height:8px; border-radius:50%;
+  background:#fff; transform:translate(-50%,-50%);
+  transition: width .15s, height .15s;
+  pointer-events:none; z-index:9999;
+}
+#cur-ring {
+  position:fixed; width:36px; height:36px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.35);
+  transform:translate(-50%,-50%);
+  transition: transform .1s, width .3s, height .3s, border-color .3s;
+  pointer-events:none; z-index:9998;
+}
+body:has(.card:hover) #cur-dot  { width:14px; height:14px; }
+body:has(.card:hover) #cur-ring { width:56px; height:56px; border-color:rgba(255,255,255,0.6); }
 
-/* ── WRAPPER ── */
-.wrapper{position:relative;z-index:5;max-width:960px;margin:0 auto;padding:48px 24px 100px;}
+/* ════════════════════════════════════════
+   BACKGROUND SYSTEM
+════════════════════════════════════════ */
+#cosmos { position:fixed; inset:0; z-index:0; }
 
-/* ── HERO ── */
-.page-hero{text-align:center;margin-bottom:60px;animation:fadeUp .7s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.page-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.06);
-  border:1px solid rgba(124,58,237,.25);border-radius:100px;padding:5px 18px;
-  font-size:.65rem;letter-spacing:3px;color:var(--c2);margin-bottom:22px;}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);
-  box-shadow:0 0 8px var(--c2);animation:pulse 1.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page-hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;
-  background:linear-gradient(135deg,#fff 25%,var(--c2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;}
-.page-hero p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto;line-height:1.9;}
+.grid-field {
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(79,195,247,0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,195,247,0.028) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
+}
 
-/* ── SECTION LABEL ── */
-.section-label{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:3px;
-  color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
-.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+.noise-layer {
+  position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-/* ── CARDS GRID ── */
-.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.scan-lines {
+  position:fixed; inset:0; z-index:3; pointer-events:none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+}
 
-.nav-card{
+/* ════════════════════════════════════════
+   CORNER BRACKETS
+════════════════════════════════════════ */
+.bracket { position:fixed; width:28px; height:28px; z-index:20; pointer-events:none; opacity:0.45; }
+.bracket.tl { top:20px; left:20px;  border-top:1.5px solid var(--ion);    border-left:1.5px solid var(--ion); }
+.bracket.tr { top:20px; right:20px; border-top:1.5px solid var(--warp);   border-right:1.5px solid var(--warp); }
+.bracket.bl { bottom:20px; left:20px;  border-bottom:1.5px solid var(--fission); border-left:1.5px solid var(--fission); }
+.bracket.br { bottom:20px; right:20px; border-bottom:1.5px solid var(--lab);     border-right:1.5px solid var(--lab); }
+
+/* ════════════════════════════════════════
+   HEADER
+════════════════════════════════════════ */
+header {
+  position: sticky; top:0; z-index:100;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 36px;
+  height: 60px;
+  background: rgba(3,4,10,0.88);
+  border-bottom: 1px solid var(--rim);
+  backdrop-filter: blur(28px) saturate(1.4);
+}
+
+.h-logo {
+  font-family: var(--font-en);
+  font-size: .6rem; letter-spacing: 5px;
+  color: var(--ion);
+  text-shadow: 0 0 20px rgba(79,195,247,.5);
+  animation: logoFlicker 8s infinite;
+}
+@keyframes logoFlicker {
+  0%,89%,91%,100%{opacity:1} 90%{opacity:.5}
+}
+
+.h-center {
+  display: flex; align-items:center; gap:10px;
+  font-family: var(--font-en);
+  font-size: .52rem; letter-spacing:3px; color: var(--muted);
+}
+.h-pulse {
+  width:5px; height:5px; border-radius:50%;
+  background: var(--fission);
+  box-shadow: 0 0 8px var(--fission);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.6)} }
+
+.h-back {
+  display:flex; align-items:center; gap:8px;
+  font-family: var(--font-en); font-size:.55rem; letter-spacing:2px;
+  color: var(--muted); text-decoration:none;
+  border:1px solid var(--rim); padding:7px 16px; border-radius:4px;
+  transition: all .25s;
+}
+.h-back:hover { color:var(--ion); border-color:rgba(79,195,247,.35); }
+
+/* ════════════════════════════════════════
+   MAIN WRAPPER
+════════════════════════════════════════ */
+.wrapper {
+  position: relative; z-index:5;
+  max-width: 1080px; margin:0 auto;
+  padding: 70px 28px 120px;
+}
+
+/* ════════════════════════════════════════
+   HERO SECTION
+════════════════════════════════════════ */
+.hero {
+  text-align:center;
+  margin-bottom: 90px;
+  animation: riseIn 1s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes riseIn {
+  from { opacity:0; transform:translateY(40px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hero-tag {
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--font-en); font-size:.52rem; letter-spacing:5px;
+  color: var(--muted); margin-bottom:32px;
+}
+.hero-tag-line { width:40px; height:1px; background:linear-gradient(90deg,transparent,var(--muted)); }
+.hero-tag-line.r { background:linear-gradient(90deg,var(--muted),transparent); }
+
+.hero-year {
+  font-family: var(--font-hd);
+  font-size: clamp(5rem, 14vw, 11rem);
+  line-height: 1;
+  letter-spacing: 6px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.08) 0%,
+    rgba(255,255,255,0.03) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   position:relative;
-  background:var(--card);
-  border:1px solid var(--card-border, rgba(255,255,255,.07));
-  border-radius:20px;
-  padding:32px 28px 28px;
-  text-decoration:none;
-  display:flex;flex-direction:column;gap:0;
-  backdrop-filter:blur(12px);
+  display: block;
+  margin-bottom: -12px;
+  user-select:none;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #fff 0%, rgba(220,232,245,0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.hero-en {
+  font-family: var(--font-en);
+  font-size: clamp(.65rem, 1.5vw, .85rem);
+  letter-spacing: 8px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 28px;
+}
+
+.hero-desc {
+  color: rgba(180,208,230,0.45);
+  font-size: .95rem; line-height: 2;
+  max-width: 480px; margin: 0 auto 36px;
+}
+
+/* stat pills */
+.hero-stats {
+  display: inline-flex; align-items:center; gap:0;
+  border: 1px solid var(--rim); border-radius:6px;
   overflow:hidden;
-  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
-  animation:fadeUp .6s ease both;
-  cursor:pointer;
+  animation: riseIn 1s .3s cubic-bezier(.16,1,.3,1) both;
 }
-.nav-card:nth-child(1){animation-delay:.05s;}
-.nav-card:nth-child(2){animation-delay:.12s;}
-.nav-card:nth-child(3){animation-delay:.19s;}
-.nav-card:nth-child(4){animation-delay:.26s;}
-
-/* glow layer */
-.nav-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 20% 30%, var(--card-glow, rgba(124,58,237,.12)) 0%, transparent 65%);
-  opacity:0;transition:opacity .35s;pointer-events:none;
+.h-stat {
+  padding:12px 28px; text-align:center;
+  border-left:1px solid var(--rim);
+  position:relative;
 }
-.nav-card:hover::before{opacity:1;}
-.nav-card:hover{
-  transform:translateY(-6px);
-  border-color:var(--card-acc, var(--c2));
-  box-shadow:0 16px 48px var(--card-shadow, rgba(124,58,237,.18));
+.h-stat:first-child { border-left:none; }
+.h-stat-n {
+  font-family: var(--font-hd);
+  font-size: 1.6rem; letter-spacing:2px;
+  color: var(--ion); line-height:1;
+  display:block; margin-bottom:4px;
+}
+.h-stat-l {
+  font-family:var(--font-en);
+  font-size:.44rem; letter-spacing:3px; color:var(--muted);
 }
 
-/* top accent bar */
-.card-bar{position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,transparent,var(--card-acc,var(--c2)),transparent);
-  transform:scaleX(0);transition:transform .35s ease;transform-origin:center;}
-.nav-card:hover .card-bar{transform:scaleX(1);}
+/* ════════════════════════════════════════
+   SECTION DIVIDER
+════════════════════════════════════════ */
+.sec-divider {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom: 32px;
+}
+.sec-line { flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--rim), transparent); }
+.sec-label {
+  font-family:var(--font-en);
+  font-size:.5rem; letter-spacing:4px; color:var(--muted);
+  white-space:nowrap;
+}
 
-.card-icon{font-size:2.8rem;margin-bottom:18px;filter:drop-shadow(0 0 12px var(--card-acc,var(--c2)));}
-.card-en{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:3px;
-  color:var(--card-acc,var(--c2));margin-bottom:8px;}
-.card-title{font-size:1.25rem;font-weight:900;color:#f1f5f9;margin-bottom:10px;line-height:1.3;}
-.card-desc{font-size:.82rem;color:var(--muted);line-height:1.8;flex:1;}
+/* ════════════════════════════════════════
+   ACADEMIC SECTION — 2×2 GRID
+════════════════════════════════════════ */
+.academic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
 
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:24px;
-  padding-top:16px;border-top:1px solid rgba(255,255,255,.05);}
-.card-topics{display:flex;flex-wrap:wrap;gap:6px;}
-.topic-chip{font-size:.6rem;padding:3px 9px;border-radius:100px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);}
-.card-arrow{font-family:'Share Tech Mono',monospace;font-size:.75rem;
-  color:var(--card-acc,var(--c2));opacity:0;transform:translateX(6px);
-  transition:opacity .25s,transform .25s;}
-.nav-card:hover .card-arrow{opacity:1;transform:translateX(0);}
+/* ════════════════════════════════════════
+   CARD BASE
+════════════════════════════════════════ */
+.card {
+  position:relative;
+  border-radius: 3px;
+  overflow:hidden;
+  text-decoration:none;
+  display:flex; flex-direction:column;
+  cursor:none;
+  transition: transform .35s cubic-bezier(.16,1,.3,1);
+  animation: riseIn .7s ease both;
+  isolation: isolate;
+}
+.card:hover { transform: translateY(-6px); }
 
-/* ── per-card colours ── */
-.card-relativity{--card-acc:var(--c2);--card-glow:rgba(124,58,237,.14);--card-shadow:rgba(124,58,237,.2);--card-border:rgba(124,58,237,.15);}
-.card-quantum   {--card-acc:var(--c1);--card-glow:rgba(0,212,255,.12);  --card-shadow:rgba(0,212,255,.18);  --card-border:rgba(0,212,255,.15);}
-.card-nuclear   {--card-acc:var(--c4);--card-glow:rgba(16,185,129,.12); --card-shadow:rgba(16,185,129,.18); --card-border:rgba(16,185,129,.15);}
-.card-photon    {--card-acc:var(--c3);--card-glow:rgba(245,158,11,.12); --card-shadow:rgba(245,158,11,.18); --card-border:rgba(245,158,11,.15);}
+/* glass body */
+.card-body {
+  position:relative; z-index:2;
+  background: var(--surface);
+  border: 1px solid var(--rim);
+  border-radius: 3px;
+  padding: 36px 30px 28px;
+  height:100%;
+  display:flex; flex-direction:column;
+  transition: border-color .35s, background .35s;
+  backdrop-filter: blur(16px);
+}
+.card:hover .card-body {
+  background: rgba(10,15,35,0.96);
+}
 
-/* ── RESPONSIVE ── */
-@media(max-width:640px){
-  .cards-grid{grid-template-columns:1fr;}
-  header{padding:10px 14px;}
-  .wrapper{padding:28px 14px 80px;}
-  .nav-card{padding:24px 20px 20px;}
+/* top accent stripe */
+.card-stripe {
+  position:absolute; top:0; left:0; right:0; height:2px; z-index:10;
+  transform:scaleX(0); transform-origin:right;
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
+}
+.card:hover .card-stripe { transform:scaleX(1); transform-origin:left; }
+
+/* ambient glow */
+.card-glow {
+  position:absolute; inset:0; z-index:0; opacity:0;
+  transition:opacity .4s;
+  border-radius:3px;
+  pointer-events:none;
+}
+.card:hover .card-glow { opacity:1; }
+
+/* card number */
+.card-num {
+  font-family: var(--font-hd);
+  font-size: 4.5rem; line-height:1;
+  position:absolute; top:20px; left:24px;
+  opacity:.04; letter-spacing:2px;
+  transition: opacity .35s;
+  pointer-events:none;
+  direction:ltr;
+}
+.card:hover .card-num { opacity:.07; }
+
+/* card tag */
+.card-tag {
+  font-family:var(--font-en);
+  font-size:.5rem; font-weight:700; letter-spacing:4px;
+  padding:4px 12px; border-radius:2px;
+  display:inline-flex; align-items:center; gap:7px;
+  margin-bottom:20px; align-self:flex-start;
+  border:1px solid transparent;
+}
+.tag-dot { width:4px; height:4px; border-radius:50%; }
+
+/* card icon */
+.card-icon {
+  font-size: 2.4rem;
+  margin-bottom:18px;
+  display:block;
+  transition: transform .35s cubic-bezier(.16,1,.3,1);
+  filter: drop-shadow(0 0 0px transparent);
+}
+.card:hover .card-icon { transform: scale(1.12); }
+
+/* card text */
+.card-name-en {
+  font-family:var(--font-en);
+  font-size:.5rem; letter-spacing:4px;
+  margin-bottom:8px;
+  opacity:.5;
+}
+.card-name {
+  font-size:1.35rem; font-weight:900;
+  color:#f0f6ff; line-height:1.2;
+  margin-bottom:12px;
+}
+.card-desc {
+  font-size:.82rem; color:rgba(180,208,230,0.42);
+  line-height:1.85; flex:1;
+}
+
+/* card footer */
+.card-footer {
+  margin-top:24px; padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip {
+  font-family:var(--font-en);
+  font-size:.5rem; letter-spacing:.5px;
+  padding:3px 9px; border-radius:2px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  color:rgba(180,208,230,.35);
+  transition: all .2s;
+}
+.card:hover .chip { border-color:rgba(255,255,255,.12); color:rgba(180,208,230,.6); }
+
+.card-arrow {
+  font-family:var(--font-en);
+  font-size:.65rem; letter-spacing:1px;
+  opacity:0; transform:translateX(8px);
+  transition:opacity .25s, transform .25s;
+}
+.card:hover .card-arrow { opacity:1; transform:translateX(0); }
+
+/* ════════════════════════════════════════
+   CARD COLOR THEMES
+════════════════════════════════════════ */
+
+/* أسس الكم — ice blue */
+.card-ion .card-stripe  { background:linear-gradient(90deg,transparent,var(--ion),transparent); }
+.card-ion .card-glow    { background:radial-gradient(ellipse at 20% 40%, rgba(79,195,247,.09) 0%, transparent 65%); }
+.card-ion .card-tag     { background:rgba(79,195,247,.06); border-color:rgba(79,195,247,.18); color:var(--ion); }
+.card-ion .tag-dot      { background:var(--ion); box-shadow:0 0 6px var(--ion); }
+.card-ion .card-name-en { color:var(--ion); }
+.card-ion .card-arrow   { color:var(--ion); }
+.card-ion:hover .card-body { border-color:rgba(79,195,247,.28); }
+.card-ion:hover .card-icon { filter:drop-shadow(0 0 14px rgba(79,195,247,.6)); }
+
+/* النسبية — violet */
+.card-warp .card-stripe  { background:linear-gradient(90deg,transparent,var(--warp),transparent); }
+.card-warp .card-glow    { background:radial-gradient(ellipse at 20% 40%, rgba(124,77,255,.1) 0%, transparent 65%); }
+.card-warp .card-tag     { background:rgba(124,77,255,.06); border-color:rgba(124,77,255,.18); color:var(--warp); }
+.card-warp .tag-dot      { background:var(--warp); box-shadow:0 0 6px var(--warp); }
+.card-warp .card-name-en { color:var(--warp); }
+.card-warp .card-arrow   { color:var(--warp); }
+.card-warp:hover .card-body { border-color:rgba(124,77,255,.28); }
+.card-warp:hover .card-icon { filter:drop-shadow(0 0 14px rgba(124,77,255,.6)); }
+
+/* ميكانيكا الكم — cyan */
+.card-quanta .card-stripe  { background:linear-gradient(90deg,transparent,var(--quanta),transparent); }
+.card-quanta .card-glow    { background:radial-gradient(ellipse at 20% 40%, rgba(0,229,255,.08) 0%, transparent 65%); }
+.card-quanta .card-tag     { background:rgba(0,229,255,.06); border-color:rgba(0,229,255,.18); color:var(--quanta); }
+.card-quanta .tag-dot      { background:var(--quanta); box-shadow:0 0 6px var(--quanta); }
+.card-quanta .card-name-en { color:var(--quanta); }
+.card-quanta .card-arrow   { color:var(--quanta); }
+.card-quanta:hover .card-body { border-color:rgba(0,229,255,.28); }
+.card-quanta:hover .card-icon { filter:drop-shadow(0 0 14px rgba(0,229,255,.6)); }
+
+/* النووية — green */
+.card-fission .card-stripe  { background:linear-gradient(90deg,transparent,var(--fission),transparent); }
+.card-fission .card-glow    { background:radial-gradient(ellipse at 20% 40%, rgba(105,240,174,.08) 0%, transparent 65%); }
+.card-fission .card-tag     { background:rgba(105,240,174,.06); border-color:rgba(105,240,174,.18); color:var(--fission); }
+.card-fission .tag-dot      { background:var(--fission); box-shadow:0 0 6px var(--fission); }
+.card-fission .card-name-en { color:var(--fission); }
+.card-fission .card-arrow   { color:var(--fission); }
+.card-fission:hover .card-body { border-color:rgba(105,240,174,.28); }
+.card-fission:hover .card-icon { filter:drop-shadow(0 0 14px rgba(105,240,174,.6)); }
+
+/* ════════════════════════════════════════
+   LAB CARD — FULL WIDTH SPECIAL
+════════════════════════════════════════ */
+.lab-card {
+  position:relative;
+  border-radius:3px;
+  overflow:hidden;
+  text-decoration:none;
+  display:block;
+  cursor:none;
+  margin-top: 0;
+  animation: riseIn .7s .35s ease both;
+  transition: transform .35s cubic-bezier(.16,1,.3,1);
+}
+.lab-card:hover { transform: translateY(-4px); }
+
+.lab-body {
+  position:relative; z-index:2;
+  background: rgba(6,9,18,0.94);
+  border: 1px solid rgba(255,215,64,.1);
+  border-radius:3px;
+  padding: 32px 36px;
+  display:grid; grid-template-columns:1fr auto;
+  align-items:center; gap:32px;
+  transition: border-color .35s;
+  backdrop-filter:blur(16px);
+  overflow:hidden;
+}
+.lab-card:hover .lab-body { border-color:rgba(255,215,64,.3); }
+
+/* lab stripe top */
+.lab-stripe {
+  position:absolute; top:0; left:0; right:0; height:2px; z-index:10;
+  background:linear-gradient(90deg,transparent,var(--lab),rgba(255,215,64,.4),transparent);
+  transform:scaleX(0); transform-origin:right;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.lab-card:hover .lab-stripe { transform:scaleX(1); transform-origin:left; }
+
+/* lab bg glow */
+.lab-bg-glow {
+  position:absolute; inset:0; z-index:0; opacity:0;
+  background: radial-gradient(ellipse at 15% 50%, rgba(255,215,64,.07) 0%, transparent 60%);
+  transition: opacity .4s;
+  pointer-events:none;
+}
+.lab-card:hover .lab-bg-glow { opacity:1; }
+
+/* honeycomb pattern */
+.lab-hex-bg {
+  position:absolute; inset:0; z-index:1; opacity:.025; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 0 L56 16 L56 50 L28 66 L0 50 L0 16Z' fill='none' stroke='%23ffd740' stroke-width='0.5'/%3E%3Cpath d='M28 66 L56 82 L56 100' fill='none' stroke='%23ffd740' stroke-width='0.5'/%3E%3Cpath d='M28 66 L0 82 L0 100' fill='none' stroke='%23ffd740' stroke-width='0.5'/%3E%3C/svg%3E");
+}
+.lab-card:hover .lab-hex-bg { opacity:.05; transition:opacity .4s; }
+
+.lab-left { position:relative; z-index:3; }
+.lab-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-en); font-size:.5rem; letter-spacing:4px;
+  color:rgba(255,215,64,.5); margin-bottom:14px;
+}
+.lab-eyebrow-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:var(--lab); box-shadow:0 0 8px var(--lab);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+
+.lab-title {
+  font-size:1.55rem; font-weight:900;
+  color:#fff8e1; line-height:1.2; margin-bottom:10px;
+}
+.lab-title-en {
+  font-family:var(--font-en); font-size:.52rem; letter-spacing:4px;
+  color:rgba(255,215,64,.35); display:block; margin-bottom:14px;
+}
+.lab-desc {
+  font-size:.82rem; color:rgba(200,180,120,.4);
+  line-height:1.85; max-width:480px;
+}
+
+/* tools pills */
+.lab-tools {
+  display:flex; flex-wrap:wrap; gap:7px; margin-top:20px;
+}
+.lab-tool {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--font-en); font-size:.5rem; letter-spacing:1px;
+  padding:5px 12px; border-radius:2px;
+  background:rgba(255,215,64,.04);
+  border:1px solid rgba(255,215,64,.12);
+  color:rgba(255,215,64,.5);
+  transition:all .2s;
+}
+.lab-card:hover .lab-tool {
+  border-color:rgba(255,215,64,.22);
+  color:rgba(255,215,64,.75);
+}
+.lab-tool-dot { width:3px; height:3px; border-radius:50%; background:var(--lab); opacity:.6; }
+
+.lab-right {
+  position:relative; z-index:3;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  flex-shrink:0;
+}
+
+/* big lab icon */
+.lab-icon-wrap {
+  position:relative; width:100px; height:100px;
+}
+.lab-icon-ring {
+  position:absolute; inset:-14px; border-radius:50%;
+  border:1px solid rgba(255,215,64,.12);
+  animation:labRing 8s linear infinite;
+}
+.lab-icon-ring::before {
+  content:''; position:absolute;
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(255,215,64,.7);
+  box-shadow:0 0 10px var(--lab);
+  top:-3.5px; left:50%; transform:translateX(-50%);
+}
+@keyframes labRing { to { transform:rotate(360deg); } }
+
+.lab-icon-ring2 {
+  position:absolute; inset:-28px; border-radius:50%;
+  border:1px solid rgba(255,215,64,.06);
+  animation:labRing 14s linear infinite reverse;
+}
+.lab-icon {
+  width:100px; height:100px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,
+    rgba(255,230,100,.18) 0%,
+    rgba(255,170,0,.08) 40%,
+    rgba(255,100,0,.04) 80%,
+    transparent 100%);
+  border:1px solid rgba(255,215,64,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.6rem;
+  box-shadow: 0 0 30px rgba(255,215,64,.08);
+  transition:box-shadow .35s, transform .35s;
+}
+.lab-card:hover .lab-icon {
+  box-shadow: 0 0 50px rgba(255,215,64,.18);
+  transform: scale(1.06);
+}
+
+.lab-cta {
+  font-family:var(--font-en); font-size:.55rem; letter-spacing:3px;
+  color:rgba(255,215,64,.45); display:flex; align-items:center; gap:6px;
+  opacity:0; transform:translateY(4px);
+  transition:opacity .3s, transform .3s;
+}
+.lab-card:hover .lab-cta { opacity:1; transform:translateY(0); }
+
+/* ════════════════════════════════════════
+   STATUS BAR BOTTOM
+════════════════════════════════════════ */
+.status-bar {
+  position:fixed; bottom:0; left:0; right:0; z-index:50;
+  height:32px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px;
+  background:rgba(3,4,10,0.92);
+  border-top:1px solid var(--rim);
+  backdrop-filter:blur(20px);
+  pointer-events:none;
+}
+.sb-item {
+  font-family:var(--font-en); font-size:.46rem; letter-spacing:3px; color:var(--muted);
+  display:flex; align-items:center; gap:8px;
+}
+.sb-dot { width:3px; height:3px; border-radius:50%; }
+.sb-dot.live { background:var(--fission); box-shadow:0 0 5px var(--fission); animation:pulse 1.5s infinite; }
+.sb-dot.warn { background:var(--lab); animation:pulse 2s .5s infinite; }
+
+/* ════════════════════════════════════════
+   LAB LOCK OVERLAY
+════════════════════════════════════════ */
+.lab-lock-overlay {
+  position:absolute; inset:0; z-index:20;
+  border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  gap:14px;
+  background:rgba(3,4,10,0.48);
+  backdrop-filter:blur(2px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+.lab-card:hover .lab-lock-overlay { opacity:1; }
+.lab-lock-icon {
+  font-size:1.6rem;
+  animation:labLockPulse 2s ease-in-out infinite;
+}
+@keyframes labLockPulse {
+  0%,100%{filter:drop-shadow(0 0 8px rgba(255,215,64,.5))}
+  50%{filter:drop-shadow(0 0 22px rgba(255,215,64,1))}
+}
+.lab-lock-text {
+  font-family:var(--font-en);
+  font-size:.62rem; letter-spacing:5px;
+  color:rgba(255,215,64,.75);
+}
+
+/* badge ثابت في الزاوية */
+.lab-badge-lock {
+  position:absolute; top:16px; left:20px; z-index:25;
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-en); font-size:.46rem; letter-spacing:3px;
+  color:rgba(255,215,64,.45);
+  background:rgba(6,9,18,0.88);
+  border:1px solid rgba(255,215,64,.16);
+  padding:5px 13px; border-radius:2px;
+  transition:all .3s;
+}
+.lab-card:hover .lab-badge-lock {
+  color:rgba(255,215,64,.9);
+  border-color:rgba(255,215,64,.42);
+  box-shadow:0 0 14px rgba(255,215,64,.1);
+}
+.lab-badge-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:rgba(255,215,64,.55);
+  box-shadow:0 0 5px rgba(255,215,64,.5);
+}
+
+/* ════════════════════════════════════════
+   MODAL — LAB LOCKED
+════════════════════════════════════════ */
+#lab-modal {
+  position:fixed; inset:0; z-index:2000;
+  background:rgba(2,3,9,0.86);
+  backdrop-filter:blur(18px) saturate(1.3);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s ease;
+}
+#lab-modal.open { opacity:1; pointer-events:all; }
+
+#lab-modal-box {
+  position:relative;
+  background:rgba(6,9,18,0.97);
+  border:1px solid rgba(255,215,64,.14);
+  border-radius:4px;
+  padding:48px 52px 44px;
+  max-width:420px; width:92%;
+  text-align:center;
+  overflow:hidden;
+  transform:translateY(30px) scale(.96);
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+#lab-modal.open #lab-modal-box { transform:translateY(0) scale(1); }
+
+#lab-modal-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--lab),rgba(255,215,64,.3),transparent);
+}
+#lab-modal-box::after {
+  content:''; position:absolute; top:-80px; right:-80px;
+  width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,64,.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.modal-lock-emoji {
+  font-size:3.2rem; display:block; margin-bottom:20px;
+  animation:lockPopIn .5s cubic-bezier(.16,1,.3,1) both;
+  filter:drop-shadow(0 0 18px rgba(255,215,64,.55));
+}
+@keyframes lockPopIn {
+  from{transform:scale(.3) rotate(-15deg);opacity:0}
+  to{transform:scale(1) rotate(0);opacity:1}
+}
+
+.modal-eyebrow {
+  font-family:var(--font-en); font-size:.48rem; letter-spacing:5px;
+  color:rgba(255,215,64,.45); margin-bottom:12px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.modal-ey-line { width:28px; height:1px; }
+.modal-ey-line.l { background:linear-gradient(90deg,transparent,rgba(255,215,64,.35)); }
+.modal-ey-line.r { background:linear-gradient(90deg,rgba(255,215,64,.35),transparent); }
+
+.modal-ttl {
+  font-size:1.25rem; font-weight:900;
+  color:#fff8e1; line-height:1.3; margin-bottom:6px;
+}
+.modal-ttl-en {
+  font-family:var(--font-en); font-size:.48rem; letter-spacing:4px;
+  color:rgba(255,215,64,.28); display:block; margin-bottom:24px;
+}
+
+.modal-body-txt {
+  font-size:.85rem; line-height:2;
+  color:rgba(200,180,120,.48);
+  margin-bottom:32px;
+}
+.modal-body-txt strong { color:rgba(255,215,64,.78); font-weight:700; }
+
+.modal-divider {
+  display:flex; justify-content:center; align-items:center; gap:6px;
+  margin-bottom:28px;
+}
+.modal-diamond {
+  width:7px; height:7px; border-radius:1px;
+  border:1px solid rgba(255,215,64,.2);
+  transform:rotate(45deg);
+}
+.modal-diamond.active {
+  background:rgba(255,215,64,.15);
+  border-color:rgba(255,215,64,.4);
+}
+
+.modal-close-btn {
+  font-family:var(--font-en); font-size:.52rem; letter-spacing:4px;
+  padding:12px 38px; border-radius:2px;
+  background:rgba(255,215,64,.04);
+  border:1px solid rgba(255,215,64,.2);
+  color:rgba(255,215,64,.5);
+  cursor:pointer; transition:all .25s; display:inline-block;
+}
+.modal-close-btn:hover {
+  background:rgba(255,215,64,.09);
+  border-color:rgba(255,215,64,.5);
+  color:rgba(255,215,64,.95);
+  box-shadow:0 0 22px rgba(255,215,64,.1);
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media(max-width:700px) {
+  .academic-grid { grid-template-columns:1fr; }
+  .lab-body { grid-template-columns:1fr; }
+  .lab-right { flex-direction:row; align-items:center; }
+  header { padding:0 16px; }
+  .wrapper { padding:40px 16px 80px; }
+  .card-body { padding:26px 20px 20px; }
+  .hero { margin-bottom:60px; }
+  .hero-stats { flex-wrap:wrap; }
+}
+@media(max-width:420px) {
+  .lab-right { display:none; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="grid-overlay"></div>
-<div class="scanlines"></div>
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
+<!-- cursors -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
 
+<!-- background layers -->
+<canvas id="cosmos"></canvas>
+<div class="grid-field"></div>
+<div class="noise-layer"></div>
+<div class="scan-lines"></div>
+
+<!-- corner brackets -->
+<div class="bracket tl"></div>
+<div class="bracket tr"></div>
+<div class="bracket bl"></div>
+<div class="bracket br"></div>
+
+<!-- ═══════════ HEADER ═══════════ -->
 <header>
-  <a class="back-btn" href="physics.html">← رجوع</a>
-  <div class="header-title">الفيزياء الحديثة</div>
-  <div class="logo">MODERN·PHYS</div>
+  <a class="h-back" href="physics.html">← BACK</a>
+  <div class="h-center">
+    <div class="h-pulse"></div>
+    MODERN PHYSICS · الفيزياء الحديثة
+    <div class="h-pulse" style="background:var(--warp);box-shadow:0 0 8px var(--warp);animation-delay:.9s"></div>
+  </div>
+  <div class="h-logo">PHYS · MOD</div>
 </header>
 
+<!-- ═══════════ MAIN ═══════════ -->
 <div class="wrapper">
 
-  <section class="page-hero">
-    <div class="page-badge"><div class="badge-dot"></div>الفيزياء الحديثة · MODERN PHYSICS</div>
-    <h1>⚛️ الفيزياء الحديثة</h1>
-    <p>اختر الموضوع الذي تريد حلّه — كل قسم يحتوي على قوانين كاملة وخطوات مفصّلة</p>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">
+      <span class="hero-tag-line"></span>
+      MODERN PHYSICS · 1900 — PRESENT
+      <span class="hero-tag-line r"></span>
+    </div>
+    <span class="hero-year" aria-hidden="true">1900</span>
+    <h1 class="hero-title">الفيزياء الحديثة</h1>
+    <span class="hero-en">MODERN PHYSICS</span>
+    <p class="hero-desc">
+      من ثورة الكم عام 1900 إلى حدود البحث اليوم —
+      اختر موضوعك الأكاديمي أو انطلق مباشرةً إلى مختبر الحلول
+    </p>
+    <div class="hero-stats">
+      <div class="h-stat">
+        <span class="h-stat-n">4</span>
+        <span class="h-stat-l">SUBJECTS</span>
+      </div>
+      <div class="h-stat">
+        <span class="h-stat-n">125</span>
+        <span class="h-stat-l">YEARS</span>
+      </div>
+      <div class="h-stat">
+        <span class="h-stat-n">∞</span>
+        <span class="h-stat-l">TOOLS</span>
+      </div>
+    </div>
   </section>
 
-  <div class="section-label">// اختر الموضوع</div>
+  <!-- ─── ACADEMIC SECTION ─── -->
+  <div class="sec-divider">
+    <div class="sec-line"></div>
+    <div class="sec-label">01 · المواضيع الأكاديمية</div>
+    <div class="sec-line"></div>
+  </div>
 
-  <div class="cards-grid">
+  <div class="academic-grid">
 
-    <!-- النسبية الخاصة -->
-    <a class="nav-card card-relativity" href="modern/relativity.html">
-      <div class="card-bar"></div>
-      <div class="card-icon">🌌</div>
-      <div class="card-en">SPECIAL RELATIVITY</div>
-      <div class="card-title">النسبية لأينشتاين</div>
-      <div class="card-desc"> أن الزمان والمكان ليسا ثابتين، بل يتمددان وينكمشان حسب سرعة الجسم وعلاقة كتلته بتشويه نسيج الكون.</div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">تمدد الزمن</span>
-          <span class="topic-chip">انكماش الطول</span>
-          <span class="topic-chip">E=mc²</span>
+    <!-- بطاقة 1: أسس الكم -->
+    <a class="card card-ion" href="modern/quantum_foundations.html" style="animation-delay:.05s">
+      <div class="card-glow"></div>
+      <div class="card-stripe"></div>
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="tag-dot"></span>
+          QUANTUM FOUNDATIONS
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <span class="card-icon">⚛️</span>
+        <div class="card-name-en">QF · 1900–1930</div>
+        <div class="card-name">أسس نظرية الكم</div>
+        <p class="card-desc">
+          بلانك وإشعاع الجسم الأسود، آينشتاين والتأثير الكهروضوئي، بور ونموذج الهيدروجين، دي بروي وازدواجية الموجة والجسيم، هايزنبرغ ومبدأ عدم اليقين
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">E = hf</span>
+            <span class="chip">λ = h/mv</span>
+            <span class="chip">Δx·Δp ≥ ℏ/2</span>
+          </div>
+          <span class="card-arrow" style="color:var(--ion)">← ابدأ</span>
+        </div>
       </div>
     </a>
 
-    <!-- ميكانيكا الكم -->
-    <a class="nav-card card-quantum" href="modern/quantum.html">
-      <div class="card-bar"></div>
-      <div class="card-icon">🔬</div>
-      <div class="card-en">QUANTUM MECHANICS</div>
-      <div class="card-title">ميكانيكا الكم</div>
-      <div class="card-desc">موجة دي بروي للجسيمات، مبدأ عدم اليقين لهايزنبرغ، ومستويات طاقة بور</div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">دي بروي</span>
-          <span class="topic-chip">هايزنبرغ</span>
-          <span class="topic-chip">نموذج بور</span>
+    <!-- بطاقة 2: النسبية -->
+    <a class="card card-warp" href="modern/relativity.html" style="animation-delay:.1s">
+      <div class="card-glow"></div>
+      <div class="card-stripe"></div>
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="tag-dot"></span>
+          THEORY OF RELATIVITY
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <span class="card-icon">🌌</span>
+        <div class="card-name-en">TR · 1905 & 1915</div>
+        <div class="card-name">نظرية النسبية</div>
+        <p class="card-desc">
+          النسبية الخاصة: تمدد الزمن وانكماش الطول وE=mc²
+          — النسبية العامة: انحناء الزمكان والجاذبية والثقوب السوداء
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">E = mc²</span>
+            <span class="chip">γ لورنتز</span>
+            <span class="chip">Gμν = 8πTμν</span>
+          </div>
+          <span class="card-arrow" style="color:var(--warp)">← ابدأ</span>
+        </div>
       </div>
     </a>
 
-    <!-- الفيزياء النووية -->
-    <a class="nav-card card-nuclear" href="modern/nuclear.html">
-      <div class="card-bar"></div>
-      <div class="card-icon">☢️</div>
-      <div class="card-en">NUCLEAR PHYSICS</div>
-      <div class="card-title">الفيزياء النووية</div>
-      <div class="card-desc">الانحلال الإشعاعي، النشاط الإشعاعي بالبيكريل، وحساب عمر النصف t½</div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">قانون الانحلال</span>
-          <span class="topic-chip">عمر النصف</span>
+    <!-- بطاقة 3: ميكانيكا الكم -->
+    <a class="card card-quanta" href="modern/quantum.html" style="animation-delay:.15s">
+      <div class="card-glow"></div>
+      <div class="card-stripe"></div>
+      <div class="card-num">03</div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="tag-dot"></span>
+          QUANTUM MECHANICS
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <span class="card-icon">🔬</span>
+        <div class="card-name-en">QM · 1925–PRESENT</div>
+        <div class="card-name">ميكانيكا الكم</div>
+        <p class="card-desc">
+          معادلة شرودنغر ودالة الموجة، الصياغة المصفوفية، النفق الكمي والتشابك، نظرية الحقل الكمي والنموذج المعياري
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">iℏ∂ψ/∂t = Ĥψ</span>
+            <span class="chip">|ψ|²</span>
+            <span class="chip">QFT</span>
+          </div>
+          <span class="card-arrow" style="color:var(--quanta)">← ابدأ</span>
+        </div>
       </div>
     </a>
 
-    <!-- الفوتونات وكومبتون -->
-    <a class="nav-card card-photon" href="modern/photon.html">
-      <div class="card-bar"></div>
-      <div class="card-icon">💡</div>
-      <div class="card-en">PHOTONS & COMPTON</div>
-      <div class="card-title">الفوتونات وكومبتون</div>
-      <div class="card-desc">طاقة الفوتون E=hf، التأثير الكهروضوئي لآينشتاين، وتأثير كومبتون للتشتت</div>
-      <div class="card-footer">
-        <div class="card-topics">
-          <span class="topic-chip">E=hf</span>
-          <span class="topic-chip">كهروضوئي</span>
-          <span class="topic-chip">كومبتون</span>
+    <!-- بطاقة 4: الفيزياء النووية -->
+    <a class="card card-fission" href="modern/nuclear.html" style="animation-delay:.2s">
+      <div class="card-glow"></div>
+      <div class="card-stripe"></div>
+      <div class="card-num">04</div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="tag-dot"></span>
+          NUCLEAR PHYSICS
         </div>
-        <span class="card-arrow">← ابدأ</span>
+        <span class="card-icon">☢️</span>
+        <div class="card-name-en">NP · FISSION & FUSION</div>
+        <div class="card-name">الفيزياء النووية</div>
+        <p class="card-desc">
+          بنية النواة وطاقة الربط، الانحلال الإشعاعي α β γ، قانون الانحلال وعمر النصف، التفاعلات النووية والانشطار والاندماج
+        </p>
+        <div class="card-footer">
+          <div class="card-chips">
+            <span class="chip">N(t) = N₀e^−λt</span>
+            <span class="chip">t½</span>
+            <span class="chip">Q-value</span>
+          </div>
+          <span class="card-arrow" style="color:var(--fission)">← ابدأ</span>
+        </div>
       </div>
     </a>
 
   </div>
+
+  <!-- ─── LAB SECTION ─── -->
+  <div class="sec-divider" style="margin-top:48px">
+    <div class="sec-line"></div>
+    <div class="sec-label">02 · مختبر الفيزياء</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- LAB CARD -->
+  <div class="lab-card" onclick="openLabModal()" style="cursor:pointer">
+    <div class="lab-badge-lock"><div class="lab-badge-dot"></div>LOCKED</div>
+    <div class="lab-lock-overlay">
+      <span class="lab-lock-icon">🔒</span>
+      <span class="lab-lock-text">LOCKED</span>
+    </div>
+    <div class="lab-stripe"></div>
+    <div class="lab-bg-glow"></div>
+    <div class="lab-body">
+      <div class="lab-hex-bg"></div>
+
+      <div class="lab-left">
+        <div class="lab-eyebrow">
+          <span class="lab-eyebrow-dot"></span>
+          PHYSICS LABORATORY · مختبر الفيزياء
+        </div>
+        <div class="lab-title">مختبر الفيزياء</div>
+        <span class="lab-title-en">PHYSICS LAB · CALCULATORS & SOLVERS</span>
+        <p class="lab-desc">
+          أدوات الحل التفاعلية للطالب — أدخل المعطيات واحصل على الحل الكامل خطوةً بخطوة مع القوانين المستخدمة. مكمّل للدراسة النظرية وليس بديلاً عنها.
+        </p>
+        <div class="lab-tools">
+          <div class="lab-tool"><span class="lab-tool-dot"></span>الفوتونات وكومبتون</div>
+          <div class="lab-tool"><span class="lab-tool-dot"></span>النسبية الخاصة</div>
+          <div class="lab-tool"><span class="lab-tool-dot"></span>الانحلال النووي</div>
+          <div class="lab-tool"><span class="lab-tool-dot"></span>نموذج بور</div>
+          <div class="lab-tool" style="border-style:dashed;opacity:.45"><span class="lab-tool-dot"></span>قريباً...</div>
+        </div>
+      </div>
+
+      <div class="lab-right">
+        <div class="lab-icon-wrap">
+          <div class="lab-icon-ring"></div>
+          <div class="lab-icon-ring2"></div>
+          <div class="lab-icon">🧪</div>
+        </div>
+        <div class="lab-cta">ENTER LAB →</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- ═══════════ LAB MODAL ═══════════ -->
+<div id="lab-modal">
+  <div id="lab-modal-box">
+    <span class="modal-lock-emoji">🔒</span>
+    <div class="modal-eyebrow">
+      <span class="modal-ey-line l"></span>
+      PHYSICS LABORATORY
+      <span class="modal-ey-line r"></span>
+    </div>
+    <div class="modal-ttl">مختبر الفيزياء</div>
+    <span class="modal-ttl-en">PHYSICS LAB · LOCKED</span>
+    <p class="modal-body-txt">
+      هذا المختبر <strong>قيد الإعداد</strong> حالياً —<br>
+      يتم تطوير الأدوات التفاعلية وستكون<br>
+      متاحة قريباً. ترقّب التحديثات ✦
+    </p>
+    <div class="modal-divider">
+      <div class="modal-diamond"></div>
+      <div class="modal-diamond active"></div>
+      <div class="modal-diamond"></div>
+    </div>
+    <button class="modal-close-btn" onclick="closeLabModal()">← إغلاق</button>
+  </div>
 </div>
 
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="sb-item"><div class="sb-dot live"></div>SYSTEM · ONLINE</div>
+  <div class="sb-item">MODERN PHYSICS · 4 SUBJECTS · 1 LAB</div>
+  <div class="sb-item"><div class="sb-dot warn"></div>QUANTUM · INITIALIZED</div>
+</div>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
 <script>
-/* ══ CANVAS BG ══ */
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, orbs;
-function initCanvas() {
+/* ── LAB MODAL ── */
+function openLabModal() {
+  document.getElementById('lab-modal').classList.add('open');
+}
+function closeLabModal() {
+  document.getElementById('lab-modal').classList.remove('open');
+}
+document.getElementById('lab-modal').addEventListener('click', function(e){
+  if (e.target === this) closeLabModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLabModal();
+});
+
+/* ── CURSOR ── */
+const dot  = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px';
+  dot.style.top  = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * .11;
+  ry += (my - ry) * .11;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+/* ── COSMOS CANVAS ── */
+const canvas = document.getElementById('cosmos');
+const ctx    = canvas.getContext('2d');
+let W, H, stars = [], orbs = [], shooters = [];
+
+function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
+  initStars();
+  initOrbs();
+}
+
+function initStars() {
+  stars = [];
+  const n = Math.floor(W * H / 1800);
+  for (let i = 0; i < n; i++) {
+    const m = Math.random();
+    stars.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: m < .55 ? .35 : m < .82 ? .65 : m < .94 ? 1 : 1.5,
+      a: Math.random(), da: (Math.random() - .5) * .004,
+      hue: 195 + Math.random() * 50,
+    });
+  }
+}
+
+function initOrbs() {
   orbs = [
-    {x:W*.12, y:H*.25, r:380, color:'rgba(124,58,237,',  speed:.00028, phase:0},
-    {x:W*.88, y:H*.55, r:420, color:'rgba(0,212,255,',   speed:.00035, phase:2.1},
-    {x:W*.5,  y:H*.88, r:300, color:'rgba(16,185,129,',  speed:.0003,  phase:4.2},
-    {x:W*.25, y:H*.75, r:240, color:'rgba(245,158,11,',  speed:.00025, phase:1.1},
+    { x: W*.1,  y: H*.25, r: W*.32, color:'rgba(79,195,247,',  s:.00022, ph:0 },
+    { x: W*.88, y: H*.5,  r: W*.3,  color:'rgba(124,77,255,',  s:.00017, ph:2.2 },
+    { x: W*.5,  y: H*.88, r: W*.26, color:'rgba(0,229,255,',   s:.00028, ph:4.1 },
+    { x: W*.75, y: H*.15, r: W*.2,  color:'rgba(105,240,174,', s:.00020, ph:1.5 },
   ];
 }
-function drawCanvas() {
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = '#020817';
-  ctx.fillRect(0,0,W,H);
-  for (const o of orbs) {
-    o.phase += o.speed;
-    const ox = o.x + Math.sin(o.phase) * 60;
-    const oy = o.y + Math.cos(o.phase * .7) * 45;
-    const g  = ctx.createRadialGradient(ox,oy,0,ox,oy,o.r);
-    g.addColorStop(0,   o.color + '0.07)');
-    g.addColorStop(.5,  o.color + '0.025)');
-    g.addColorStop(1,   o.color + '0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  requestAnimationFrame(drawCanvas);
+
+/* shooting star */
+function spawnShooter() {
+  const ang = Math.PI / 4 + (Math.random() - .5) * .5;
+  const spd = 7 + Math.random() * 10;
+  const colors = ['79,195,247','124,77,255','0,229,255','105,240,174'];
+  shooters.push({
+    x: Math.random() * W * 1.3 - W * .15,
+    y: Math.random() * H * .45,
+    vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+    len: 70 + Math.random() * 110,
+    life: 1, col: colors[Math.floor(Math.random() * colors.length)],
+  });
 }
-window.addEventListener('resize', initCanvas);
-initCanvas();
-requestAnimationFrame(drawCanvas);
+setInterval(() => { if (Math.random() < .55) spawnShooter(); }, 2600);
+
+/* mouse parallax */
+let pmx = 0, pmy = 0;
+document.addEventListener('mousemove', e => { pmx = e.clientX; pmy = e.clientY; });
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#03040a';
+  ctx.fillRect(0, 0, W, H);
+
+  const ox = (pmx / (W||1) - .5) * 28;
+  const oy = (pmy / (H||1) - .5) * 18;
+
+  /* orbs */
+  for (const o of orbs) {
+    o.ph += o.s;
+    const nx = o.x + Math.sin(o.ph) * 70;
+    const ny = o.y + Math.cos(o.ph * .65) * 50;
+    const g = ctx.createRadialGradient(nx, ny, 0, nx, ny, o.r);
+    g.addColorStop(0,  o.color + '0.065)');
+    g.addColorStop(.5, o.color + '0.022)');
+    g.addColorStop(1,  o.color + '0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(nx, ny, o.r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  /* stars */
+  for (const s of stars) {
+    s.a += s.da;
+    if (s.a > 1 || s.a < 0) s.da *= -1;
+    s.a = Math.max(0, Math.min(1, s.a));
+    const sx = s.x + ox * .14, sy = s.y + oy * .09;
+    ctx.globalAlpha = .25 + s.a * .75;
+    ctx.fillStyle = `hsl(${s.hue},55%,90%)`;
+    ctx.beginPath(); ctx.arc(sx, sy, s.r, 0, Math.PI * 2); ctx.fill();
+    if (s.r > .9) {
+      const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+      sg.addColorStop(0, `hsl(${s.hue},80%,90%)`);
+      sg.addColorStop(1, 'transparent');
+      ctx.globalAlpha = s.a * .12;
+      ctx.fillStyle = sg;
+      ctx.beginPath(); ctx.arc(sx, sy, s.r * 5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  /* shooting stars */
+  shooters = shooters.filter(s => {
+    s.x += s.vx; s.y += s.vy; s.life -= .014;
+    if (s.life <= 0) return false;
+    const ang = Math.atan2(s.vy, s.vx);
+    const ex = s.x - Math.cos(ang) * s.len;
+    const ey = s.y - Math.sin(ang) * s.len;
+    const gl = ctx.createLinearGradient(s.x, s.y, ex, ey);
+    gl.addColorStop(0, `rgba(${s.col},${s.life * .85})`);
+    gl.addColorStop(1, `rgba(${s.col},0)`);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = gl;
+    ctx.lineWidth = s.life * 1.8;
+    ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(ex, ey); ctx.stroke();
+    return true;
+  });
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+
+/* ── CARD TILT ── */
+document.querySelectorAll('.card, .lab-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const cx = r.left + r.width  / 2;
+    const cy = r.top  + r.height / 2;
+    const dx = (e.clientX - cx) / (r.width  / 2);
+    const dy = (e.clientY - cy) / (r.height / 2);
+    const isLab = card.classList.contains('lab-card');
+    const ry = isLab ? dx * 3 : dx * 5;
+    const rx = isLab ? -dy * 2 : -dy * 4;
+    card.style.transform = `perspective(900px) rotateY(${ry}deg) rotateX(${rx}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform .55s cubic-bezier(.16,1,.3,1)';
+    card.style.transform  = '';
+  });
+  card.addEventListener('mouseenter', () => {
+    card.style.transition = 'transform .12s ease';
+  });
+});
+
+/* ── COUNTER ANIMATION ── */
+function animCount(el, target, dur = 1000) {
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(e * target);
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.dataset.val) {
+      animCount(e.target, +e.target.dataset.val);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: .5 });
+document.querySelectorAll('[data-val]').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
