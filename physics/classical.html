@@ -319,11 +319,11 @@ header {
   margin-bottom: 64px;
 }
 
-/* semester 1 — 7 topics — 4+3 layout */
+/* semester 1 — 9 topics — grid */
 .pgrid.s1 {
   grid-template-columns: repeat(4, 1fr);
 }
-/* semester 2 — 4 topics — 2+2 layout */
+/* semester 2 — 7 topics — grid */
 .pgrid.s2 {
   grid-template-columns: repeat(4, 1fr);
 }
@@ -627,6 +627,29 @@ header {
   .el-sym   { font-size:2.2rem; }
 }
 
+/* ═══════════════════════════════════════════
+   SVG ICONS
+═══════════════════════════════════════════ */
+.el-icon {
+  width: 56px; height: 56px;
+  display: block;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), filter .35s;
+}
+.el.s1 .el-icon { color: var(--m); filter: drop-shadow(0 0 8px rgba(65,200,255,.3)); }
+.el.s2 .el-icon { color: var(--e); filter: drop-shadow(0 0 8px rgba(255,190,61,.25)); }
+.el:hover .el-icon { transform: scale(1.1) translateY(-3px); filter: drop-shadow(0 0 16px currentColor); }
+.el.wide .el-icon { width: 64px; height: 64px; margin-bottom: 0; margin-left: 8px; }
+
+/* modal icon */
+.mo-icon {
+  width: 72px; height: 72px;
+  display: block; margin: 0 auto 14px;
+}
+.mo-icon.s1 { color: #41c8ff; filter: drop-shadow(0 0 16px rgba(65,200,255,.4)); }
+.mo-icon.s2 { color: #ffbe3d; filter: drop-shadow(0 0 16px rgba(255,190,61,.35)); }
+
 ::-webkit-scrollbar { width:3px; }
 ::-webkit-scrollbar-track { background:var(--void); }
 ::-webkit-scrollbar-thumb { background:rgba(65,200,255,.12); border-radius:2px; }
@@ -660,16 +683,16 @@ header {
         <em>الكلاسيكية</em>
       </h1>
       <p class="hero-desc">
-        فصلان · <strong>١١ موضوعاً</strong> من الحركة والقوة إلى
-        الكهرومغناطيسية والبصريات. كل عنصر في هذا الجدول هو بوابة لعالم فيزيائي كامل.
+        فصلان · <strong>١٦ موضوعاً</strong> من الحركة والقوة إلى
+        الكهرومغناطيسية والبصريات الموجية. كل عنصر في هذا الجدول هو بوابة لعالم فيزيائي كامل.
       </p>
       <div class="hero-tags">
         <div class="htag m"><span class="htag-d"></span>MECHANICS · ميكانيكا</div>
+        <div class="htag m"><span class="htag-d"></span>GRAVITY · جاذبية</div>
         <div class="htag m"><span class="htag-d"></span>THERMO · ديناميكا حرارية</div>
         <div class="htag e"><span class="htag-d"></span>ELECTROMAGNETISM · كهرومغناطيسية</div>
         <div class="htag e"><span class="htag-d"></span>WAVES · أمواج</div>
         <div class="htag e"><span class="htag-d"></span>OPTICS · بصريات</div>
-        <div class="htag n">ALL LOCKED · قريباً</div>
       </div>
     </div>
 
@@ -680,11 +703,11 @@ header {
           <span class="st-lbl">SEMESTERS</span>
         </div>
         <div class="st-cell">
-          <span class="st-val">11</span>
+          <span class="st-val">16</span>
           <span class="st-lbl">TOPICS</span>
         </div>
         <div class="st-cell">
-          <span class="st-val">78</span>
+          <span class="st-val">120</span>
           <span class="st-lbl">LESSONS</span>
         </div>
         <div class="st-cell">
@@ -701,104 +724,190 @@ header {
   <div class="sem-label s1" id="sl1">
     <div class="sl-num">I</div>
     <div class="sl-info">
-      <div class="sl-title">الميكانيكا والديناميكا الحرارية</div>
-      <div class="sl-sub">MECHANICS · ROTATIONAL DYNAMICS · THERMODYNAMICS · 7 TOPICS</div>
+      <div class="sl-title">الميكانيكا والحرارة</div>
+      <div class="sl-sub">MECHANICS · GRAVITY · OSCILLATIONS · THERMODYNAMICS · 9 TOPICS</div>
     </div>
     <div class="sl-line"></div>
-    <div class="sl-count">٧ مواضيع</div>
+    <div class="sl-count">٩ مواضيع</div>
   </div>
 
   <!-- PERIODIC GRID S1 -->
   <div class="pgrid s1" id="g1">
 
-    <!-- Kin1D -->
-    <div class="el s1 locked" onclick="openEl(this,'الحركة الخطية','Kinematics 1D','Kn','v = v₀ + at · x = v₀t + ½at²','CLS·01','كينماتيكا أحادية البُعد — الموضع والسرعة والتسارع. المعادلات الأربع الكبيرة والحركة تحت الجاذبية.')">
+    <!-- CLS·01 Kin1D -->
+    <div class="el s1 locked" onclick="openEl(this,'الحركة الخطية','Kinematics 1D','Kn','v = v₀ + at · x = v₀t + ½at² · v² = v₀² + 2ax','CLS·01','كينماتيكا أحادية البُعد — الموضع والسرعة والتسارع. المعادلات الأربع الكبيرة والحركة تحت الجاذبية الحرة.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">01</div><div class="el-cat">KINEMATICS</div></div>
-        <div class="el-sym">Kn</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <line x1="10" y1="55" x2="70" y2="55" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <polyline points="10,42 25,26 45,36 65,16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="65,16 58,20 62,27" fill="currentColor"/>
+  <circle cx="10" cy="42" r="3.5" fill="currentColor"/>
+  <line x1="10" y1="52" x2="10" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="40" y1="52" x2="40" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="70" y1="52" x2="70" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
         <div class="el-name">الحركة الخطية</div>
         <div class="el-en">KINEMATICS · 1D</div>
         <div class="el-eq">v² = v₀² + 2ax</div>
       </div>
     </div>
 
-    <!-- Kin2D -->
+    <!-- CLS·02 Kin2D -->
     <div class="el s1 locked" onclick="openEl(this,'الحركة المستوية','Kinematics 2D','Kₚ','R = v₀²sin2θ/g · aᶜ = v²/r','CLS·02','حركة المقذوفات والمسار القطعي المكافئ. الحركة الدائرية والتسارع المركزي.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">02</div><div class="el-cat">KINEMATICS</div></div>
-        <div class="el-sym">Kₚ</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <path d="M10 64 Q40 10 70 64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="10" cy="64" r="3.5" fill="currentColor"/>
+  <circle cx="40" cy="19" r="3" fill="currentColor" opacity="0.6"/>
+  <circle cx="70" cy="64" r="3.5" fill="currentColor"/>
+  <line x1="5" y1="67" x2="75" y2="67" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  <line x1="10" y1="67" x2="10" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  <polygon points="10,18 7,26 13,26" fill="currentColor" opacity="0.4"/>
+  <polygon points="75,67 67,63 67,71" fill="currentColor" opacity="0.4"/>
+</svg>
         <div class="el-name">الحركة المستوية</div>
         <div class="el-en">KINEMATICS · 2D</div>
         <div class="el-eq">R = v₀²sin(2θ)/g</div>
       </div>
     </div>
 
-    <!-- Newton -->
-    <div class="el s1 locked" onclick="openEl(this,'قوانين نيوتن','Newton\'s Laws','Nw','ΣF = ma · F₁₂ = −F₂₁','CLS·03','القصور الذاتي وقانون التسارع والتأثير المتبادل. مخطط الجسم الحر وتطبيقاته.')">
+    <!-- CLS·03 Newton -->
+    <div class="el s1 locked" onclick="openEl(this,'قوانين نيوتن','Newton\'s Laws','Nw','ΣF = ma · F₁₂ = −F₂₁ · f = μN','CLS·03','القصور الذاتي وقانون التسارع والتأثير المتبادل. مخطط الجسم الحر والاحتكاك وتطبيقاته.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">03</div><div class="el-cat">DYNAMICS</div></div>
-        <div class="el-sym">Nw</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <rect x="27" y="27" width="26" height="26" rx="3" stroke="currentColor" stroke-width="2.5"/>
+  <line x1="53" y1="40" x2="68" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="70,40 62,36 62,44" fill="currentColor"/>
+  <line x1="27" y1="40" x2="12" y2="40" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+  <polygon points="10,40 18,36 18,44" fill="currentColor" opacity="0.45"/>
+  <line x1="40" y1="27" x2="40" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+  <polygon points="40,12 36,20 44,20" fill="currentColor" opacity="0.45"/>
+  <line x1="40" y1="53" x2="40" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="20" y1="66" x2="60" y2="66" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
         <div class="el-name">قوانين نيوتن</div>
         <div class="el-en">NEWTON'S LAWS</div>
         <div class="el-eq">ΣF = ma</div>
       </div>
     </div>
 
-    <!-- Energy — TALL -->
-    <div class="el s1 locked tall" onclick="openEl(this,'الشغل والطاقة','Work & Energy','W·E','W = Fd·cosθ · KE = ½mv²','CLS·04','الشغل الميكانيكي وطاقة الحركة. مبدأ حفظ الطاقة الميكانيكية والقدرة.')">
+    <!-- CLS·04 Energy — TALL -->
+    <div class="el s1 locked tall" onclick="openEl(this,'الشغل والطاقة','Work & Energy','W·E','W = Fd·cosθ · KE = ½mv² · PE = mgh','CLS·04','الشغل الميكانيكي وطاقة الحركة والطاقة الكامنة. مبدأ حفظ الطاقة الميكانيكية والقدرة.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">04</div><div class="el-cat">ENERGY</div></div>
-        <div class="el-sym">W·E</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <polygon points="44,8 24,44 38,44 36,72 56,36 42,36" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>
         <div class="el-name">الشغل والطاقة</div>
         <div class="el-en">WORK & ENERGY</div>
         <div class="el-eq">W = Fd·cosθ</div>
       </div>
     </div>
 
-    <!-- Momentum -->
-    <div class="el s1 locked" onclick="openEl(this,'الزخم والتصادمات','Momentum','Mv','p = mv · J = Δp','CLS·05','الزخم الخطي والدفع. حفظ الزخم في التصادمات المرنة وغير المرنة.')">
+    <!-- CLS·05 Momentum -->
+    <div class="el s1 locked" onclick="openEl(this,'الزخم والتصادمات','Momentum & Collisions','Mv','p = mv · J = Δp · m₁v₁ = m₂v₂','CLS·05','الزخم الخطي والدفع. حفظ الزخم في التصادمات المرنة وغير المرنة ومركز الكتلة.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">05</div><div class="el-cat">MOMENTUM</div></div>
-        <div class="el-sym">Mv</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <circle cx="22" cy="40" r="13" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.1"/>
+  <circle cx="58" cy="40" r="13" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.1"/>
+  <line x1="5" y1="40" x2="16" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="16,40 10,36 10,44" fill="currentColor"/>
+  <line x1="75" y1="40" x2="64" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="64,40 70,36 70,44" fill="currentColor"/>
+</svg>
         <div class="el-name">الزخم والتصادمات</div>
         <div class="el-en">MOMENTUM & COLLISIONS</div>
         <div class="el-eq">J = Δp = FΔt</div>
       </div>
     </div>
 
-    <!-- Rotation -->
-    <div class="el s1 locked" onclick="openEl(this,'الحركة الدورانية','Rotational Motion','Rω','τ = Iα · L = Iω','CLS·06','عزم الدوران وعزم القصور الذاتي. الزخم الزاوي وحفظه.')">
+    <!-- CLS·06 Rotation -->
+    <div class="el s1 locked" onclick="openEl(this,'الحركة الدورانية','Rotational Motion','Rω','τ = Iα · L = Iω · KE = ½Iω²','CLS·06','عزم الدوران وعزم القصور الذاتي. الزخم الزاوي وحفظه. طاقة الدوران.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
         <div class="el-top"><div class="el-num">06</div><div class="el-cat">ROTATION</div></div>
-        <div class="el-sym">Rω</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <circle cx="40" cy="40" r="24" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.07"/>
+  <circle cx="40" cy="40" r="5" fill="currentColor"/>
+  <line x1="40" y1="35" x2="40" y2="17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 57 23 A 24 24 0 0 1 64 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="64,40 56,34 70,34" fill="currentColor"/>
+</svg>
         <div class="el-name">الحركة الدورانية</div>
         <div class="el-en">ROTATIONAL MOTION</div>
         <div class="el-eq">τ = Iα</div>
       </div>
     </div>
 
-    <!-- Thermo — WIDE -->
-    <div class="el s1 locked wide" onclick="openEl(this,'الديناميكا الحرارية','Thermodynamics','Th','ΔU = Q − W · η = 1 − Tc/Th','CLS·07','القانونان الأول والثاني. الطاقة الداخلية والحرارة والشغل. الانتروبيا ودورة كارنو.')">
+    <!-- CLS·07 Gravity — جديد -->
+    <div class="el s1 locked" onclick="openEl(this,'الجاذبية وقوانين كبلر','Gravity & Kepler\'s Laws','Gk','F = Gm₁m₂/r² · T² ∝ a³','CLS·07','قانون الجاذبية الكونية لنيوتن. القوى المركزية والطاقة الميكانيكية للأجرام. قوانين كبلر الثلاثة للحركة الكوكبية.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
-        <div class="el-sym">Th</div>
+        <div class="el-top"><div class="el-num">07</div><div class="el-cat">GRAVITY</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <circle cx="32" cy="40" r="14" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.15"/>
+  <ellipse cx="32" cy="40" rx="32" ry="13" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.55"/>
+  <circle cx="62" cy="28" r="5.5" fill="currentColor" opacity="0.85"/>
+  <line x1="32" y1="40" x2="62" y2="28" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.4"/>
+</svg>
+        <div class="el-name">الجاذبية وكبلر</div>
+        <div class="el-en">GRAVITY & KEPLER</div>
+        <div class="el-eq">F = Gm₁m₂/r²</div>
+      </div>
+    </div>
+
+    <!-- CLS·08 SHM — جديد -->
+    <div class="el s1 locked" onclick="openEl(this,'الاهتزاز والحركة التوافقية','Simple Harmonic Motion','SHM','x = A·cos(ωt+φ) · T = 2π√(m/k) · f = ω/2π','CLS·08','الحركة التوافقية البسيطة وقانون هوك. البندول البسيط. الطاقة في الاهتزازات والتخميد والرنين.')">
+      <div class="el-scan"></div><div class="el-glow"></div>
+      <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
+      <div class="el-inner">
+        <div class="el-top"><div class="el-num">08</div><div class="el-cat">OSCILLATIONS</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <path d="M8,40 C14,40 14,18 20,18 C26,18 26,62 32,62 C38,62 38,18 44,18 C50,18 50,62 56,62 C62,62 62,40 68,40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="8" cy="40" r="3.5" fill="currentColor"/>
+  <circle cx="68" cy="40" r="3.5" fill="currentColor"/>
+  <line x1="40" y1="10" x2="40" y2="70" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.28"/>
+</svg>
+        <div class="el-name">الاهتزاز التوافقي</div>
+        <div class="el-en">SIMPLE HARMONIC MOTION</div>
+        <div class="el-eq">T = 2π√(m/k)</div>
+      </div>
+    </div>
+
+    <!-- CLS·09 Thermo — WIDE -->
+    <div class="el s1 locked wide" onclick="openEl(this,'الحرارة والديناميكا الحرارية','Heat & Thermodynamics','Th','ΔU = Q − W · η = 1 − Tc/Th · PV = nRT','CLS·09','الحرارة وخصائص الغازات المثالية. القانونان الأول والثاني للديناميكا الحرارية. الانتروبيا ودورة كارنو.')">
+      <div class="el-scan"></div><div class="el-glow"></div>
+      <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
+      <div class="el-inner">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <rect x="33" y="10" width="14" height="36" rx="7" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.08"/>
+  <circle cx="40" cy="56" r="11" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.18"/>
+  <rect x="37" y="34" width="6" height="24" rx="2" fill="currentColor" opacity="0.7"/>
+  <circle cx="40" cy="56" r="5.5" fill="currentColor"/>
+  <line x1="47" y1="20" x2="54" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="47" y1="29" x2="54" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="47" y1="38" x2="54" y2="38" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+</svg>
         <div class="el-body">
-          <div class="el-top" style="margin-bottom:8px"><div class="el-num">07</div><div class="el-cat">THERMO</div></div>
-          <div class="el-name">الديناميكا الحرارية</div>
-          <div class="el-en">THERMODYNAMICS</div>
+          <div class="el-top" style="margin-bottom:8px"><div class="el-num">09</div><div class="el-cat">THERMO</div></div>
+          <div class="el-name">الحرارة والديناميكا الحرارية</div>
+          <div class="el-en">HEAT & THERMODYNAMICS</div>
           <div class="el-eq">ΔU = Q − W · PV = nRT</div>
         </div>
       </div>
@@ -814,65 +923,155 @@ header {
     <div class="sl-num">II</div>
     <div class="sl-info">
       <div class="sl-title">الكهرباء · المغناطيسية · الأمواج · البصريات</div>
-      <div class="sl-sub">ELECTROMAGNETISM · WAVES · OPTICS · 4 TOPICS</div>
+      <div class="sl-sub">ELECTROSTATICS · CIRCUITS · MAGNETISM · EM WAVES · SOUND · OPTICS · 7 TOPICS</div>
     </div>
     <div class="sl-line"></div>
-    <div class="sl-count">٤ مواضيع</div>
+    <div class="sl-count">٧ مواضيع</div>
   </div>
 
   <div class="pgrid s2" id="g2">
 
-    <!-- Electrostatics — TALL -->
-    <div class="el s2 locked tall" onclick="openEl(this,'الكهرباء والدوائر','Electrostatics & Circuits','Es','F = kq₁q₂/r² · V = IR','CLS·08','قانون كولوم والمجال الكهربائي. الجهد والمكثف. قانون أوم وقوانين كيرشهوف للدوائر.')">
+    <!-- CLS·10 Electrostatics — TALL -->
+    <div class="el s2 locked tall" onclick="openEl(this,'الكهرباء الساكنة والمجال الكهربائي','Electrostatics','Es','F = kq₁q₂/r² · E = kq/r² · φ = kq/r','CLS·10','قانون كولوم وتراكب القوى الكهربائية. المجال الكهربائي وخطوطه. الجهد الكهربائي والطاقة الكامنة والمكثف.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
-        <div class="el-top"><div class="el-num">08</div><div class="el-cat">ELECTRO</div></div>
-        <div class="el-sym">Es</div>
-        <div class="el-name">الكهرباء والدوائر</div>
-        <div class="el-en">ELECTROSTATICS & CIRCUITS</div>
+        <div class="el-top"><div class="el-num">10</div><div class="el-cat">ELECTROSTATICS</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <circle cx="20" cy="40" r="12" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.1"/>
+  <line x1="14" y1="40" x2="26" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="20" y1="34" x2="20" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="60" cy="40" r="12" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.1"/>
+  <line x1="54" y1="40" x2="66" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M32,30 C40,40 40,40 48,30" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M32,50 C40,40 40,40 48,50" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <line x1="32" y1="40" x2="48" y2="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.35"/>
+</svg>
+        <div class="el-name">الكهرباء الساكنة</div>
+        <div class="el-en">ELECTROSTATICS & FIELD</div>
         <div class="el-eq">F = kq₁q₂/r²</div>
       </div>
     </div>
 
-    <!-- Magnetism -->
-    <div class="el s2 locked" onclick="openEl(this,'المغناطيسية والحث','Magnetism & Induction','Bφ','F = qv×B · ε = −dΦ/dt','CLS·09','قوة لورنتز وقانون أمبير. قانون فاراداي للحث الكهرومغناطيسي والمولد والمحرك.')">
+    <!-- CLS·11 Circuits -->
+    <div class="el s2 locked" onclick="openEl(this,'الجهد والدوائر الكهربائية','Electric Circuits','Dc','V = IR · P = IV · ΣV = 0','CLS·11','قانون أوم والمقاومة. قوانين كيرشهوف للتيار والجهد. دوائر التيار المستمر والمتردد والطاقة الكهربائية.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
-        <div class="el-top"><div class="el-num">09</div><div class="el-cat">MAGNETISM</div></div>
-        <div class="el-sym">Bφ</div>
+        <div class="el-top"><div class="el-num">11</div><div class="el-cat">CIRCUITS</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <line x1="8" y1="30" x2="8" y2="55" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="8" y1="30" x2="30" y2="30" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="30" y="22" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2.5" fill="currentColor" fill-opacity="0.1"/>
+  <line x1="50" y1="30" x2="72" y2="30" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="72" y1="30" x2="72" y2="55" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="8" y1="55" x2="72" y2="55" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="36" y1="49" x2="36" y2="61" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <line x1="30" y1="55" x2="42" y2="55" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="33" y1="51" x2="39" y2="51" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+</svg>
+        <div class="el-name">الدوائر الكهربائية</div>
+        <div class="el-en">ELECTRIC CIRCUITS</div>
+        <div class="el-eq">V = IR · ΣV = 0</div>
+      </div>
+    </div>
+
+    <!-- CLS·12 Magnetism -->
+    <div class="el s2 locked" onclick="openEl(this,'المغناطيسية والحث الكهرومغناطيسي','Magnetism & Induction','Bφ','F = qv×B · ε = −dΦ/dt · B = μ₀I/2πr','CLS·12','قوة لورنتز وقانون أمبير. قانون فاراداي للحث الكهرومغناطيسي. معادلات ماكسويل.')">
+      <div class="el-scan"></div><div class="el-glow"></div>
+      <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
+      <div class="el-inner">
+        <div class="el-top"><div class="el-num">12</div><div class="el-cat">MAGNETISM</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <path d="M8,40 C8,22 18,14 28,14 C38,14 38,66 48,66 C58,66 72,58 72,40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M8,40 C8,58 18,66 28,66 C38,66 38,14 48,14 C58,14 72,22 72,40" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.45"/>
+  <polygon points="72,40 62,35 62,45" fill="currentColor"/>
+</svg>
         <div class="el-name">المغناطيسية والحث</div>
         <div class="el-en">MAGNETISM & INDUCTION</div>
         <div class="el-eq">ε = −dΦ/dt</div>
       </div>
     </div>
 
-    <!-- Waves -->
-    <div class="el s2 locked" onclick="openEl(this,'الموجات والصوت','Waves & Sound','Wλ','v = fλ · fₙ = nv/2L','CLS·10','الموجات الميكانيكية المستعرضة والطولية. التداخل والرنين. ظاهرة دوبلر.')">
+    <!-- CLS·13 EM Waves — جديد -->
+    <div class="el s2 locked" onclick="openEl(this,'الأمواج الكهرومغناطيسية','Electromagnetic Waves','EMw','c = fλ · E = hf · S = E×B/μ₀','CLS·13','طبيعة الأمواج الكهرومغناطيسية وسرعتها. الطيف الكهرومغناطيسي. كثافة الطاقة ومبدأ هيغنز والاستقطاب.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
-        <div class="el-top"><div class="el-num">10</div><div class="el-cat">WAVES</div></div>
-        <div class="el-sym">Wλ</div>
-        <div class="el-name">الموجات والصوت</div>
-        <div class="el-en">WAVES & SOUND</div>
-        <div class="el-eq">v = fλ</div>
+        <div class="el-top"><div class="el-num">13</div><div class="el-cat">EM WAVES</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <line x1="8" y1="40" x2="72" y2="40" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+  <path d="M8,40 C14,40 14,20 20,20 C26,20 26,40 32,40 C38,40 38,60 44,60 C50,60 50,40 56,40 C62,40 62,20 68,20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M8,40 C14,40 14,58 20,58 C26,58 26,40 32,40 C38,40 38,22 44,22 C50,22 50,40 56,40 C62,40 62,58 68,58" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+  <polygon points="72,40 65,37 65,43" fill="currentColor" opacity="0.7"/>
+</svg>
+        <div class="el-name">الأمواج الكهرومغناطيسية</div>
+        <div class="el-en">ELECTROMAGNETIC WAVES</div>
+        <div class="el-eq">c = fλ = 3×10⁸ m/s</div>
       </div>
     </div>
 
-    <!-- Optics — WIDE -->
-    <div class="el s2 locked wide" onclick="openEl(this,'البصريات','Optics','Op','n₁sinθ₁ = n₂sinθ₂ · 1/f = 1/dₒ + 1/dᵢ','CLS·11','قانون سنيل والانعكاس الكلي. العدسات الرقيقة والمرايا الكروية. التداخل والحيود.')">
+    <!-- CLS·14 Waves & Sound — WIDE -->
+    <div class="el s2 locked wide" onclick="openEl(this,'الموجات الميكانيكية والصوت','Mechanical Waves & Sound','Wλ','v = fλ · fₙ = nv/2L · f\' = f(v±vₒ)/(v∓vs)','CLS·14','الموجات الميكانيكية المستعرضة والطولية. مبدأ التراكب والتداخل والرنين. ظاهرة دوبلر وتطبيقاتها.')">
       <div class="el-scan"></div><div class="el-glow"></div>
       <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
       <div class="el-inner">
-        <div class="el-sym">Op</div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <path d="M8,40 C14,40 14,14 20,14 C26,14 26,66 32,66 C38,66 38,14 44,14 C50,14 50,66 56,66 C62,66 62,40 68,40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="8" y1="40" x2="72" y2="40" stroke="currentColor" stroke-width="1" stroke-dasharray="2 4" opacity="0.3"/>
+  <line x1="20" y1="70" x2="44" y2="70" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="20" y1="74" x2="20" y2="66" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="44" y1="74" x2="44" y2="66" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg>
         <div class="el-body">
-          <div class="el-top" style="margin-bottom:8px"><div class="el-num">11</div><div class="el-cat">OPTICS</div></div>
-          <div class="el-name">البصريات</div>
-          <div class="el-en">GEOMETRIC & WAVE OPTICS</div>
-          <div class="el-eq">n₁sinθ₁ = n₂sinθ₂ · d sinθ = mλ</div>
+          <div class="el-top" style="margin-bottom:8px"><div class="el-num">14</div><div class="el-cat">WAVES</div></div>
+          <div class="el-name">الموجات الميكانيكية والصوت</div>
+          <div class="el-en">MECHANICAL WAVES & SOUND</div>
+          <div class="el-eq">v = fλ · fₙ = nv/2L</div>
         </div>
+      </div>
+    </div>
+
+    <!-- CLS·15 Geometric Optics -->
+    <div class="el s2 locked" onclick="openEl(this,'البصريات الهندسية','Geometric Optics','Og','n₁sinθ₁ = n₂sinθ₂ · 1/f = 1/dₒ + 1/dᵢ · M = −dᵢ/dₒ','CLS·15','قانون سنيل والانعكاس الكلي الداخلي. العدسات الرقيقة والمرايا الكروية. التكبير وتطبيقاتها في البصريات.')">
+      <div class="el-scan"></div><div class="el-glow"></div>
+      <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
+      <div class="el-inner">
+        <div class="el-top"><div class="el-num">15</div><div class="el-cat">OPTICS</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <path d="M40,10 Q54,40 40,70" stroke="currentColor" stroke-width="2.5"/>
+  <path d="M40,10 Q26,40 40,70" stroke="currentColor" stroke-width="2.5"/>
+  <line x1="8" y1="26" x2="40" y2="40" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+  <line x1="8" y1="54" x2="40" y2="40" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+  <line x1="40" y1="40" x2="68" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.5" stroke-dasharray="3 3"/>
+  <line x1="40" y1="40" x2="68" y2="62" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.5" stroke-dasharray="3 3"/>
+  <circle cx="40" cy="40" r="3" fill="currentColor"/>
+</svg>
+        <div class="el-name">البصريات الهندسية</div>
+        <div class="el-en">GEOMETRIC OPTICS</div>
+        <div class="el-eq">n₁sinθ₁ = n₂sinθ₂</div>
+      </div>
+    </div>
+
+    <!-- CLS·16 Wave Optics — جديد -->
+    <div class="el s2 locked" onclick="openEl(this,'البصريات الموجية','Wave Optics','Ow','d sinθ = mλ · Δx = λL/d · I = I₀cos²θ','CLS·16','التداخل الضوئي وتجربة يونغ. الحيود على الشق الواحد والشبكة الحيودية. تحليل الطيف والاستقطاب الضوئي.')">
+      <div class="el-scan"></div><div class="el-glow"></div>
+      <div class="el-lock"><div class="lk-icon">🔒</div><div class="lk-txt">COMING SOON</div></div>
+      <div class="el-inner">
+        <div class="el-top"><div class="el-num">16</div><div class="el-cat">WAVE OPTICS</div></div>
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="el-icon">
+  <line x1="26" y1="8" x2="26" y2="33" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="26" y1="47" x2="26" y2="72" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="8" y1="40" x2="26" y2="40" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M26,36 C36,22 55,16 72,13" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.9"/>
+  <path d="M26,36 C38,36 54,36 72,36" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.6"/>
+  <path d="M26,36 C36,50 55,58 72,62" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.9"/>
+  <path d="M26,44 C38,44 56,44 72,44" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M26,44 C36,58 54,64 72,68" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.65"/>
+</svg>
+        <div class="el-name">البصريات الموجية</div>
+        <div class="el-en">WAVE OPTICS</div>
+        <div class="el-eq">d sinθ = mλ</div>
       </div>
     </div>
 
@@ -899,7 +1098,7 @@ header {
 <!-- STATUS BAR -->
 <div class="sbar">
   <div class="sbi"><div class="sbd g"></div>CLASSICAL · ONLINE</div>
-  <div class="sbi">PHYS·CLS · 2 SEM · 11 TOPICS · ALL LOCKED</div>
+  <div class="sbi">PHYS·CLS · 2 SEM · 16 TOPICS · ALL LOCKED</div>
   <div class="sbi"><div class="sbd a"></div>CONTENT BUILDING</div>
 </div>
 
