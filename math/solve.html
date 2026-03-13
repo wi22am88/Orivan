@@ -173,6 +173,28 @@ aside{width:var(--sw);background:var(--bp);border-right:1px solid var(--bdr);dis
   background:rgba(191,0,255,.1) !important;
   color:var(--np) !important;
 }
+/* Division button long-press override (yellow glow) */
+#btn-frac.lp-active{
+  border-color:var(--ny) !important;
+  box-shadow:0 0 14px rgba(255,230,0,.6) !important;
+  background:rgba(255,230,0,.12) !important;
+  color:var(--ny) !important;
+}
+#btn-frac::after{
+  background:var(--ny) !important;
+  box-shadow:0 0 4px var(--ny) !important;
+}
+/* Power button long-press override (cyan glow) */
+#btn-pow.lp-active{
+  border-color:var(--nb) !important;
+  box-shadow:0 0 14px rgba(0,212,255,.6) !important;
+  background:rgba(0,212,255,.12) !important;
+  color:var(--nb) !important;
+}
+#btn-pow::after{
+  background:var(--nb) !important;
+  box-shadow:0 0 4px var(--nb) !important;
+}
 .k.sp{flex:3;color:var(--td);font-size:var(--kbfs);letter-spacing:1px;}
 .k.bk{flex:1.5;color:var(--nr);border-color:rgba(255,0,60,.25);}
 .k.bk:hover{border-color:var(--nr);}
@@ -365,7 +387,7 @@ aside.collapsed ~ .sb-open-tab,.sb-open-tab.visible{display:flex;align-items:cen
             <button class="k m" onclick="kp('1')">1</button><button class="k m" onclick="kp('2')">2</button><button class="k m" onclick="kp('3')">3</button><button class="k m" onclick="kp('4')">4</button><button class="k m" onclick="kp('5')">5</button><button class="k m" onclick="kp('6')">6</button><button class="k m" onclick="kp('7')">7</button><button class="k m" onclick="kp('8')">8</button><button class="k m" onclick="kp('9')">9</button><button class="k m" onclick="kp('0')">0</button>
           </div>
           <div class="kr">
-            <button class="k m" onclick="kp('+')">+</button><button class="k m" onclick="kp('-')">-</button><button class="k m" onclick="kp('×')">×</button><button class="k m" onclick="kpFrac()">÷</button><button class="k m" onclick="kp('=')">═</button><button class="k m" onclick="kp('√')">√</button><button class="k m" onclick="kpPow()">^</button><button class="k m" onclick="kpSub()">_</button><button class="k m" onclick="kp('∂')">∂</button><button class="k m" onclick="kp('∫')">∫</button>
+            <button class="k m" onclick="kp('+')">+</button><button class="k m" onclick="kp('-')">-</button><button class="k m" onclick="kp('×')">×</button><button class="k m trig-key" id="btn-frac">÷</button><button class="k m" onclick="kp('=')">═</button><button class="k m" onclick="kp('√')">√</button><button class="k m trig-key" id="btn-pow">^</button><button class="k m" onclick="kpSub()">_</button><button class="k m" onclick="kp('∂')">∂</button><button class="k m" onclick="kp('∫')">∫</button>
           </div>
           <div class="kr">
             <button class="k m" onclick="kpDoubleInt()">∫∫</button><button class="k m" onclick="kp('∮')">∮</button><button class="k m" onclick="kpSum()">∑</button><button class="k m" onclick="kp('∏')">∏</button><button class="k m" onclick="kp('θ')">θ</button><button class="k m" onclick="kp('ƒ')">ƒ</button><button class="k m" onclick="kpLim()">lim</button><button class="k m trig-key" id="btn-cos">cos</button><button class="k m trig-key" id="btn-sin">sin</button><button class="k m trig-key" id="btn-tan">tan</button>
@@ -647,6 +669,8 @@ function convertPowerBrackets(s) {
           i = braClose + 1;
           continue;
         }
+        // Recursively convert nested ^[...] inside the exponent
+        inner = convertPowerBrackets(inner);
         // Convert fractions inside exponent: (a)/(b) → \frac{a}{b}
         inner = convertFractionsInExp(inner);
         result += '^{' + inner + '}';
@@ -1217,6 +1241,93 @@ function kpTrigInv(fn){
   });
 })();
 
+// ═══════════════════════════════════════════════
+// LONG-PRESS on ÷ key → wrap ENTIRE expression as denominator: ()/( full_expr )
+// ═══════════════════════════════════════════════
+(function initFracLongPress(){
+  const LONG_MS = 500;
+  const btn = document.getElementById('btn-frac');
+  if(!btn) return;
+  let timer = null;
+  let fired = false;
+
+  function startPress(e){
+    fired = false;
+    btn.classList.add('lp-active');
+    timer = setTimeout(() => {
+      fired = true;
+      btn.classList.remove('lp-active');
+      kpFracWrapAll();
+    }, LONG_MS);
+  }
+
+  function endPress(e){
+    clearTimeout(timer);
+    btn.classList.remove('lp-active');
+    if(!fired){
+      kpFrac();
+    }
+    fired = false;
+  }
+
+  function cancelPress(){
+    clearTimeout(timer);
+    btn.classList.remove('lp-active');
+    fired = false;
+  }
+
+  btn.addEventListener('touchstart',  e => { e.preventDefault(); startPress(e); }, {passive:false});
+  btn.addEventListener('touchend',    e => { e.preventDefault(); endPress(e);   }, {passive:false});
+  btn.addEventListener('touchcancel', e => { cancelPress(); },                     {passive:false});
+  btn.addEventListener('mousedown', startPress);
+  btn.addEventListener('mouseup',   endPress);
+  btn.addEventListener('mouseleave', cancelPress);
+  btn.addEventListener('click', e => e.stopPropagation());
+})();
+
+// Long-press ÷:
+//   • If '=' exists at depth 0 → wrap everything AFTER '=' as numerator:
+//       x=3+2  →  x=(3+2)/()     caret inside denominator
+//   • No '=' → wrap entire txt as numerator:
+//       3+2    →  (3+2)/()
+function kpFracWrapAll(){
+  hideWelcome();
+  const whole = txt;
+  if(!whole.trim()){
+    txt = '()/()';
+    caret = 1;
+    sync(); return;
+  }
+
+  // Find first '=' at depth 0
+  let eqIdx = -1;
+  let depth = 0;
+  for(let i = 0; i < whole.length; i++){
+    const c = whole[i];
+    if(c==='('||c==='['||c==='{') depth++;
+    else if(c===')'||c===']'||c==='}') depth--;
+    else if(c==='=' && depth===0){ eqIdx = i; break; }
+  }
+
+  if(eqIdx !== -1){
+    // x=3+2  →  x=(3+2)/()
+    const prefix  = whole.slice(0, eqIdx + 1); // "x="
+    const content = whole.slice(eqIdx + 1);    // "3+2"
+    const frac    = '(' + content + ')/()';
+    txt   = prefix + frac;
+    // Place caret inside denominator () → before the closing ')'
+    caret = txt.length - 1;
+  } else {
+    // No '=' → wrap everything as numerator
+    const frac = '(' + whole + ')/()';
+    txt   = frac;
+    caret = txt.length - 1;
+  }
+
+  sync();
+  notif('المعادلة في البسط', 'i');
+}
+
 // Insert definite integral ∫[a]^[b](expr)
 function kpDefInt(){
   const s='∫[]^[]()';
@@ -1289,6 +1400,90 @@ function getSqrtInfo(pos){
 // POWER SYSTEM  ^[]
 // Format: base^[exponent]
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// LONG-PRESS on ^ key → wrap ENTIRE expression as base: ( entire_txt )^[]
+// If '=' exists at depth 0 → wrap only part AFTER '=' as base
+// e.g. x=3+2 → x=(3+2)^[]
+// ═══════════════════════════════════════════════
+(function initPowLongPress(){
+  const LONG_MS = 500;
+  const btn = document.getElementById('btn-pow');
+  if(!btn) return;
+  let timer = null;
+  let fired = false;
+
+  function startPress(e){
+    fired = false;
+    btn.classList.add('lp-active');
+    timer = setTimeout(() => {
+      fired = true;
+      btn.classList.remove('lp-active');
+      kpPowWrapAll();
+    }, LONG_MS);
+  }
+
+  function endPress(e){
+    clearTimeout(timer);
+    btn.classList.remove('lp-active');
+    if(!fired){ kpPow(); }
+    fired = false;
+  }
+
+  function cancelPress(){
+    clearTimeout(timer);
+    btn.classList.remove('lp-active');
+    fired = false;
+  }
+
+  btn.addEventListener('touchstart',  e => { e.preventDefault(); startPress(e); }, {passive:false});
+  btn.addEventListener('touchend',    e => { e.preventDefault(); endPress(e);   }, {passive:false});
+  btn.addEventListener('touchcancel', e => { cancelPress(); },                     {passive:false});
+  btn.addEventListener('mousedown', startPress);
+  btn.addEventListener('mouseup',   endPress);
+  btn.addEventListener('mouseleave', cancelPress);
+  btn.addEventListener('click', e => e.stopPropagation());
+})();
+
+// Wrap ENTIRE txt (or part after '=') as base, add empty exponent:
+// 3+2       →  (3+2)^[]     caret inside []
+// x=3+2     →  x=(3+2)^[]  caret inside []
+function kpPowWrapAll(){
+  hideWelcome();
+  const whole = txt;
+  if(!whole.trim()){
+    txt = '^[]';
+    caret = 2;
+    sync(); return;
+  }
+
+  // Find first '=' at depth 0
+  let eqIdx = -1;
+  let depth = 0;
+  for(let i = 0; i < whole.length; i++){
+    const c = whole[i];
+    if(c==='('||c==='['||c==='{') depth++;
+    else if(c===')'||c===']'||c==='}') depth--;
+    else if(c==='=' && depth===0){ eqIdx = i; break; }
+  }
+
+  if(eqIdx !== -1){
+    // x=3+2  →  x=(3+2)^[]
+    const prefix  = whole.slice(0, eqIdx + 1);  // "x="
+    const content = whole.slice(eqIdx + 1);      // "3+2"
+    const powered = '(' + content + ')^[]';
+    txt   = prefix + powered;
+    caret = txt.length - 1; // inside []
+  } else {
+    // No '=' → wrap everything as base
+    const powered = '(' + whole + ')^[]';
+    txt   = powered;
+    caret = txt.length - 1; // inside []
+  }
+
+  sync();
+  notif('المعادلة كقاعدة للأس', 'i');
+}
+
 function kpPow(){
   // Insert ^[] and place caret inside []
   const s = '^[]';
@@ -2603,8 +2798,8 @@ function normSqrts(s) {
         if (radClose !== -1) {
           const degRaw = s.slice(degOpen+1, degClose).trim();
           const radContent = s.slice(radOpen+1, radClose);
-          // Recursively normalise radicand (may have nested sqrt, fractions)
-          const innerNorm = normSqrts(normFracs(radContent));
+          // Recursively normalise radicand (may have nested sqrt, fractions, powers)
+          const innerNorm = normSqrts(normFracs(normPowerBrackets(radContent)));
           if (degRaw === '' || degRaw === '2') {
             result += `sqrt(${innerNorm})`;
           } else {
@@ -2662,7 +2857,9 @@ function normPowerBrackets(s) {
       const braOpen = i + 1;
       const braClose = findBracketClose(s, braOpen, '[', ']');
       if (braClose !== -1) {
-        const inner = s.slice(braOpen + 1, braClose);
+        let inner = s.slice(braOpen + 1, braClose);
+        // Recursively convert nested ^[...] inside the exponent
+        inner = normPowerBrackets(inner);
         result += inner ? `^(${inner})` : '';
         i = braClose + 1;
         continue;
@@ -3095,7 +3292,17 @@ function detectType(raw){
   const s=raw.trim();
   if(/∫∫/.test(s))  return 'dblintegral';
   if(/∮/.test(s))   return 'contourintegral';
-  if(/∫/.test(s))   return /∫\[/.test(s)?'defintegral':'integral';
+
+  // ── If integral exists but is wrapped in a fraction (∫...)/n → treat as fraction ──
+  if(/∫/.test(s)){
+    // Check if the form is (∫(...))/something  — the integral is in the numerator
+    const fracWrap = s.match(/^\(([^)]*∫[^)]*(?:\([^)]*\))?[^)]*)\)\/(.+)$/);
+    if(fracWrap) return 'fraction';
+    // More general: (∫[...](...))/n  or (∫(...))/n
+    if(/^\(∫/.test(s) && /\)\//.test(s)) return 'fraction';
+    return /∫\[/.test(s)?'defintegral':'integral';
+  }
+
   if(/∑/.test(s))   return 'summation';
   if(/∂/.test(s)||/\bd\/dx\b/.test(s)) return 'derivative';
   if(/^lim_\[/.test(s)) return 'limit';
@@ -3108,7 +3315,9 @@ function detectType(raw){
 
 // Check if the expression is primarily a fraction/division problem
 function isFractionExpr(s) {
-  // Exclude integrals, derivatives already handled
+  // Allow (∫...)/n — integral wrapped as numerator of a fraction
+  if (/^\(∫/.test(s.trim()) && /\)\//.test(s)) return true;
+  // Exclude bare integrals, derivatives
   if (/[∫∂∬]/.test(s)) return false;
   // Check if there's a / that is NOT inside a ^[...] exponent
   // Build a version of s with ^[...] content blanked out
@@ -3288,6 +3497,54 @@ function solveFraction(raw) {
   const numL = rawToLatex(numR) || numR;
   const denL = rawToLatex(denR) || denR;
 
+  // ── معالجة خاصة: البسط تكامل غير محدود  (∫expr)/n ─────────────────
+  // مثال: (∫(5))/(5) → ∫5 dx = 5x → 5x/5 = x + C
+  if (/∫/.test(numR) && !/\[/.test(numR)) {
+    const intMatch = numR.match(/^∫\((.+)\)$/) || numR.match(/^∫(.+)$/);
+    if (intMatch) {
+      const integrand    = intMatch[1].trim();
+      const integrandLtx = rawToLatex(integrand);
+      const integrandNrm = norm(integrand);
+      let denValInt = null;
+      try { denValInt = math.evaluate(denN, scope); } catch(e) {}
+
+      steps.push({ lbl:'التعبير', expr:`\\dfrac{\\int ${integrandLtx}\\,dx}{${denL}}` });
+
+      // حساب التكامل الرمزي مباشرة
+      const tempSteps = [];
+      const antiderivTex = buildAntiderivSteps(integrandNrm, integrandLtx, 'x', tempSteps);
+
+      if (antiderivTex) {
+        steps.push({ lbl:'حساب التكامل', expr:`\\int ${integrandLtx}\\,dx = ${antiderivTex} + C` });
+
+        if (denValInt !== null && denValInt !== 0 && denValInt !== 1) {
+          // تبسيط رمزي: antideriv / den
+          steps.push({ lbl:'تعويض', expr:`\\dfrac{${antiderivTex}}{${fmtN(denValInt)}} + C` });
+          try {
+            // تحويل LaTeX → math.js للتبسيط
+            const antiNrm = antiderivTex
+              .replace(/\\dfrac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)')
+              .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)')
+              .replace(/\\/g,'').replace(/\{/g,'(').replace(/\}/g,')');
+            const simpNode = math.simplify(math.parse(`(${antiNrm})/(${denValInt})`));
+            const simpTex  = n2l(simpNode);
+            steps.push({ lbl:'تبسيط', expr:`${simpTex} + C` });
+            steps.push({ lbl:'النتيجة', expr:`F(x) = ${simpTex} + C`, isResult:true });
+          } catch(e) {
+            steps.push({ lbl:'النتيجة', expr:`F(x) = \\dfrac{${antiderivTex}}{${fmtN(denValInt)}} + C`, isResult:true });
+          }
+        } else {
+          // المقام = 1 أو فشل تقييمه
+          steps.push({ lbl:'النتيجة', expr:`F(x) = ${antiderivTex} + C`, isResult:true });
+        }
+      } else {
+        // فشل التكامل الرمزي — نتيجة رمزية
+        steps.push({ lbl:'النتيجة', expr:`\\dfrac{\\int ${integrandLtx}\\,dx}{${denL}} + C`, isResult:true });
+      }
+      return { steps, type:'fraction' };
+    }
+  }
+
   let numVal = null, denVal = null;
   try { numVal = math.evaluate(numN, scope); } catch(e) {}
   try { denVal = math.evaluate(denN, scope); } catch(e) {}
@@ -3325,48 +3582,43 @@ function solveFraction(raw) {
     const N = Math.round(numVal), D = Math.round(denVal);
     const g = gcdInt(Math.abs(N), Math.abs(D));
 
-    // ── STEP 4: عرض العوامل الأولية ─────────────────────────────────
-    if (Math.abs(N) > 1 && Math.abs(D) > 1 && Math.abs(N) <= 9999 && Math.abs(D) <= 9999) {
-      const nFact = factorsToLatex(N);
-      const dFact = factorsToLatex(D);
-      if (nFact !== String(N) || dFact !== String(D)) {
-        steps.push({ lbl:'تحليل إلى عوامل أولية', expr:`\\dfrac{${nFact}}{${dFact}}`, note:'prime factors' });
-      }
-    }
-
-    // ── STEP 5: القاسم المشترك الأكبر ──────────────────────────────
-    if (g > 1) {
-      steps.push({ lbl:'القاسم المشترك الأكبر', expr:`\\gcd(${N},\\,${D}) = ${g}` });
-      steps.push({
-        lbl:'القسمة على GCD',
-        expr:`\\dfrac{${N} \\div ${g}}{${D} \\div ${g}} = \\dfrac{${N/g}}{${D/g}}`
-      });
-    }
-
-    // ── STEP 6: هل يقبل القسمة التامة؟ ─────────────────────────────
+    // ── قسمة تامة ────────────────────────────────────────────────────
     if (N % D === 0) {
+      // إذا كان البسط == المقام (مثل 2/2, 3/3) → قسمة تامة مباشرة
+      // إذا كان البسط أكبر (مثل 6/3) → اعرض القسمة التامة
       steps.push({ lbl:'قسمة تامة', expr:`${N} \\div ${D} = ${N/D}`, note:'÷ تام' });
       steps.push({ lbl:'النتيجة', expr:`${N/D}`, isResult:true });
+
     } else {
+      // ── قسمة غير تامة: نحتاج تبسيط ─────────────────────────────
       const rN = N/g, rD = D/g;
       const whole = Math.trunc(rN/rD);
       const rem = Math.abs(rN) % Math.abs(rD);
       const sign = (N<0) !== (D<0) ? -1 : 1;
 
+      // العوامل الأولية + GCD — فقط إذا g > 1
+      if (g > 1 && Math.abs(N) <= 9999 && Math.abs(D) <= 9999) {
+        const nFact = factorsToLatex(N);
+        const dFact = factorsToLatex(D);
+        if (nFact !== String(N) || dFact !== String(D)) {
+          steps.push({ lbl:'تحليل إلى عوامل أولية', expr:`\\dfrac{${nFact}}{${dFact}}` });
+        }
+        steps.push({ lbl:'القاسم المشترك الأكبر', expr:`\\gcd(${Math.abs(N)},\\,${Math.abs(D)}) = ${g}` });
+        steps.push({ lbl:'تبسيط', expr:`\\dfrac{${N} \\div ${g}}{${D} \\div ${g}} = \\dfrac{${rN}}{${rD}}` });
+      }
+
       // الكسر المبسّط
       steps.push({ lbl:'الكسر بأبسط صورة', expr: fracToLatex(sign*Math.abs(rN), Math.abs(rD)) });
 
       // العدد المختلط إن وجد
-      if (Math.abs(rN) > Math.abs(rD)) {
+      if (Math.abs(rN) > Math.abs(rD) && rem !== 0) {
         const absWhole = Math.abs(whole);
         const signStr = sign < 0 ? '-' : '';
-        if (rem !== 0) {
-          steps.push({
-            lbl:'عدد مختلط',
-            expr: `${signStr}${absWhole} \\dfrac{${rem}}{${Math.abs(rD)}}`,
-            note:'mixed number'
-          });
-        }
+        steps.push({
+          lbl:'عدد مختلط',
+          expr: `${signStr}${absWhole} \\dfrac{${rem}}{${Math.abs(rD)}}`,
+          note:'mixed number'
+        });
       }
 
       // القيمة العشرية
@@ -3387,17 +3639,31 @@ function solveFraction(raw) {
     // ── كسور عشرية ────────────────────────────────────────────────────
     const result = numVal / denVal;
 
-    // محاولة تحويل لكسر اشتقاقي
+    // عرض البسط والمقام المبسطين كأعداد عشرية أو كسور
+    const numFrac = decToFrac(numVal);
+    const denFrac = decToFrac(denVal);
+    const numLatexSimp = numFrac ? fracToLatex(numFrac.n, numFrac.d) : fmtN(numVal);
+    const denLatexSimp = denFrac ? fracToLatex(denFrac.n, denFrac.d) : fmtN(denVal);
+
+    // خطوة: تبسيط البسط والمقام إلى كسور بسيطة
+    steps.push({ lbl:'تبسيط البسط والمقام', expr: `\\dfrac{${numLatexSimp}}{${denLatexSimp}}` });
+
+    // محاولة تحويل النتيجة لكسر بسيط
     const frac = decToFrac(result);
     if (frac && frac.d !== 1) {
       const g2 = gcdInt(Math.abs(frac.n), frac.d);
-      steps.push({ lbl:'تحويل إلى كسر', expr: fracToLatex(frac.n/g2, frac.d/g2) });
+      const simpN = frac.n/g2, simpD = frac.d/g2;
+      steps.push({ lbl:'الكسر المبسط', expr: fracToLatex(simpN, simpD) });
+      // القيمة العشرية
+      const decStr = (Math.round(result * 1e10) / 1e10).toString();
+      if (!Number.isInteger(result)) {
+        steps.push({ lbl:'القيمة العشرية', expr: decStr, note:'decimal' });
+      }
+      steps.push({ lbl:'النتيجة', expr: fracToLatex(simpN, simpD), isResult:true });
+    } else {
+      const resTex = formatNiceResult(result);
+      steps.push({ lbl:'النتيجة', expr: resTex, isResult:true });
     }
-
-    steps.push({ lbl:'الناتج', expr: `${fmtN(numVal)} \\div ${fmtN(denVal)}` });
-
-    const resTex = formatNiceResult(result);
-    steps.push({ lbl:'النتيجة', expr: resTex, isResult:true });
   }
 
   return { steps, type:'fraction' };
@@ -3411,6 +3677,105 @@ function solveEval(raw){
   const latex=rawToLatex(raw);
   steps.push({lbl:'Expression',expr:latex});
   const nrm=norm(raw);
+
+  // ── Tower-of-powers detection: a^[b^[c]] or deeper ──────────────────
+  // If raw matches base^[exp^[...]] show step-by-step evaluation from inside out
+  {
+    const towerMatch = raw.match(/^(.+?)\^\[(.+)\]$/);
+    if (towerMatch) {
+      const baseRaw = towerMatch[1].trim();
+      const expRaw  = towerMatch[2].trim();
+      // Check if exponent itself contains a power
+      const innerPow = expRaw.match(/^(.+?)\^\[(.+)\]$/);
+      if (innerPow) {
+        try {
+          // Step 1: compute inner exponent first
+          const innerBase = innerPow[1].trim();
+          const innerExp  = innerPow[2].trim();
+          const innerBaseVal = math.evaluate(norm(innerBase), {pi:Math.PI, e:Math.E});
+          const innerExpVal  = math.evaluate(norm(innerExp),  {pi:Math.PI, e:Math.E});
+          const innerResult  = Math.pow(innerBaseVal, innerExpVal);
+
+          const innerBaseTex = rawToLatex(innerBase);
+          const innerExpTex  = rawToLatex(innerExp);
+          const baseTex      = rawToLatex(baseRaw);
+
+          steps.push({lbl:'الخطوة الداخلية', expr:`${innerBaseTex}^{${innerExpTex}} = ${fmtN(innerResult)}`});
+
+          // Step 2: substitute inner result into outer
+          steps.push({lbl:'تعويض', expr:`${baseTex}^{${fmtN(innerResult)}}`});
+
+          // Step 3: compute final result (may be huge)
+          const finalLog10 = innerResult * Math.log10(math.evaluate(norm(baseRaw), {pi:Math.PI, e:Math.E}));
+          if (finalLog10 > 15) {
+            // Too large for exact — show logarithm form
+            steps.push({lbl:'القيمة كبيرة جداً', expr:`\\approx 10^{${fmtN(Math.round(finalLog10))}}`, note:`${Math.round(finalLog10)} digits`});
+            steps.push({lbl:'النتيجة', expr:`${baseTex}^{${fmtN(innerResult)}} \\approx 10^{${fmtN(Math.round(finalLog10))}}`, isResult:true});
+          } else {
+            const finalVal = Math.pow(math.evaluate(norm(baseRaw), {pi:Math.PI, e:Math.E}), innerResult);
+            steps.push({lbl:'النتيجة', expr:`${baseTex}^{${fmtN(innerResult)}} = ${fmtN(finalVal)}`, isResult:true});
+          }
+          return {steps, type:'evaluate'};
+        } catch(e) {}
+      }
+    }
+  }
+
+  // ── Power expansion: (expr)^[n] or base^[n] ─────────────────────────
+  // Detect numeric base and integer exponent → show step-by-step multiplication
+  {
+    // Match patterns: (content)^[exp]  OR  base^[exp]
+    const powMatch = raw.match(/^(.*?)\^\[(\d+)\]$/) || raw.match(/^\((.+)\)\^\[(\d+)\]$/);
+    if (powMatch) {
+      // Determine base raw and exponent
+      let baseRaw = '', expN = 0;
+      const m1 = raw.match(/^\((.+)\)\^\[(\d+)\]$/);
+      const m2 = raw.match(/^(.+)\^\[(\d+)\]$/);
+      if (m1) { baseRaw = m1[1].trim(); expN = parseInt(m1[2]); }
+      else if (m2) { baseRaw = m2[1].trim(); expN = parseInt(m2[2]); }
+
+      if (baseRaw && expN >= 2 && expN <= 20) {
+        try {
+          const baseVal = math.evaluate(norm(baseRaw), {pi:Math.PI, e:Math.E});
+          const baseTex = rawToLatex(baseRaw);
+
+          if (typeof baseVal === 'number' && isFinite(baseVal)) {
+            // Step: evaluate base if it's an expression (not a plain number)
+            const isPlainBase = /^-?[\d.]+$/.test(baseRaw.trim());
+            const isParenBase = m1 !== null; // wrapped in parens like (3+2)
+            if (!isPlainBase) {
+              steps.push({lbl:'القاعدة', expr:`${isParenBase ? '(' + baseTex + ')' : baseTex} = ${fmtN(baseVal)}`});
+              // Show substitution
+              steps.push({lbl:'تعويض', expr:`${fmtN(baseVal)}^{${expN}}`});
+            }
+
+            // Step: multiplication chain (only if expN <= 8 and result not too big)
+            const finalVal = Math.pow(baseVal, expN);
+            if (expN <= 8 && Math.abs(finalVal) <= 1e15 && Number.isInteger(Math.round(baseVal))) {
+              const bv = Math.round(baseVal);
+              let chain = `${bv}`;
+              let running = bv;
+              const chainParts = [`${bv}`];
+              for (let k = 1; k < expN; k++) {
+                running *= bv;
+                chainParts.push(`${bv}`);
+              }
+              // Show: b × b × b ... = result
+              const multStr = chainParts.join(' \\times ');
+              steps.push({lbl:'ضرب متكرر', expr:`${multStr} = ${fmtN(finalVal)}`});
+            } else if (expN > 8 || Math.abs(finalVal) > 1e15) {
+              // For large exponents, show logarithmic scale
+              const log10val = expN * Math.log10(Math.abs(baseVal));
+              if (log10val > 15) {
+                steps.push({lbl:'القيمة التقريبية', expr:`\\approx 10^{${fmtN(Math.round(log10val * 10) / 10)}}`});
+              }
+            }
+          }
+        } catch(e) {}
+      }
+    }
+  }
+
   try{
     // Simplify symbolically
     let simpTex=latex;
@@ -3648,8 +4013,12 @@ function solveSqrt(raw){
     } catch(e) {}
 
     if (radVal !== null) {
-      // Show what's inside
-      steps.push({lbl:'Radicand', expr: `${radLatex} = ${fmtN(radVal)}`});
+      // Show radicand evaluation ONLY if it's a non-trivial expression
+      const radNormTrimmed = radNorm.trim();
+      const isPlainNumber = /^-?[\d.]+$/.test(radNormTrimmed);
+      if (!isPlainNumber) {
+        steps.push({lbl:'Radicand', expr: `${radLatex} = ${fmtN(radVal)}`});
+      }
 
       // Negative under even root
       if (radVal < 0 && degree % 2 === 0) {
@@ -3670,6 +4039,25 @@ function solveSqrt(raw){
 
         steps.push({lbl:'Compute root', expr:`${rootSymbol} ${isPerfect?'=':'\\approx'} ${fmtN(rootVal)}`});
 
+        // ── Substitution step: if full expression is √.../den, show rootVal/den ──
+        // e.g. (√[](49))/(7) → norm: (sqrt(49))/(7) → show 7/7
+        {
+          // Match both: sqrt(...)/.+ and (sqrt(...))/(...)
+          const fnStr = fullNorm.trim();
+          const fracRe = /^\(?sqrt\([^)]+\)\)?\s*\/\s*\(?(.+?)\)?$/;
+          const fm = fnStr.match(fracRe);
+          if (fm && isPerfect) {
+            // Clean denominator: remove wrapping parens if any
+            let denRaw = fm[1].replace(/^\((.+)\)$/, '$1').trim();
+            try {
+              const denVal2 = math.evaluate(denRaw, {pi:Math.PI, e:Math.E});
+              if (typeof denVal2 === 'number' && isFinite(denVal2) && denVal2 !== 0) {
+                steps.push({lbl:'تعويض', expr:`\\dfrac{${fmtN(rootVal)}}{${fmtN(denVal2)}}`});
+              }
+            } catch(e) {}
+          }
+        }
+
         // Perfect square factoring for √
         if (degree===2 && !isPerfect && radVal > 0 && Number.isInteger(radVal)) {
           let bestFactor = 1;
@@ -3686,8 +4074,7 @@ function solveSqrt(raw){
         }
       }
     } else {
-      // Symbolic radicand
-      steps.push({lbl:'Symbolic', expr: sqrtLatex});
+      // Radicand is symbolic (contains variables) — just show it, no extra step needed
     }
   }
 
