@@ -1,0 +1,2837 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLS·02 — الحركة المستوية</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{
+    delimiters:[
+      {left:'$$',right:'$$',display:true},
+      {left:'$',right:'$',display:false}
+    ],
+    throwOnError:false
+  })">
+</script>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS — CLS-02 accent: amber #ffbe3d
+═══════════════════════════════════════════ */
+:root {
+  --void:   #03070f;
+  --deep:   #060d1a;
+  --panel:  #090f1e;
+
+  --m:      #ffbe3d;
+  --m-mid:  #d49820;
+  --m-dark: rgba(255,190,61,.07);
+  --m-rim:  rgba(255,190,61,.22);
+  --m-glow: rgba(255,190,61,.12);
+
+  --blue:   #41c8ff;
+  --b-dark: rgba(65,200,255,.07);
+  --b-rim:  rgba(65,200,255,.2);
+
+  --green:  #00ff9d;
+  --g-dark: rgba(0,255,157,.07);
+  --g-rim:  rgba(0,255,157,.2);
+
+  --red:    #ff3d71;
+  --r-dark: rgba(255,61,113,.07);
+  --r-rim:  rgba(255,61,113,.2);
+
+  --violet: #b06bff;
+  --v-dark: rgba(176,107,255,.07);
+  --v-rim:  rgba(176,107,255,.2);
+
+  --white:  #e8f4ff;
+  --fog:    rgba(180,215,255,.45);
+  --ghost:  rgba(180,215,255,.15);
+  --haze:   rgba(180,215,255,.06);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--void);
+  color:var(--white);
+  font-family:'Tajawal',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── ATMOSPHERE ── */
+#cv { position:fixed; inset:0; z-index:0; pointer-events:none; }
+.layer-grain {
+  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px;
+}
+.layer-grid {
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,190,61,.006) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,190,61,.006) 1px,transparent 1px);
+  background-size:80px 80px;
+  -webkit-mask-image:radial-gradient(ellipse 100% 80% at 50% 30%,black,transparent);
+  mask-image:radial-gradient(ellipse 100% 80% at 50% 30%,black,transparent);
+}
+.layer-vignette {
+  position:fixed; inset:0; z-index:2; pointer-events:none;
+  background:radial-gradient(ellipse 85% 80% at 50% 50%,transparent 30%,rgba(3,7,15,.8) 100%);
+}
+#spb {
+  position:fixed; top:0; left:0; z-index:999; height:2px; width:0%;
+  background:linear-gradient(90deg,var(--m),#ff6b35);
+  box-shadow:0 0 14px var(--m);
+  transition:width .08s linear;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+header {
+  position:sticky; top:0; z-index:600;
+  height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px;
+  background:rgba(3,7,15,.92);
+  border-bottom:1px solid rgba(255,190,61,.07);
+  backdrop-filter:blur(24px);
+}
+.hdr-back {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.6rem; letter-spacing:2.5px;
+  color:var(--ghost); text-decoration:none;
+  border:1px solid rgba(255,255,255,.06);
+  padding:7px 18px; border-radius:2px;
+  transition:.2s; display:flex; align-items:center; gap:8px;
+  cursor:pointer; background:none;
+}
+.hdr-back:hover { color:var(--m); border-color:var(--m-rim); }
+.hdr-mid {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.52rem; letter-spacing:4px;
+  color:rgba(255,190,61,.3);
+  display:flex; align-items:center; gap:10px;
+}
+.hdr-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--m); box-shadow:0 0 8px var(--m);
+  animation:hblink 2s ease-in-out infinite;
+}
+@keyframes hblink { 0%,100%{opacity:1} 50%{opacity:.15} }
+.hdr-logo {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.65rem; letter-spacing:6px; font-weight:700;
+  color:var(--m); text-shadow:0 0 20px rgba(255,190,61,.45);
+}
+
+/* ═══════════════════════════════════════════
+   PAGE
+═══════════════════════════════════════════ */
+.page {
+  position:relative; z-index:10;
+  isolation: isolate;
+  max-width:920px; margin:0 auto;
+  padding:0 36px 140px;
+}
+
+/* ── HERO ── */
+.lesson-hero {
+  padding:64px 0 56px;
+  border-bottom:1px solid rgba(255,190,61,.07);
+  margin-bottom:60px;
+  position:relative;
+}
+.lh-code {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.45rem; letter-spacing:5px;
+  color:rgba(255,190,61,.5);
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:20px;
+  opacity:0; animation:fadeUp .5s .1s ease forwards;
+}
+.lh-code::before {
+  content:''; width:28px; height:1px;
+  background:linear-gradient(90deg,transparent,var(--m));
+}
+.lh-h1 {
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2.4rem,5vw,4.2rem);
+  line-height:.93; letter-spacing:-.01em;
+  margin-bottom:16px;
+  opacity:0; animation:fadeUp .7s .2s ease forwards;
+}
+.lh-h1 em {
+  font-style:italic;
+  background:linear-gradient(135deg,var(--m) 0%,#ffe09a 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.lh-desc {
+  font-size:.95rem; color:var(--fog);
+  line-height:2.1; font-weight:300; max-width:600px;
+  opacity:0; animation:fadeUp .6s .35s ease forwards;
+}
+.lh-desc strong { color:var(--m); font-weight:500; }
+.lh-meta {
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:28px;
+  opacity:0; animation:fadeUp .5s .5s ease forwards;
+}
+.lh-tag {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.38rem; letter-spacing:2px;
+  padding:5px 12px; border-radius:2px;
+  display:flex; align-items:center; gap:6px;
+}
+.lh-tag.m { background:var(--m-dark); border:1px solid var(--m-rim); color:rgba(255,190,61,.8); }
+.lh-tag.n { background:var(--haze); border:1px solid rgba(255,255,255,.07); color:var(--ghost); }
+.lh-dot { width:4px; height:4px; border-radius:50%; background:currentColor; box-shadow:0 0 5px currentColor; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Fallback: if animations disabled or unsupported, show content */
+@media (prefers-reduced-motion: reduce) {
+  .lh-code, .lh-h1, .lh-desc, .lh-meta, .lesson-toc {
+    opacity:1 !important;
+    animation:none !important;
+    transform:none !important;
+  }
+}
+
+/* ── TOC ── */
+.lesson-toc {
+  background:var(--m-dark);
+  border:1px solid rgba(255,190,61,.1);
+  border-radius:4px; padding:20px 24px;
+  margin-bottom:60px;
+  opacity:0; animation:fadeUp .6s .6s ease forwards;
+}
+.toc-title {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.38rem; letter-spacing:3px;
+  color:rgba(255,190,61,.5); margin-bottom:14px;
+}
+.toc-list { list-style:none; }
+.toc-list li {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.4rem; letter-spacing:1.5px;
+  color:var(--ghost); padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.03);
+  display:flex; align-items:center; gap:10px;
+  cursor:pointer; transition:.2s;
+}
+.toc-list li:last-child { border:none; }
+.toc-list li:hover { color:var(--m); }
+.toc-num { color:rgba(255,190,61,.3); min-width:28px; }
+
+/* ── SECTIONS ── */
+.ls {
+  margin-bottom:80px;
+  opacity:0; transform:translateY(20px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.ls.in { opacity:1; transform:none; }
+
+.ls-head {
+  display:flex; align-items:flex-start; gap:20px;
+  margin-bottom:36px; padding-bottom:20px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.ls-num {
+  font-family:'DM Serif Display',serif;
+  font-size:3.2rem; line-height:.85; font-style:italic;
+  color:var(--m); opacity:.16;
+  flex-shrink:0; min-width:52px;
+}
+.ls-label {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.38rem; letter-spacing:4px;
+  color:rgba(255,190,61,.4); margin-bottom:6px;
+}
+.ls-title {
+  font-family:'DM Serif Display',serif;
+  font-size:1.7rem; line-height:1.1;
+  color:var(--white);
+}
+
+/* ── TEXT ── */
+.lt {
+  font-family:'Tajawal',sans-serif;
+  font-size:.97rem; line-height:2.2; color:var(--fog);
+  margin-bottom:20px;
+}
+.lt strong { color:var(--white); font-weight:600; }
+.lt em { color:var(--m); font-style:normal; font-weight:500; }
+.lt .red { color:var(--red); font-weight:600; }
+.lt .grn { color:var(--green); font-weight:600; }
+.lt .amb { color:var(--m); font-weight:600; }
+.lt .blu { color:var(--blue); font-weight:600; }
+
+/* ── HIGHLIGHT BOXES ── */
+.lbox { border-radius:4px; padding:22px 26px; margin:22px 0; }
+.lbox.m  { background:var(--m-dark);  border:1px solid var(--m-rim);  border-right:3px solid rgba(255,190,61,.5); }
+.lbox.g  { background:var(--g-dark);  border:1px solid var(--g-rim);  border-right:3px solid rgba(0,255,157,.5); }
+.lbox.y  { background:var(--b-dark);  border:1px solid var(--b-rim);  border-right:3px solid rgba(65,200,255,.5); }
+.lbox.r  { background:var(--r-dark);  border:1px solid var(--r-rim);  border-right:3px solid rgba(255,61,113,.5); }
+.lbox.vd { background:var(--v-dark);  border:1px solid var(--v-rim);  border-right:3px solid rgba(176,107,255,.5); }
+.lbox-label {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.36rem; letter-spacing:3px; margin-bottom:10px;
+}
+.lbox.m  .lbox-label { color:rgba(255,190,61,.65); }
+.lbox.g  .lbox-label { color:rgba(0,255,157,.65); }
+.lbox.y  .lbox-label { color:rgba(65,200,255,.65); }
+.lbox.r  .lbox-label { color:rgba(255,61,113,.65); }
+.lbox.vd .lbox-label { color:rgba(176,107,255,.65); }
+.lbox .lt { margin:0; }
+
+/* ── LATEX ── */
+.katex-display {
+  direction:ltr !important;
+  overflow-x:auto;
+  padding:18px 24px;
+  background:rgba(255,190,61,.04);
+  border:1px solid rgba(255,190,61,.1);
+  border-radius:4px;
+  margin:18px 0;
+}
+.katex { font-size:1.05em !important; }
+
+.eq-card {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px;
+  padding:18px 24px;
+  background:rgba(255,190,61,.04);
+  border:1px solid rgba(255,190,61,.12);
+  border-radius:4px; margin:14px 0;
+  direction:ltr;
+}
+.eq-body { flex:1; }
+.eq-num {
+  font-family:'IBM Plex Mono',monospace; font-size:.38rem;
+  letter-spacing:2px; color:rgba(255,190,61,.3);
+  flex-shrink:0; white-space:nowrap;
+}
+.eq-label {
+  font-family:'Tajawal',sans-serif; font-size:.78rem;
+  color:var(--fog); direction:rtl; text-align:right;
+  margin-top:4px;
+}
+
+/* ── VECTOR DECOMPOSITION GRID ── */
+.vec-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px; margin:24px 0;
+}
+.vec-item {
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,190,61,.12);
+  border-radius:6px; padding:20px;
+  position:relative; overflow:hidden;
+  transition:.3s;
+}
+.vec-item:hover {
+  border-color:rgba(255,190,61,.28);
+  background:rgba(255,190,61,.04);
+  transform:translateY(-2px);
+}
+.vec-item::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--m),transparent);
+}
+.vec-item.x-comp::before { background:linear-gradient(90deg,transparent,var(--blue),transparent); }
+.vec-item.y-comp::before { background:linear-gradient(90deg,transparent,var(--red),transparent); }
+.vec-label {
+  font-family:'IBM Plex Mono',monospace; font-size:.36rem;
+  letter-spacing:3px; color:rgba(255,190,61,.35); margin-bottom:12px;
+}
+.vec-item.x-comp .vec-label { color:rgba(65,200,255,.5); }
+.vec-item.y-comp .vec-label { color:rgba(255,61,113,.5); }
+.vec-name {
+  font-family:'Tajawal',sans-serif; font-size:.82rem;
+  color:var(--fog); margin-top:10px;
+}
+
+/* ── DERIVATION STEPS ── */
+.deriv-wrap {
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:6px; padding:24px 28px; margin:22px 0;
+}
+.deriv-title {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.38rem; letter-spacing:3px;
+  color:rgba(255,190,61,.45); margin-bottom:20px;
+}
+.dstep {
+  display:flex; align-items:flex-start; gap:18px;
+  padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.dstep:last-child { border:none; padding-bottom:0; }
+.dstep-num {
+  font-family:'IBM Plex Mono',monospace; font-size:.5rem;
+  color:var(--m); opacity:.5; flex-shrink:0;
+  min-width:22px; margin-top:2px;
+}
+.dstep-body { flex:1; }
+.dstep-text {
+  font-family:'Tajawal',sans-serif; font-size:.9rem;
+  color:var(--fog); line-height:1.9; margin-bottom:8px;
+}
+.dstep-text strong { color:var(--white); }
+.dstep-text em { color:var(--m); font-style:normal; }
+.dstep-math { direction:ltr; margin-top:6px; }
+.dstep-math .katex-display {
+  margin:6px 0; padding:10px 16px;
+  background:var(--m-dark); border-color:var(--m-rim);
+}
+
+/* ── EQUATIONS SHOWCASE ── */
+.eq4-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px; margin:24px 0;
+}
+.eq4-item {
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,190,61,.12);
+  border-radius:6px; padding:20px;
+  position:relative; overflow:hidden;
+  transition:.3s;
+}
+.eq4-item:hover {
+  border-color:rgba(255,190,61,.28);
+  background:rgba(255,190,61,.04);
+  transform:translateY(-2px);
+}
+.eq4-item::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--m),transparent);
+}
+.eq4-item.xdir::before { background:linear-gradient(90deg,transparent,var(--blue),transparent); }
+.eq4-item.ydir::before { background:linear-gradient(90deg,transparent,var(--red),transparent); }
+.eq4-num {
+  font-family:'IBM Plex Mono',monospace; font-size:.36rem;
+  letter-spacing:3px; color:rgba(255,190,61,.35);
+  margin-bottom:12px;
+}
+.eq4-item.xdir .eq4-num { color:rgba(65,200,255,.5); }
+.eq4-item.ydir .eq4-num { color:rgba(255,61,113,.5); }
+.eq4-name {
+  font-family:'Tajawal',sans-serif; font-size:.82rem;
+  color:var(--fog); margin-top:10px;
+}
+.eq4-missing {
+  font-family:'IBM Plex Mono',monospace; font-size:.34rem;
+  letter-spacing:2px; color:rgba(255,61,113,.5);
+  margin-top:6px;
+}
+
+/* ── TABLE ── */
+.lt-table { width:100%; border-collapse:collapse; margin:22px 0; }
+.lt-table th {
+  padding:11px 16px; text-align:right;
+  background:var(--m-dark); border:1px solid rgba(255,190,61,.1);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.38rem; letter-spacing:2px;
+  color:rgba(255,190,61,.7); font-weight:500;
+}
+.lt-table td {
+  padding:11px 16px;
+  border:1px solid rgba(255,255,255,.04);
+  color:var(--fog); font-size:.88rem;
+}
+.lt-table tr:hover td { background:rgba(255,190,61,.025); }
+.lt-table .cm { color:var(--m); font-family:'IBM Plex Mono',monospace; font-size:.8rem; }
+.lt-table .cb { color:var(--blue); font-family:'IBM Plex Mono',monospace; font-size:.8rem; }
+.lt-table .cg { color:var(--green); font-family:'IBM Plex Mono',monospace; font-size:.8rem; }
+.lt-table .ce { color:var(--m); font-family:'IBM Plex Mono',monospace; font-size:.8rem; }
+.lt-table .cw { color:var(--white); font-weight:500; }
+.lt-table .cr { color:var(--red); font-family:'IBM Plex Mono',monospace; font-size:.8rem; }
+
+/* ── GRAPH ── */
+.graph-wrap {
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:6px; padding:20px; margin:22px 0;
+  display:flex; justify-content:center;
+}
+.graph-label {
+  font-family:'IBM Plex Mono',monospace; font-size:.38rem;
+  letter-spacing:3px; color:rgba(255,190,61,.45); margin-bottom:10px;
+}
+
+/* ── WORKED EXAMPLE ── */
+.example-block {
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,190,61,.14);
+  border-radius:6px; padding:0; margin:24px 0;
+  overflow:hidden;
+}
+.ex-header {
+  background:rgba(255,190,61,.06);
+  border-bottom:1px solid rgba(255,190,61,.1);
+  padding:14px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ex-badge {
+  font-family:'IBM Plex Mono',monospace; font-size:.36rem;
+  letter-spacing:3px; color:rgba(255,190,61,.6);
+}
+.ex-diff {
+  font-family:'IBM Plex Mono',monospace; font-size:.34rem;
+  letter-spacing:2px; padding:3px 10px; border-radius:2px;
+}
+.ex-diff.easy { background:rgba(0,255,157,.07); border:1px solid rgba(0,255,157,.2); color:rgba(0,255,157,.7); }
+.ex-diff.med  { background:rgba(255,190,61,.07); border:1px solid rgba(255,190,61,.2); color:rgba(255,190,61,.7); }
+.ex-diff.hard { background:rgba(255,61,113,.07); border:1px solid rgba(255,61,113,.2); color:rgba(255,61,113,.7); }
+.ex-body { padding:24px; }
+.ex-q {
+  font-family:'Tajawal',sans-serif; font-size:.95rem;
+  color:var(--white); line-height:2; margin-bottom:20px;
+  padding:16px 20px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:4px;
+}
+.ex-sol-title {
+  font-family:'IBM Plex Mono',monospace; font-size:.36rem;
+  letter-spacing:3px; color:rgba(255,190,61,.4);
+  margin-bottom:16px;
+}
+.ex-step {
+  display:flex; gap:16px; margin-bottom:14px;
+  padding:12px 16px; border-radius:4px;
+  background:rgba(0,0,0,.15);
+  border:1px solid rgba(255,255,255,.03);
+}
+.ex-step-n {
+  font-family:'IBM Plex Mono',monospace; font-size:.5rem;
+  color:var(--m); opacity:.6; flex-shrink:0;
+  min-width:20px; margin-top:2px;
+}
+.ex-step-body { flex:1; }
+.ex-step-text {
+  font-family:'Tajawal',sans-serif; font-size:.9rem;
+  color:var(--fog); line-height:1.9; margin-bottom:6px;
+}
+.ex-step-text strong { color:var(--white); }
+.ex-answer {
+  font-family:'IBM Plex Mono',monospace; font-size:.42rem;
+  letter-spacing:1px; color:var(--green);
+  background:rgba(0,255,157,.05);
+  border:1px solid rgba(0,255,157,.15);
+  border-radius:3px; padding:12px 18px;
+  margin-top:16px; direction:ltr;
+}
+
+/* ── QUIZ ── */
+.quiz-wrap { display:flex; flex-direction:column; gap:12px; margin-top:28px; }
+.quiz-item {
+  background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+  border-radius:4px; overflow:hidden; cursor:pointer; transition:.25s;
+}
+.quiz-item:hover { border-color:var(--m-rim); }
+.quiz-q {
+  padding:15px 20px; font-family:'Tajawal',sans-serif;
+  font-size:.92rem; color:var(--white);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.quiz-icon {
+  font-family:'IBM Plex Mono',monospace; font-size:.5rem;
+  color:rgba(255,190,61,.35); flex-shrink:0; transition:.3s;
+}
+.quiz-item.open .quiz-icon { transform:rotate(90deg); color:var(--m); }
+.quiz-ans {
+  display:none; padding:16px 20px;
+  background:var(--m-dark); border-top:1px solid rgba(255,190,61,.08);
+  font-family:'Tajawal',sans-serif; font-size:.88rem; color:var(--fog); line-height:2;
+}
+.quiz-ans strong { color:var(--m); }
+.quiz-ans .qg { color:var(--green); font-weight:600; }
+.quiz-ans .qr { color:var(--red); font-weight:600; }
+.quiz-item.open .quiz-ans { display:block; }
+
+/* ── NAVIGATION ── */
+.nav-row { display:flex; gap:14px; margin-top:72px; }
+.nav-btn {
+  flex:1; display:flex; align-items:center; justify-content:space-between;
+  padding:20px 24px; border-radius:6px;
+  cursor:pointer; text-decoration:none;
+  transition:.3s; position:relative; overflow:hidden;
+}
+.nav-btn::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+  transform:translateX(-100%); transition:.5s;
+}
+.nav-btn:hover::before { transform:translateX(100%); }
+.nav-btn.prev { background:var(--haze); border:1px solid rgba(255,255,255,.07); flex-direction:row-reverse; }
+.nav-btn.prev:hover { border-color:rgba(65,200,255,.25); }
+.nav-btn.next { background:var(--m-dark); border:1px solid var(--m-rim); }
+.nav-btn.next:hover { border-color:var(--m); }
+.nb-label {
+  font-family:'IBM Plex Mono',monospace; font-size:.36rem;
+  letter-spacing:3px; margin-bottom:5px;
+}
+.nav-btn.prev .nb-label { color:rgba(65,200,255,.45); }
+.nav-btn.next .nb-label { color:rgba(255,190,61,.45); }
+.nb-title { font-family:'DM Serif Display',serif; font-size:1.1rem; }
+.nav-btn.prev .nb-title { color:var(--blue); }
+.nav-btn.next .nb-title { color:var(--m); }
+.nb-arrow { font-family:'IBM Plex Mono',monospace; font-size:1.2rem; transition:.3s; }
+.nav-btn.prev .nb-arrow { color:rgba(65,200,255,.3); }
+.nav-btn.next .nb-arrow { color:rgba(255,190,61,.3); }
+.nav-btn.prev:hover .nb-arrow { color:var(--blue); transform:translateX(6px); }
+.nav-btn.next:hover .nb-arrow { color:var(--m); transform:translateX(-6px); }
+
+/* ── STATUS BAR ── */
+.sbar {
+  position:fixed; bottom:0; left:0; right:0; z-index:400;
+  height:32px; background:rgba(3,7,15,.95);
+  border-top:1px solid rgba(255,190,61,.06);
+  display:flex; align-items:center;
+  padding:0 24px; gap:24px; backdrop-filter:blur(12px);
+}
+.sbi {
+  font-family:'IBM Plex Mono',monospace; font-size:.33rem;
+  letter-spacing:2px; color:rgba(255,255,255,.18);
+  display:flex; align-items:center; gap:6px;
+}
+.sbd { width:5px; height:5px; border-radius:50%; }
+.sbd.m { background:var(--m); box-shadow:0 0 6px var(--m); animation:hblink 2s infinite; }
+.sbd.a { background:var(--blue); box-shadow:0 0 6px var(--blue); }
+
+/* divider */
+.sdiv {
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,190,61,.08),transparent);
+  margin:64px 0;
+}
+
+/* ── INTERACTIVE SIMULATION ── */
+.sim-block {
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,190,61,.12);
+  border-radius:6px; overflow:hidden; margin:24px 0;
+}
+.sim-header {
+  background:var(--m-dark);
+  border-bottom:1px solid rgba(255,190,61,.1);
+  padding:12px 20px;
+  font-family:'IBM Plex Mono',monospace; font-size:.38rem;
+  letter-spacing:3px; color:rgba(255,190,61,.6);
+  display:flex; align-items:center; gap:10px;
+}
+.sim-dot { width:6px; height:6px; border-radius:50%; background:var(--m); box-shadow:0 0 6px var(--m); }
+.sim-body { padding:20px; }
+.sim-canvas-wrap {
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:4px; margin-bottom:16px;
+  display:flex; justify-content:center;
+  overflow:hidden;
+}
+.sim-controls {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+}
+.sim-ctrl label {
+  font-family:'IBM Plex Mono',monospace; font-size:.38rem;
+  letter-spacing:2px; color:rgba(255,190,61,.6);
+  display:flex; justify-content:space-between; margin-bottom:8px;
+}
+.sim-ctrl input[type=range] {
+  -webkit-appearance:none; width:100%; height:3px;
+  background:rgba(255,190,61,.15); border-radius:2px; outline:none;
+}
+.sim-ctrl input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:13px; height:13px; border-radius:50%;
+  background:var(--m); box-shadow:0 0 7px var(--m); cursor:pointer;
+}
+.sim-output {
+  background:rgba(255,190,61,.04);
+  border:1px solid rgba(255,190,61,.1);
+  border-radius:4px; padding:14px 18px; margin-top:14px;
+  display:flex; gap:24px; flex-wrap:wrap; direction:ltr;
+}
+.sim-val {
+  display:flex; flex-direction:column; gap:3px;
+  font-family:'IBM Plex Mono',monospace;
+}
+.sim-val-label { font-size:.32rem; letter-spacing:2px; color:rgba(255,190,61,.4); }
+.sim-val-num { font-size:.85rem; color:var(--m); font-weight:500; }
+.sim-val-num.blue { color:var(--blue); }
+.sim-val-num.red  { color:var(--red); }
+.sim-val-num.grn  { color:var(--green); }
+
+/* ── SUMMARY FINAL BOX ── */
+#sfinal .lbox { margin-bottom:16px; }
+
+/* responsive */
+@media(max-width:700px){
+  .eq4-grid { grid-template-columns:1fr; }
+  .vec-grid  { grid-template-columns:1fr; }
+  .sim-controls { grid-template-columns:1fr; }
+  .nav-row { flex-direction:column; }
+  header { padding:0 20px; }
+  .page { padding:0 18px 120px; }
+}
+</style>
+</head>
+<body>
+<script>
+/* ══ VISIBILITY GUARANTEE — run before paint ══ */
+document.addEventListener('DOMContentLoaded', function(){
+  /* Force animated elements visible after 800ms as fallback */
+  setTimeout(function(){
+    var els = document.querySelectorAll('.lh-code,.lh-h1,.lh-desc,.lh-meta,.lesson-toc');
+    els.forEach(function(el){
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }, 800);
+});
+</script>
+
+<canvas id="cv"></canvas>
+<div class="layer-grain"></div>
+<div class="layer-grid"></div>
+<div class="layer-vignette"></div>
+<div id="spb"></div>
+
+<!-- ══════ HEADER ══════ -->
+<header>
+  <a class="hdr-back" href="CLS-01.html">← CLS·01</a>
+  <div class="hdr-mid"><div class="hdr-dot"></div>CLASSICAL PHYSICS · PHYS·CLS</div>
+  <div class="hdr-logo">PHYS · LAB</div>
+</header>
+
+<!-- ══════ PAGE ══════ -->
+<div class="page">
+
+  <!-- HERO -->
+  <div class="lesson-hero">
+    <div class="lh-code">CLS · 02 · MECHANICS · 2D KINEMATICS</div>
+    <h1 class="lh-h1">الحركة <em>المستوية</em></h1>
+    <p class="lh-desc">
+      الطبيعة لا تتحرك على خطوط مستقيمة — الكون يتحرك في مستويات وفضاءات.
+      في هذا الدرس نكسر حدود البُعد الواحد: نتعلم كيف نُفكّك أي حركة مائلة إلى مركبتين مستقلتين،
+      نكتشف <strong>مبدأ الاستقلالية</strong> الذي جعل جاليليو يُعيد كتابة الفيزياء،
+      ونشتق معادلات الحركة المقذوفة من الصفر — <strong>فهماً لا حفظاً.</strong>
+    </p>
+    <div class="lh-meta">
+      <div class="lh-tag m"><div class="lh-dot"></div>كينماتيكا ثنائية الأبعاد</div>
+      <div class="lh-tag n"><div class="lh-dot"></div>يتطلب CLS·01</div>
+      <div class="lh-tag n"><div class="lh-dot"></div>9 أقسام</div>
+      <div class="lh-tag n"><div class="lh-dot"></div>محاكاة تفاعلية</div>
+      <div class="lh-tag n"><div class="lh-dot"></div>مسائل محلولة</div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="lesson-toc" style="font-size:18px;">
+    <div class="toc-title">محتوى الدرس · TABLE OF CONTENTS</div>
+    <ul class="toc-list">
+      <li onclick="goTo('s1')"><span class="toc-num">01</span>المتجهات في البعدين — التمثيل والتحليل</li>
+      <li onclick="goTo('s2')"><span class="toc-num">02</span>استقلالية المحورين — المبدأ الأساسي</li>
+      <li onclick="goTo('s3')"><span class="toc-num">03</span>معادلات الحركة في بُعدين</li>
+      <li onclick="goTo('s4')"><span class="toc-num">04</span>الحركة المقذوفة — الاشتقاق</li>
+      <li onclick="goTo('s5')"><span class="toc-num">05</span>نقطة القمة والمدى الأفقي</li>
+      <li onclick="goTo('s5b')"><span class="toc-num">06</span>مثال شامل — كرة بزاوية 45° وسرعة 20 m/s</li>
+      <li onclick="goTo('s6')"><span class="toc-num">07</span>محاكاة تفاعلية للمقذوف</li>
+      <li onclick="goTo('s7')"><span class="toc-num">08</span>مسائل محلولة</li>
+      <li onclick="goTo('sq')"><span class="toc-num">★</span>اختبر نفسك</li>
+      <li onclick="goTo('sfinal')"><span class="toc-num">📌</span>ملخص وخلاصة الدرس</li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 1 — المتجهات في البعدين
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s1">
+    <div class="ls-head">
+      <div class="ls-num">01</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">VECTORS · المتجهات</div>
+        <div class="ls-title">المتجهات في البعدين — التمثيل والتحليل</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      في CLS·01 كان عالمنا بسيطاً: كرة تسقط، سيارة تكبح، قطار يتسارع — كل شيء على خط مستقيم واحد.
+      السرعة كانت رقماً له إشارة موجبة أو سالبة، وهذا كافٍ تماماً.
+      لكن إذا رفعت رأسك ونظرت إلى العالم الحقيقي، ستجد أن <strong>الطبيعة لا تتحرك على خطوط مستقيمة.</strong>
+    </p>
+
+    <p class="lt">
+      كرة رُميت بزاوية تصف قوساً في الهواء. طائرة تقلع مائلةً ثم تستوي في الأفق.
+      قذيفة تنطلق من مدفع وتعلو ثم تهبط. النجوم تدور حول مراكزها. الرياح تجري بزوايا متعددة.
+      كل هذه الظواهر تحتاج وصفاً أكثر ثراءً من مجرد رقم واحد — تحتاج <em>متجهاً.</em>
+    </p>
+
+    <div class="lbox vd">
+      <div class="lbox-label">THE QUESTION · السؤال الجوهري</div>
+      <p class="lt">
+        إذا رُميت كرة بسرعة 20 m/s بزاوية 45°، كيف تصف هذه الحركة رياضياً؟
+        السرعة 20 m/s موجودة — لكنها <strong>موزّعة على اتجاهين في نفس الوقت</strong>.
+        تتحرك الكرة للأمام وللأعلى معاً.
+        كيف نفصل هذه الحركة المركّبة إلى مكوناتها؟
+        هذا بالضبط ما يجيب عنه تحليل المتجهات.
+      </p>
+    </div>
+
+    <p class="lt">
+      الفكرة الأساسية بسيطة وعميقة في آنٍ واحد:
+      <em>أي حركة مائلة في المستوى يمكن تمثيلها كمجموع حركتين — واحدة أفقية خالصة وأخرى رأسية خالصة.</em>
+      هذا التمثيل لا يُغيّر الحركة الفعلية، لكنه يجعلها قابلةً للحساب.
+    </p>
+
+    <div class="lbox m">
+      <div class="lbox-label">DEFINITION · المتجه وتحليله</div>
+      <p class="lt">
+        المتجه $\vec{v}$ في المستوى له <strong>مقدار</strong> (طوله) و<strong>اتجاه</strong> (زاويته).
+        تحليله يعني إيجاد مركبتيه: المركبة الأفقية $v_x$ والمركبة الرأسية $v_y$.
+        الثلاثة مرتبطة بمثلث قائم الزاوية — والمتجه الأصلي هو الوتر:
+        $$v_x = |\vec{v}|\cos\theta \qquad v_y = |\vec{v}|\sin\theta$$
+        $$|\vec{v}| = \sqrt{v_x^2 + v_y^2} \qquad \theta = \arctan\!\left(\tfrac{v_y}{v_x}\right)$$
+      </p>
+    </div>
+
+    <div class="lbox y">
+      <div class="lbox-label">WHY SIN AND COS · لماذا جيب وجيب تمام؟</div>
+      <p class="lt">
+        ليست قاعدة تحفظها — هي <strong>تعريف الدوال المثلثية</strong> في مثلث قائم.
+        في أي مثلث قائم، الزاوية θ تربط الأضلاع بالوتر:
+        <em>جيب الزاوية = الضلع المقابل ÷ الوتر</em>، وهو المركبة الرأسية.
+        <em>جيب التمام = الضلع المجاور ÷ الوتر</em>، وهو المركبة الأفقية.
+        المتجه هو الوتر — ضربه في جيب الزاوية يعطيك الإسقاط الرأسي، وضربه في جيب التمام يعطيك الإسقاط الأفقي.
+        <strong>هذا هو الاستنتاج، لا الحفظ.</strong>
+      </p>
+    </div>
+
+    <!-- SVG: Vector decomposition diagram -->
+    <div class="graph-wrap">
+      <svg width="100%" height="280" viewBox="0 0 560 280" style="max-width:540px;">
+        <defs>
+          <marker id="aVec" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ffbe3d"/>
+          </marker>
+          <marker id="aX" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#41c8ff"/>
+          </marker>
+          <marker id="aY" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ff3d71"/>
+          </marker>
+          <marker id="aAx" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="rgba(180,215,255,.2)"/>
+          </marker>
+        </defs>
+        <!-- coordinate axes -->
+        <line x1="80" y1="220" x2="460" y2="220" stroke="rgba(255,255,255,.12)" stroke-width="1.5" marker-end="url(#aAx)"/>
+        <line x1="80" y1="220" x2="80"  y2="30"  stroke="rgba(255,255,255,.12)" stroke-width="1.5" marker-end="url(#aAx)"/>
+        <text x="463" y="224" fill="rgba(180,215,255,.3)" font-family="IBM Plex Mono" font-size="11">x</text>
+        <text x="72"  y="26"  fill="rgba(180,215,255,.3)" font-family="IBM Plex Mono" font-size="11">y</text>
+        <text x="70"  y="234" fill="rgba(180,215,255,.25)" font-family="IBM Plex Mono" font-size="10">O</text>
+
+        <!-- main vector A -->
+        <line x1="80" y1="220" x2="336" y2="72" stroke="#ffbe3d" stroke-width="2.5" marker-end="url(#aVec)"/>
+        <text x="188" y="128" fill="rgba(255,190,61,.9)" font-family="IBM Plex Mono" font-size="13" font-weight="600">A⃗</text>
+        <text x="200" y="145" fill="rgba(255,190,61,.5)" font-family="Tajawal,sans-serif" font-size="11">|A| = √(Aₓ²+Aᵧ²)</text>
+
+        <!-- Ax component (horizontal) -->
+        <line x1="80" y1="220" x2="332" y2="220" stroke="#41c8ff" stroke-width="2" stroke-dasharray="none" marker-end="url(#aX)"/>
+        <text x="195" y="238" fill="rgba(65,200,255,.8)" font-family="IBM Plex Mono" font-size="10" text-anchor="middle">Aₓ = |A| cos θ</text>
+
+        <!-- Ay component (vertical) -->
+        <line x1="336" y1="220" x2="336" y2="76" stroke="#ff3d71" stroke-width="2" stroke-dasharray="none" marker-end="url(#aY)"/>
+        <text x="378" y="155" fill="rgba(255,61,113,.8)" font-family="IBM Plex Mono" font-size="10" text-anchor="middle">Aᵧ = |A| sin θ</text>
+
+        <!-- dashed construction lines -->
+        <line x1="80"  y1="72"  x2="336" y2="72"  stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="5,4"/>
+        <line x1="336" y1="220" x2="336" y2="72"   stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="5,4"/>
+
+        <!-- angle arc -->
+        <path d="M 115,220 A 35,35 0 0,0 107,187" fill="none" stroke="rgba(255,190,61,.4)" stroke-width="1.5"/>
+        <text x="118" y="202" fill="rgba(255,190,61,.6)" font-family="IBM Plex Mono" font-size="10">θ</text>
+
+        <!-- right angle box -->
+        <rect x="326" y="210" width="10" height="10" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+
+        <!-- labels -->
+        <text x="80"  y="260" fill="rgba(65,200,255,.5)"  font-family="IBM Plex Mono" font-size="9" letter-spacing="1">← Aₓ : المركبة الأفقية</text>
+        <text x="350" y="135" fill="rgba(255,61,113,.5)"  font-family="IBM Plex Mono" font-size="9" letter-spacing="1">Aᵧ : المركبة الرأسية ↑</text>
+      </svg>
+    </div>
+
+    <p class="lt">
+      انظر إلى الرسم أعلاه. المتجه $\vec{A}$ الذهبي هو الحركة الفعلية — مائل، يحمل معلومتين في آنٍ واحد.
+      حين نسقطه على المحور الأفقي نحصل على <span class="blu">$A_x$</span>: حصة الحركة الأفقية.
+      وحين نسقطه على المحور الرأسي نحصل على <span class="red">$A_y$</span>: حصة الحركة الرأسية.
+      <strong>مجموع هاتين المركبتين يُعيد لنا المتجه الأصلي بالكامل — لا يُفقد شيء، لا يُضاف شيء.</strong>
+    </p>
+
+    <p class="lt">
+      هذا التحليل أشبه بتفكيك ضوء أبيض بمنشور زجاجي إلى ألوان الطيف — كل لون كان موجوداً
+      في الضوء الأبيض، غير أننا الآن نستطيع التعامل مع كل لون منفرداً.
+      كذلك المتجه: كانت المركبتان موجودتين فيه، والتحليل يكشفهما لتتعامل معهما كلاً على حدة.
+    </p>
+
+    <div class="vec-grid">
+      <div class="vec-item x-comp">
+        <div class="vec-label">X · المركبة الأفقية</div>
+        <div style="direction:ltr;">$$A_x = |\vec{A}|\cos\theta$$</div>
+        <div class="vec-name">الإسقاط على المحور الأفقي</div>
+      </div>
+      <div class="vec-item y-comp">
+        <div class="vec-label">Y · المركبة الرأسية</div>
+        <div style="direction:ltr;">$$A_y = |\vec{A}|\sin\theta$$</div>
+        <div class="vec-name">الإسقاط على المحور الرأسي</div>
+      </div>
+      <div class="vec-item" style="border-color:rgba(0,255,157,.12);">
+        <div class="vec-label" style="color:rgba(0,255,157,.5);">MAGNITUDE · المقدار</div>
+        <div style="direction:ltr;">$$|\vec{A}| = \sqrt{A_x^2 + A_y^2}$$</div>
+        <div class="vec-name">فيثاغورس ثلاثي الأبعاد</div>
+      </div>
+      <div class="vec-item" style="border-color:rgba(176,107,255,.12);">
+        <div class="vec-label" style="color:rgba(176,107,255,.5);">ANGLE · الاتجاه</div>
+        <div style="direction:ltr;">$$\theta = \arctan\!\left(\frac{A_y}{A_x}\right)$$</div>
+        <div class="vec-name">الزاوية مع المحور الأفقي</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      العملية المعاكسة — إيجاد المقدار والاتجاه من مركبتين معلومتين — تُسمى <em>تركيب المتجهات</em>.
+      هي بالضبط معكوس التحليل: بدلاً من الوتر ←── الضلعان، تذهب من الضلعين ──→ الوتر عبر فيثاغورس.
+    </p>
+      <p class="lt">
+        دالة $\arctan$ تُعيد قيماً في المجال $(-90°, +90°)$ فقط.
+        إذا كان المتجه في الربع الثاني أو الثالث (حيث $A_x < 0$)،
+        يجب إضافة <span class="red">180°</span> للناتج للحصول على الزاوية الصحيحة.
+        في الحسابات العملية، ارسم المتجه أولاً لتتحقق من الربع.
+      </p>
+    </div>
+
+    <table class="lt-table">
+      <tr><th>الربع</th><th>إشارة $A_x$</th><th>إشارة $A_y$</th><th>تصحيح الزاوية</th></tr>
+      <tr><td class="cw">الأول (I)</td><td class="cg">+</td><td class="cg">+</td><td class="cm">θ مباشرة</td></tr>
+      <tr><td class="cw">الثاني (II)</td><td class="cr">−</td><td class="cg">+</td><td class="cm">θ + 180°</td></tr>
+      <tr><td class="cw">الثالث (III)</td><td class="cr">−</td><td class="cr">−</td><td class="cm">θ + 180°</td></tr>
+      <tr><td class="cw">الرابع (IV)</td><td class="cg">+</td><td class="cr">−</td><td class="cm">θ + 360°</td></tr>
+    </table>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 2 — استقلالية المحورين
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s2">
+    <div class="ls-head">
+      <div class="ls-num">02</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">INDEPENDENCE · الاستقلالية</div>
+        <div class="ls-title">استقلالية المحورين — المبدأ الأساسي</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      لدينا الآن أداة التحليل — نعرف كيف نفكك المتجه إلى مركبتيه.
+      لكن لماذا نفعل هذا أصلاً؟ ما الفائدة من تحليل السرعة إلى أفقية ورأسية
+      إذا كانت الكرة في الحقيقة تتحرك بكلتيهما في آنٍ واحد؟
+    </p>
+
+    <p class="lt">
+      الجواب في <strong>أعمق وأذكى مبدأ في الكينماتيكا الكلاسيكية</strong> —
+      مبدأ اكتشفه جاليليو بالتجربة في مطلع القرن السابع عشر قبل أن تُوجد الرياضيات اللازمة
+      لإثباته بشكل صارم. المبدأ يقول:
+    </p>
+
+    <div class="lbox g">
+      <div class="lbox-label">KEY PRINCIPLE · مبدأ الاستقلالية</div>
+      <p class="lt">
+        <strong>الحركة الأفقية والحركة الرأسية مستقلتان تماماً — كل منهما تجهل وجود الأخرى.</strong><br><br>
+        الجاذبية تؤثر على المركبة الرأسية فقط، ولا تعلم شيئاً عن مدى سرعة الجسم أفقياً.
+        السرعة الأفقية تتحرك بثبات تام، ولا تعلم شيئاً عن ما تفعله الجاذبية رأسياً.
+        المحوران يتقاسمان الزمن فقط — هو الخيط الوحيد الذي يربطهما.
+      </p>
+    </div>
+
+    <p class="lt">
+      لفهم عمق هذا المبدأ، فكّر في الأمر هكذا:
+      لنقل أن كرة رُميت أفقياً من قمة برج.
+      في الوقت نفسه، أُسقطت كرة أخرى مباشرةً للأسفل من نفس الارتفاع.
+      أيهما يصل الأرض أولاً؟
+    </p>
+
+    <div class="lbox vd">
+      <div class="lbox-label">GEDANKEN EXPERIMENT · تجربة فكرية غاليليو</div>
+      <p class="lt">
+        <strong>الجواب: تصلان في نفس اللحظة تماماً.</strong><br><br>
+        الكرة المرمية أفقياً تقطع مسافةً أفقية إضافية نعم — لكن هبوطها الرأسي <em>مطابق تماماً</em>
+        لهبوط الكرة الساقطة عمودياً. لأن الجاذبية $g$ تعمل على كلتيهما بنفس الطريقة بغض النظر
+        عن ما يجري أفقياً.
+        <br><br>
+        هذه النتيجة تبدو بديهية الآن، لكنها أسقطت في وقتها مئات السنين من اعتقاد أرسطو
+        بأن الجسم الأثقل يسقط أسرع، وأن للجسم "ذاكرة" تجعل حركته الأفقية تُبطئ سقوطه الرأسي.
+        جاليليو كسر هذا الاعتقاد بالتجربة — والمبدأ أعمق مما يبدو.
+      </p>
+    </div>
+
+    <p class="lt">
+      ما الذي يعنيه هذا المبدأ عملياً بالنسبة لنا؟
+      يعني أننا حين نحلّ مسائل الحركة ثنائية الأبعاد، <em>لا نحتاج معادلات جديدة.</em>
+      نأخذ معادلات CLS·01 ونطبقها مرتين — مرة على المحور الأفقي ومرة على الرأسي —
+      ثم نربط النتيجتين عبر الزمن المشترك.
+      الكون رحيم: المعادلات التي أتقنتها في الدرس الأول تكفيك لحل كل مسائل هذا الدرس.
+    </p>
+
+    <!-- SVG: Independence visualization -->
+    <div class="graph-wrap" style="flex-direction:column;align-items:center;gap:0;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,190,61,.4);margin-bottom:14px;">INDEPENDENCE VISUALIZATION</div>
+      <svg width="100%" height="220" viewBox="0 0 580 220" style="max-width:560px;">
+        <defs>
+          <marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="rgba(180,215,255,.2)"/>
+          </marker>
+          <marker id="aBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#41c8ff"/>
+          </marker>
+          <marker id="aRed2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ff3d71"/>
+          </marker>
+        </defs>
+
+        <!-- trajectory parabola -->
+        <polyline points="50,180 90,148 130,120 170,96 210,76 250,60 290,48 330,40 370,36 410,36 450,40 490,48 530,60"
+          fill="none" stroke="rgba(255,190,61,.5)" stroke-width="2" stroke-dasharray="6,4"/>
+        <text x="420" y="30" fill="rgba(255,190,61,.6)" font-family="IBM Plex Mono" font-size="9" letter-spacing="1">مسار المقذوف</text>
+
+        <!-- x-projection line (constant velocity) -->
+        <line x1="50" y1="195" x2="530" y2="195" stroke="rgba(65,200,255,.15)" stroke-width="1"/>
+        <!-- x motion dots evenly spaced -->
+        <circle cx="50"  cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="130" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="210" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="290" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="370" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="450" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <circle cx="530" cy="195" r="4" fill="#41c8ff" opacity=".7"/>
+        <text x="280" y="213" fill="rgba(65,200,255,.5)" font-family="Tajawal,sans-serif" font-size="11" text-anchor="middle">حركة أفقية منتظمة (vₓ = ثابت)</text>
+
+        <!-- y-projection line -->
+        <line x1="35" y1="180" x2="35" y2="36" stroke="rgba(255,61,113,.15)" stroke-width="1"/>
+        <!-- y motion dots (parabolic spacing) -->
+        <circle cx="35" cy="180" r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="148" r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="120" r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="96"  r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="76"  r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="60"  r="4" fill="#ff3d71" opacity=".7"/>
+        <circle cx="35" cy="48"  r="4" fill="#ff3d71" opacity=".7"/>
+        <text x="14" y="115" fill="rgba(255,61,113,.5)" font-family="Tajawal,sans-serif" font-size="11" text-anchor="middle" writing-mode="rl">حركة رأسية متسارعة</text>
+
+        <!-- vertical dashed lines from trajectory to x-axis -->
+        <line x1="130" y1="120" x2="130" y2="195" stroke="rgba(255,255,255,.05)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="290" y1="48"  x2="290" y2="195" stroke="rgba(255,255,255,.05)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="450" y1="40"  x2="450" y2="195" stroke="rgba(255,255,255,.05)" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- trajectory position dots -->
+        <circle cx="50"  cy="180" r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="130" cy="120" r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="210" cy="76"  r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="290" cy="48"  r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="370" cy="36"  r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="450" cy="40"  r="5" fill="#ffbe3d" opacity=".9"/>
+        <circle cx="530" cy="60"  r="5" fill="#ffbe3d" opacity=".9"/>
+      </svg>
+    </div>
+
+    <p class="lt">
+      انظر للرسم أعلاه بعناية. المسار الذهبي المتقطع هو الحركة الفعلية للمقذوف — منحنى مركّب.
+      لكن الإسقاط الأزرق على الأسفل يظهر <span class="blu">الحركة الأفقية وحدها</span>:
+      نقاط متساوية البُعد، حركة منتظمة، لا تسارع ولا تباطؤ.
+      والإسقاط الأحمر على اليسار يظهر <span class="red">الحركة الرأسية وحدها</span>:
+      نقاط تتقارب كلما صعدنا — تباطؤ بسبب الجاذبية.
+    </p>
+
+    <p class="lt">
+      هذا التمثيل هو جوهر الفكرة: <strong>نفس المقذوف، لكن نراه من منظورين مختلفين في نفس الوقت.</strong>
+      الأفقي يرى حركةً موحّدة لا قلق فيها. الرأسي يرى سقوطاً حراً.
+      والمقذوف الحقيقي يعيش الاثنتين معاً في كل لحظة.
+    </p>
+
+    <div class="lbox vd">
+      <div class="lbox-label">GEDANKEN EXPERIMENT · تجربة فكرية</div>
+      <p class="lt">
+        أُطلقت كرة أفقياً من طاولة في نفس اللحظة التي سقطت فيها كرة أخرى من نفس الارتفاع عمودياً.
+        أيهما يصل الأرض أولاً؟<br><br>
+        الجواب: <strong>في نفس اللحظة تماماً.</strong>
+        لأن الحركة الرأسية لكلتيهما متطابقة — $a_y = -g$ بغض النظر عن السرعة الأفقية.
+        هذا هو مبدأ الاستقلالية مجسَّداً — الجاذبية لا "تعرف" أن الكرة تتحرك أفقياً.
+      </p>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 3 — معادلات الحركة في بعدين
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s3">
+    <div class="ls-head">
+      <div class="ls-num">03</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">EQUATIONS · المعادلات</div>
+        <div class="ls-title">معادلات الحركة في بُعدين</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      بفضل مبدأ الاستقلالية، نكتب معادلات حركة <strong>منفصلة لكل محور</strong>.
+      كل محور يتبع معادلات CLS·01 بتسارعه الخاص.
+      في الحالة العامة:
+    </p>
+
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.4rem;letter-spacing:3px;color:rgba(65,200,255,.55);margin:32px 0 16px;">
+      X-DIRECTION · المحور الأفقي
+    </div>
+
+    <div class="eq4-grid">
+      <div class="eq4-item xdir">
+        <div class="eq4-num">X · EQ·I</div>
+        $$v_x = v_{0x} + a_x t$$
+        <div class="eq4-name">السرعة الأفقية</div>
+      </div>
+      <div class="eq4-item xdir">
+        <div class="eq4-num">X · EQ·II</div>
+        $$x = x_0 + v_{0x}t + \tfrac{1}{2}a_x t^2$$
+        <div class="eq4-name">الموضع الأفقي</div>
+      </div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.4rem;letter-spacing:3px;color:rgba(255,61,113,.55);margin:32px 0 16px;">
+      Y-DIRECTION · المحور الرأسي
+    </div>
+
+    <div class="eq4-grid">
+      <div class="eq4-item ydir">
+        <div class="eq4-num">Y · EQ·I</div>
+        $$v_y = v_{0y} + a_y t$$
+        <div class="eq4-name">السرعة الرأسية</div>
+      </div>
+      <div class="eq4-item ydir">
+        <div class="eq4-num">Y · EQ·II</div>
+        $$y = y_0 + v_{0y}t + \tfrac{1}{2}a_y t^2$$
+        <div class="eq4-name">الموضع الرأسي</div>
+      </div>
+    </div>
+
+    <p class="lt" style="margin-top:24px;">
+      المتغير الوحيد <strong>المشترك</strong> بين المحورين هو <em>الزمن $t$</em>.
+      هذه هي الجسر الذي يربط الحركتين المستقلتين.
+    </p>
+
+    <div class="lbox m">
+      <div class="lbox-label">STRATEGY · منهجية الحل العامة</div>
+      <p class="lt">
+        ① فصّل المتجهات إلى مركبات x وy.<br>
+        ② حلّل المحور x مستقلاً بمعادلات CLS·01.<br>
+        ③ حلّل المحور y مستقلاً بمعادلات CLS·01.<br>
+        ④ استخدم الزمن $t$ لربط المحورين عند الحاجة.<br>
+        ⑤ ادمج النتائج (إذا لزم) بفيثاغورس أو arctan.
+      </p>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 4 — الحركة المقذوفة
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s4">
+    <div class="ls-head">
+      <div class="ls-num">04</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">PROJECTILE MOTION · المقذوف</div>
+        <div class="ls-title">الحركة المقذوفة — الاشتقاق الكامل</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      الحركة المقذوفة هي <strong>الحالة الخاصة</strong> الأهم:
+      جسم يُرمى بزاوية $\theta$ وسرعة $v_0$، ويتحرك تحت تأثير الجاذبية فقط (بإهمال مقاومة الهواء).
+      شرطها الجوهري:
+    </p>
+
+    <div class="lbox y">
+      <div class="lbox-label">CONDITIONS · شروط الحركة المقذوفة</div>
+      <p class="lt">
+        <span class="blu">المحور الأفقي:</span> لا تسارع — $a_x = 0$ — حركة منتظمة بسرعة ثابتة $v_x = v_{0x}$.<br>
+        <span class="red">المحور الرأسي:</span> تسارع الجاذبية فقط — $a_y = -g$ — سقوط حر في الاتجاه الرأسي.
+      </p>
+    </div>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">DERIVATION · اشتقاق معادلات المقذوف</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>تحليل السرعة الابتدائية</strong> إلى مركبتيها:</div>
+          <div class="dstep-math">$$v_{0x} = v_0\cos\theta \qquad v_{0y} = v_0\sin\theta$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>المحور الأفقي</strong> ($a_x = 0$): السرعة ثابتة، الإزاحة خطية في الزمن.</div>
+          <div class="dstep-math">$$v_x = v_0\cos\theta \qquad x = v_0\cos\theta \cdot t$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>المحور الرأسي</strong> ($a_y = -g$): بالضبط كالسقوط الحر من CLS·01.</div>
+          <div class="dstep-math">$$v_y = v_0\sin\theta - gt \qquad y = v_0\sin\theta\cdot t - \tfrac{1}{2}gt^2$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">④</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>السرعة اللحظية</strong> في أي وقت $t$ — ندمج المركبتين:</div>
+          <div class="dstep-math">$$|\vec{v}| = \sqrt{v_x^2 + v_y^2} \qquad \phi = \arctan\!\left(\frac{v_y}{v_x}\right)$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">⑤</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>معادلة المسار</strong> — نحذف $t$ بين معادلتي $x$ و$y$: من $x = v_0\cos\theta\cdot t$ نستخرج $t = x/(v_0\cos\theta)$ ونعوّض في معادلة $y$:</div>
+          <div class="dstep-math">$$\boxed{y = x\tan\theta - \frac{g}{2v_0^2\cos^2\!\theta}\,x^2}$$</div>
+          <div class="dstep-text" style="margin-top:8px;"><em>هذه معادلة قطع مكافئ في $x$ — المسار شكل قوس مكافئ دائماً.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final equations showcase -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.4rem;letter-spacing:3px;color:rgba(255,190,61,.55);margin:32px 0 16px;">
+      PROJECTILE EQUATIONS · معادلات الحركة المقذوفة
+    </div>
+    <div class="eq4-grid">
+      <div class="eq4-item xdir">
+        <div class="eq4-num">PROJ · X·1</div>
+        $$v_x = v_0\cos\theta$$
+        <div class="eq4-name">السرعة الأفقية — ثابتة دائماً</div>
+      </div>
+      <div class="eq4-item xdir">
+        <div class="eq4-num">PROJ · X·2</div>
+        $$x = v_0\cos\theta\cdot t$$
+        <div class="eq4-name">الإزاحة الأفقية</div>
+      </div>
+      <div class="eq4-item ydir">
+        <div class="eq4-num">PROJ · Y·1</div>
+        $$v_y = v_0\sin\theta - gt$$
+        <div class="eq4-name">السرعة الرأسية — تتغير بالزمن</div>
+      </div>
+      <div class="eq4-item ydir">
+        <div class="eq4-num">PROJ · Y·2</div>
+        $$y = v_0\sin\theta\cdot t - \tfrac{1}{2}gt^2$$
+        <div class="eq4-name">الارتفاع عن نقطة الإطلاق</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 5 — نقطة القمة والمدى
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s5">
+    <div class="ls-head">
+      <div class="ls-num">05</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">PEAK & RANGE · القمة والمدى</div>
+        <div class="ls-title">نقطة القمة والمدى الأفقي</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      هناك لحظتان محوريتان في حياة كل مقذوف:
+      <em>لحظة القمة</em> حيث تبلغ الذروة، و<em>لحظة السقوط</em> حيث تلامس الأرض.
+      من هاتين اللحظتين نستخرج ثلاثة معلمات أساسية.
+    </p>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">PEAK · اشتقاق زمن القمة والارتفاع الأقصى</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">عند القمة، <strong>$v_y = 0$</strong> (الجسم لا يتحرك رأسياً لحظة واحدة). نحل من معادلة $v_y$:</div>
+          <div class="dstep-math">$$0 = v_0\sin\theta - gt_{\text{top}} \quad\Longrightarrow\quad \boxed{t_{\text{top}} = \frac{v_0\sin\theta}{g}}$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نعوّض $t_{\text{top}}$ في معادلة $y$ للحصول على الارتفاع الأقصى:</div>
+          <div class="dstep-math">$$H = v_0\sin\theta\cdot\frac{v_0\sin\theta}{g} - \frac{1}{2}g\left(\frac{v_0\sin\theta}{g}\right)^2$$</div>
+          <div class="dstep-math">$$\boxed{H = \frac{(v_0\sin\theta)^2}{2g}}$$</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="deriv-wrap" style="margin-top:16px;">
+      <div class="deriv-title">RANGE · اشتقاق المدى الأفقي</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">المدى هو الإزاحة الأفقية حين يعود الجسم لمستوى الإطلاق ($y = 0$):</div>
+          <div class="dstep-math">$$0 = v_0\sin\theta\cdot t_{\text{land}} - \tfrac{1}{2}g\,t_{\text{land}}^2$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نقسم على $t_{\text{land}}$ (نستبعد الحل التافه $t=0$):</div>
+          <div class="dstep-math">$$t_{\text{land}} = \frac{2v_0\sin\theta}{g} = 2\,t_{\text{top}}$$</div>
+          <div class="dstep-text" style="margin-top:6px;"><em>زمن السقوط = ضعف زمن الصعود — تناسق جميل!</em></div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نعوّض في معادلة $x$ مع استخدام المتطابقة $2\sin\theta\cos\theta = \sin 2\theta$:</div>
+          <div class="dstep-math">$$R = v_0\cos\theta\cdot\frac{2v_0\sin\theta}{g} = \frac{2v_0^2\sin\theta\cos\theta}{g}$$</div>
+          <div class="dstep-math">$$\boxed{R = \frac{v_0^2\sin 2\theta}{g}}$$</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lbox g">
+      <div class="lbox-label">KEY INSIGHT · الزاوية المثلى</div>
+      <p class="lt">
+        المدى $R \propto \sin 2\theta$، وهذه الدالة تبلغ قيمتها القصوى عند $2\theta = 90°$،
+        أي <strong>$\theta = 45°$</strong>.
+        هذه هي الزاوية التي تعطي أقصى مدى أفقي لنفس السرعة الابتدائية.
+        وزاويتان متكاملتان (مجموعهما 90°) تعطيان نفس المدى: $30°$ و$60°$، $20°$ و$70°$...
+      </p>
+    </div>
+
+    <!-- Summary table -->
+    <table class="lt-table">
+      <tr><th>الكمية</th><th>الرمز</th><th>المعادلة</th><th>ملاحظة</th></tr>
+      <tr>
+        <td class="cw">زمن القمة</td>
+        <td class="cm">$t_{\text{top}}$</td>
+        <td class="cm" style="direction:ltr;">$v_0\sin\theta / g$</td>
+        <td style="color:var(--fog);">عند $v_y=0$</td>
+      </tr>
+      <tr>
+        <td class="cw">الارتفاع الأقصى</td>
+        <td class="cm">$H$</td>
+        <td class="cm" style="direction:ltr;">$(v_0\sin\theta)^2 / 2g$</td>
+        <td style="color:var(--fog);">يعتمد فقط على $v_{0y}$</td>
+      </tr>
+      <tr>
+        <td class="cw">زمن السقوط</td>
+        <td class="cm">$t_{\text{land}}$</td>
+        <td class="cm" style="direction:ltr;">$2v_0\sin\theta / g$</td>
+        <td style="color:var(--fog);">ضعف زمن القمة</td>
+      </tr>
+      <tr>
+        <td class="cw">المدى الأفقي</td>
+        <td class="cm">$R$</td>
+        <td class="cm" style="direction:ltr;">$v_0^2\sin2\theta / g$</td>
+        <td style="color:var(--fog);">أقصاه عند $\theta=45°$</td>
+      </tr>
+    </table>
+
+    <!-- SVG: Full trajectory with labels -->
+    <div class="graph-label">TRAJECTORY DIAGRAM · رسم المسار الكامل</div>
+    <div class="graph-wrap">
+      <svg width="100%" height="280" viewBox="0 0 600 280" style="max-width:580px;">
+        <defs>
+          <marker id="g1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="rgba(180,215,255,.2)"/>
+          </marker>
+          <marker id="gAmb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ffbe3d"/>
+          </marker>
+          <marker id="gGrn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00ff9d"/>
+          </marker>
+        </defs>
+
+        <!-- ground -->
+        <line x1="30" y1="230" x2="570" y2="230" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <text x="574" y="234" fill="rgba(180,215,255,.3)" font-family="IBM Plex Mono" font-size="10">x</text>
+
+        <!-- trajectory -->
+        <path d="M 60,230 Q 310,40 560,230" fill="none" stroke="#ffbe3d" stroke-width="2.5"/>
+
+        <!-- initial velocity vector -->
+        <line x1="60" y1="230" x2="100" y2="198" stroke="#ffbe3d" stroke-width="2" marker-end="url(#gAmb)"/>
+        <text x="68" y="215" fill="rgba(255,190,61,.8)" font-family="IBM Plex Mono" font-size="10">v₀</text>
+
+        <!-- angle arc -->
+        <path d="M 85,230 A 25,25 0 0,0 77,208" fill="none" stroke="rgba(255,190,61,.45)" stroke-width="1.5"/>
+        <text x="90" y="225" fill="rgba(255,190,61,.6)" font-family="IBM Plex Mono" font-size="10">θ</text>
+
+        <!-- Peak point -->
+        <circle cx="310" cy="40" r="5" fill="#ffbe3d"/>
+        <text x="318" y="36" fill="rgba(255,190,61,.8)" font-family="IBM Plex Mono" font-size="9">القمة (vᵧ=0)</text>
+
+        <!-- height arrow -->
+        <line x1="22" y1="230" x2="22" y2="44" stroke="rgba(255,61,113,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="310" y1="230" x2="310" y2="44" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="6" y="140" fill="rgba(255,61,113,.6)" font-family="IBM Plex Mono" font-size="9" writing-mode="rl">H</text>
+
+        <!-- Range arrow -->
+        <line x1="60" y1="252" x2="560" y2="252" stroke="rgba(0,255,157,.3)" stroke-width="1.5" marker-end="url(#gGrn)"/>
+        <line x1="60" y1="245" x2="60" y2="258" stroke="rgba(0,255,157,.3)" stroke-width="1.5"/>
+        <text x="290" y="268" fill="rgba(0,255,157,.6)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle" letter-spacing="1">R = v₀²·sin2θ / g</text>
+
+        <!-- tₜₒₚ and tₗₐₙₐₐ labels -->
+        <text x="185" y="100" fill="rgba(255,190,61,.4)" font-family="IBM Plex Mono" font-size="8" letter-spacing="1">t_top</text>
+        <text x="395" y="100" fill="rgba(255,190,61,.4)" font-family="IBM Plex Mono" font-size="8" letter-spacing="1">t_top</text>
+        <!-- symmetry dashed -->
+        <line x1="310" y1="44" x2="310" y2="230" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="5,4"/>
+        <text x="295" y="142" fill="rgba(180,215,255,.2)" font-family="IBM Plex Mono" font-size="8">تناظر</text>
+
+        <!-- vx constant arrows -->
+        <line x1="60"  y1="180" x2="100" y2="180" stroke="rgba(65,200,255,.5)" stroke-width="1.5" marker-end="url(#g1)"/>
+        <line x1="180" y1="115" x2="220" y2="115" stroke="rgba(65,200,255,.5)" stroke-width="1.5" marker-end="url(#g1)"/>
+        <line x1="310" y1="90"  x2="350" y2="90"  stroke="rgba(65,200,255,.5)" stroke-width="1.5" marker-end="url(#g1)"/>
+        <line x1="440" y1="115" x2="480" y2="115" stroke="rgba(65,200,255,.5)" stroke-width="1.5" marker-end="url(#g1)"/>
+        <text x="480" y="112" fill="rgba(65,200,255,.4)" font-family="IBM Plex Mono" font-size="8">vₓ=cst</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 6 — مثال شامل
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s5b">
+    <div class="ls-head">
+      <div class="ls-num">06</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">COMPREHENSIVE EXAMPLE · مثال شامل</div>
+        <div class="ls-title">كرة بزاوية 45° وسرعة 20 m/s — الحل الكامل</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      بعد أن أتقنّا المفاهيم والمعادلات، حان وقت رؤيتها كلها تعمل معاً في مسألة واحدة متكاملة.
+      هذا المثال مُصمَّم لأن يكون <em>نموذجاً منهجياً</em> تُطبّقه على أي مسألة مقذوف تواجهها.
+      لا تحفظ النتائج — افهم <strong>لماذا كل خطوة تسبق التي تليها.</strong>
+    </p>
+
+    <div class="lbox m">
+      <div class="lbox-label">PROBLEM STATEMENT · نص المسألة</div>
+      <p class="lt">
+        رُميت كرة من مستوى الأرض بسرعة ابتدائية $v_0 = 20$ m/s بزاوية $\theta = 45°$ فوق الأفق.
+        أوجد: <strong>(أ)</strong> المركبتين الابتدائيتين للسرعة،
+        <strong>(ب)</strong> زمن الوصول إلى أقصى ارتفاع،
+        <strong>(ج)</strong> أقصى ارتفاع تبلغه الكرة،
+        <strong>(د)</strong> زمن الطيران الكلي بطريقتين،
+        <strong>(هـ)</strong> المدى الأفقي الكلي.
+        ($g = 9.8$ m/s²، $\sin45° = \cos45° = \frac{\sqrt{2}}{2} \approx 0.707$)
+      </p>
+    </div>
+
+    <!-- SVG: المسألة مرسومة -->
+    <div class="graph-wrap">
+      <svg width="100%" height="220" viewBox="0 0 580 220" style="max-width:560px;">
+        <defs>
+          <marker id="c1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="rgba(180,215,255,.2)"/>
+          </marker>
+          <marker id="cAmb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ffbe3d"/>
+          </marker>
+          <marker id="cBlu" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#41c8ff"/>
+          </marker>
+          <marker id="cRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ff3d71"/>
+          </marker>
+          <marker id="cGrn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00ff9d"/>
+          </marker>
+        </defs>
+
+        <!-- ground line -->
+        <line x1="30" y1="185" x2="550" y2="185" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+
+        <!-- parabolic trajectory (θ=45°, symmetric) -->
+        <path d="M 55,185 Q 295,30 535,185" fill="none" stroke="rgba(255,190,61,.5)" stroke-width="2" stroke-dasharray="7,4"/>
+
+        <!-- launch point ball -->
+        <circle cx="55" cy="185" r="6" fill="#ffbe3d"/>
+        <text x="30" y="200" fill="rgba(255,190,61,.6)" font-family="IBM Plex Mono" font-size="9">نقطة الإطلاق</text>
+
+        <!-- v0 vector -->
+        <line x1="55" y1="185" x2="105" y2="135" stroke="#ffbe3d" stroke-width="2.2" marker-end="url(#cAmb)"/>
+        <text x="112" y="148" fill="rgba(255,190,61,.9)" font-family="IBM Plex Mono" font-size="10" font-weight="600">v₀=20 m/s</text>
+
+        <!-- v0x component -->
+        <line x1="55" y1="185" x2="105" y2="185" stroke="#41c8ff" stroke-width="1.8" marker-end="url(#cBlu)"/>
+        <text x="72" y="200" fill="rgba(65,200,255,.7)" font-family="IBM Plex Mono" font-size="9">v₀ₓ=14.14</text>
+
+        <!-- v0y component -->
+        <line x1="105" y1="185" x2="105" y2="135" stroke="#ff3d71" stroke-width="1.8" marker-end="url(#cRed)"/>
+        <text x="110" y="168" fill="rgba(255,61,113,.7)" font-family="IBM Plex Mono" font-size="9">v₀ᵧ=14.14</text>
+
+        <!-- angle arc -->
+        <path d="M 80,185 A 25,25 0 0,0 72.3,162.3" fill="none" stroke="rgba(255,190,61,.4)" stroke-width="1.5"/>
+        <text x="86" y="180" fill="rgba(255,190,61,.65)" font-family="IBM Plex Mono" font-size="9">45°</text>
+
+        <!-- right angle box at decomposition -->
+        <rect x="95" y="175" width="10" height="10" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+
+        <!-- peak point -->
+        <circle cx="295" cy="30" r="5" fill="#ffbe3d"/>
+        <text x="303" y="26" fill="rgba(255,190,61,.8)" font-family="IBM Plex Mono" font-size="9">القمة: vᵧ=0</text>
+
+        <!-- H dashed -->
+        <line x1="295" y1="185" x2="295" y2="34" stroke="rgba(255,61,113,.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="300" y="112" fill="rgba(255,61,113,.55)" font-family="IBM Plex Mono" font-size="9">H=10.2m</text>
+
+        <!-- t_top label -->
+        <text x="160" y="90" fill="rgba(255,190,61,.35)" font-family="IBM Plex Mono" font-size="8" letter-spacing="1">← t=1.44s →</text>
+        <text x="355" y="90" fill="rgba(255,190,61,.35)" font-family="IBM Plex Mono" font-size="8" letter-spacing="1">← t=1.44s →</text>
+
+        <!-- landing point -->
+        <circle cx="535" cy="185" r="6" fill="rgba(0,255,157,.7)"/>
+        <text x="510" y="200" fill="rgba(0,255,157,.6)" font-family="IBM Plex Mono" font-size="9">نقطة السقوط</text>
+
+        <!-- Range arrow -->
+        <line x1="55" y1="208" x2="533" y2="208" stroke="rgba(0,255,157,.35)" stroke-width="1.5" marker-end="url(#cGrn)"/>
+        <line x1="55" y1="202" x2="55" y2="213" stroke="rgba(0,255,157,.35)" stroke-width="1.5"/>
+        <text x="265" y="218" fill="rgba(0,255,157,.55)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">R = 20.4 m</text>
+      </svg>
+    </div>
+
+    <!-- STEP A: تحليل المركبتين -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,190,61,.5);margin:36px 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--m));"></div>
+      STEP A · تحليل المركبتين
+    </div>
+
+    <p class="lt">
+      <strong>الخطوة الأولى دائماً:</strong> عندما تُعطى زاوية، فهذا يعني أن السرعة موزّعة على المحورين.
+      المهمة الأولى هي إيجاد حصة كل محور من هذه السرعة.
+      لا نفعل أكثر من ضرب السرعة في الدالة المثلثية المناسبة.
+    </p>
+
+    <div class="lbox y">
+      <div class="lbox-label">INSIGHT · لماذا sin وcos؟</div>
+      <p class="lt">
+        لأن السرعة الابتدائية هي <strong>وتر</strong> المثلث القائم الذي تُشكّله مركبتاها.
+        المركبة الرأسية تقابل الزاوية θ فتستخدم <em>sin θ</em>.
+        المركبة الأفقية مجاورة للزاوية θ فتستخدم <em>cos θ</em>.
+        هذا ليس قانوناً تحفظه — هو هندسة بسيطة.
+      </p>
+    </div>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">A · تحليل السرعة الابتدائية إلى مركبتيها</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>المركبة الرأسية</strong> $v_{0y}$ — تُحرّك الكرة للأعلى:</div>
+          <div class="dstep-math">$$v_{0y} = v_0 \cdot \sin\theta = 20 \times \sin 45° = 20 \times 0.707 = \mathbf{14.14\;\text{m/s}}$$</div>
+          <div class="dstep-text" style="margin-top:4px;">هذه السرعة هي التي ستقاوم الجاذبية وتدفع الكرة للأعلى حتى تصل القمة.</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>المركبة الأفقية</strong> $v_{0x}$ — تُحرّك الكرة للأمام:</div>
+          <div class="dstep-math">$$v_{0x} = v_0 \cdot \cos\theta = 20 \times \cos 45° = 20 \times 0.707 = \mathbf{14.14\;\text{m/s}}$$</div>
+          <div class="dstep-text" style="margin-top:4px;">هذه السرعة لن تتغير طوال الرحلة — لا يوجد تسارع أفقي.</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>لاحظ:</strong> عند $\theta = 45°$ تتطابق المركبتان لأن $\sin 45° = \cos 45°$.
+          هذا ليس دائماً هكذا — إذا كانت الزاوية $30°$ مثلاً فستحصل على $v_{0y} = 10$ m/s
+          و$v_{0x} = 17.3$ m/s — قيمتان مختلفتان تماماً.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP B: زمن القمة -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,61,113,.5);margin:36px 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--red));"></div>
+      STEP B · زمن الوصول إلى القمة
+    </div>
+
+    <p class="lt">
+      عند القمة، تكون السرعة الرأسية $v_y = 0$ تماماً — الكرة لا تصعد ولا تهبط رأسياً لتلك اللحظة الوحيدة.
+      من هذه الحقيقة البسيطة نستخرج الزمن مباشرة.
+      <strong>نأخذ $v_{0y} = 14.14$ m/s لأننا نعمل على المحور الرأسي فقط</strong> — ليس 20 m/s.
+    </p>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">B · زمن الوصول إلى أقصى ارتفاع</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نستخدم تعريف التسارع على المحور الرأسي: عند القمة $v_y = 0$:</div>
+          <div class="dstep-math">$$v_y = v_{0y} - g\,t_{\text{top}}$$</div>
+          <div class="dstep-math">$$0 = v_{0y} - g\,t_{\text{top}} \quad\Longrightarrow\quad t_{\text{top}} = \frac{v_{0y}}{g}$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نعوّض القيم:</div>
+          <div class="dstep-math">$$t_{\text{top}} = \frac{14.14}{9.8} = \mathbf{1.44\;\text{s}}$$</div>
+          <div class="dstep-text" style="margin-top:6px;"><em>
+            بعد 1.44 ثانية تماماً تصل الكرة إلى ذروتها ثم تبدأ الهبوط.
+          </em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lbox r">
+      <div class="lbox-label">CRITICAL · لماذا أخذنا 14.14 وليس 20؟</div>
+      <p class="lt">
+        لأن الجاذبية تعمل على <span class="red">المحور الرأسي فقط</span>.
+        هي لا "تعرف" شيئاً عن الحركة الأفقية.
+        حين نحسب زمن القمة أو الارتفاع، نعمل داخل المحور الرأسي المستقل،
+        وسرعتنا فيه هي $v_{0y} = 14.14$ m/s — وليست السرعة الكلية 20 m/s.
+        قارن: لو أطلقنا الكرة عمودياً (90°) بنفس السرعة 20 m/s،
+        عندها $v_{0y} = 20$ m/s ويتغير الارتفاع كلياً.
+      </p>
+    </div>
+
+    <!-- STEP C: الارتفاع الأقصى -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(65,200,255,.5);margin:36px 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--blue));"></div>
+      STEP C · الارتفاع الأقصى
+    </div>
+
+    <p class="lt">
+      نعوّض $t_{\text{top}} = 1.44$ s في معادلة الموضع الرأسي. مرة أخرى نعمل على المحور الرأسي
+      ونستخدم $v_{0y}$ — ليس $v_0$.
+    </p>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">C · إيجاد أقصى ارتفاع</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نستخدم معادلة الارتفاع الأقصى المشتقة مباشرة:</div>
+          <div class="dstep-math">$$H = \frac{v_{0y}^2}{2g} = \frac{(14.14)^2}{2 \times 9.8} = \frac{199.94}{19.6} \approx \mathbf{10.2\;\text{m}}$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>تحقق بطريقة بديلة</strong> — نعوّض $t_{\text{top}}$ في معادلة $y$:</div>
+          <div class="dstep-math">$$H = v_{0y}\cdot t_{\text{top}} - \tfrac{1}{2}g\,t_{\text{top}}^2 = 14.14\times1.44 - \tfrac{1}{2}(9.8)(1.44)^2$$</div>
+          <div class="dstep-math">$$H = 20.36 - \tfrac{1}{2}(9.8)(2.074) = 20.36 - 10.16 \approx 10.2\;\text{m}\;\checkmark$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>الفرق الجوهري عن CLS·01:</strong>
+          في الدرس الأول عند إطلاق كرة للأعلى بـ 20 m/s كان الارتفاع
+          $H = 20^2/(2\times9.8) = 20.4$ m.
+          هنا الارتفاع 10.2 m فقط — نصف القيمة — لأن <em>سرعتنا الرأسية الفعلية هي 14.14 وليس 20</em>.
+          الزاوية "سرقت" نصف السرعة للحركة الأفقية.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP D: زمن الطيران بطريقتين -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(0,255,157,.5);margin:36px 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--green));"></div>
+      STEP D · زمن الطيران الكلي — طريقتان
+    </div>
+
+    <p class="lt">
+      يمكن إيجاد زمن الطيران الكلي بطريقتين. فهم كلتيهما يعمّق الإدراك، وتعرف متى تستخدم كل منهما.
+    </p>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">D·1 · الطريقة الأولى — الضرب في 2</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">
+            لأن الكرة انطلقت من الأرض وستعود إلى نفس المستوى، المسار تناظري تماماً.
+            زمن الصعود = زمن الهبوط. إذن:
+          </div>
+          <div class="dstep-math">$$T = 2\,t_{\text{top}} = 2 \times 1.44 = \mathbf{2.88\;\text{s}}$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong style="color:var(--red);">شرط هام:</strong>
+          هذه الطريقة صالحة <em>فقط</em> حين تكون نقطة الإطلاق ونقطة السقوط على نفس المستوى الأفقي.
+          إذا كانت الكرة تُطلق من فوق جرف أو تسقط في حفرة، يختل التناظر وتنتفي هذه الطريقة.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="deriv-wrap" style="margin-top:14px;">
+      <div class="deriv-title">D·2 · الطريقة الثانية — المعادلة العامة (الأدق دائماً)</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text">
+            نضع $y_f = 0$ (عادت للأرض) و$y_0 = 0$ (أُطلقت من الأرض) في معادلة الموضع الرأسي:
+          </div>
+          <div class="dstep-math">$$y_f = y_0 + v_{0y}\,T - \tfrac{1}{2}g\,T^2$$</div>
+          <div class="dstep-math">$$0 = 0 + 14.14\,T - \tfrac{1}{2}(9.8)\,T^2$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text">نعيد الترتيب ونقسم على $T$ (نستبعد الحل التافه $T = 0$):</div>
+          <div class="dstep-math">$$14.14\,T = \tfrac{1}{2}(9.8)\,T^2 \quad\Longrightarrow\quad 14.14 = 4.9\,T$$</div>
+          <div class="dstep-math">$$T = \frac{14.14}{4.9} = \mathbf{2.88\;\text{s}}\;\checkmark$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text">
+            <strong>متى تُفضَّل هذه الطريقة؟</strong>
+            دائماً حين يكون لديك ارتفاع ابتدائي أو نهائي مختلف عن الصفر.
+            في تلك الحالة تضع القيم في المعادلة العامة وتحل معادلة من الدرجة الثانية.
+            إذا لم يكن هناك ارتفاع فالطريقتان تعطيان نفس النتيجة، لكن هذه أكثر صرامةً وأماناً.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP E: المدى الأفقي -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(176,107,255,.5);margin:36px 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--violet));"></div>
+      STEP E · المدى الأفقي الكلي
+    </div>
+
+    <p class="lt">
+      الآن ننتقل للمحور الأفقي. لدينا الزمن الكلي $T = 2.88$ s والسرعة الأفقية $v_{0x} = 14.14$ m/s.
+      لاحظ أن قانون المدى $R = v_0^2 \sin2\theta / g$ يأخذ $v_0 = 20$ m/s — السرعة الكلية — لأن الزاوية مضمّنة في sin2θ.
+    </p>
+
+    <div class="deriv-wrap">
+      <div class="deriv-title">E · المدى الأفقي بطريقتين</div>
+
+      <div class="dstep">
+        <div class="dstep-num">①</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>من الزمن:</strong></div>
+          <div class="dstep-math">$$R = v_{0x} \cdot T = 14.14 \times 2.88 = \mathbf{40.7\;\text{m}}$$</div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">②</div>
+        <div class="dstep-body">
+          <div class="dstep-text"><strong>بالصيغة المباشرة</strong> — لاحظ هنا نأخذ $v_0 = 20$ m/s الكلية:</div>
+          <div class="dstep-math">$$R = \frac{v_0^2 \cdot \sin(2\theta)}{g} = \frac{20^2 \times \sin(90°)}{9.8} = \frac{400 \times 1}{9.8} \approx \mathbf{40.8\;\text{m}}\;\checkmark$$</div>
+          <div class="dstep-text" style="margin-top:6px;"><em>الفرق الصغير (0.1 m) ناتج عن تقريب $\sqrt{2}/2 \approx 0.707$.</em></div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="dstep-num">③</div>
+        <div class="dstep-body">
+          <div class="dstep-text">
+            <strong>لماذا نأخذ $v_0$ الكلية وليس المركبة في صيغة المدى؟</strong>
+            لأن $\sin(2\theta) = 2\sin\theta\cos\theta$، وحين تُدخل $v_0\sin\theta$ و$v_0\cos\theta$
+            في الاشتقاق ينتج $v_0^2 \cdot 2\sin\theta\cos\theta / g = v_0^2\sin2\theta/g$.
+            الصيغة تجمع المركبتين داخلها — لذا تستخدم $v_0$ مباشرة.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Answer Box -->
+    <div style="background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.15);border-radius:6px;padding:20px 24px;margin-top:28px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.36rem;letter-spacing:3px;color:rgba(0,255,157,.55);margin-bottom:14px;">FINAL ANSWERS · النتائج الكاملة</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;direction:ltr;">
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,190,61,.12);border-radius:4px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.32rem;letter-spacing:2px;color:rgba(255,190,61,.4);margin-bottom:4px;">المركبات</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#ffbe3d;">v₀ₓ = v₀ᵧ = 14.14 m/s</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,61,113,.12);border-radius:4px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.32rem;letter-spacing:2px;color:rgba(255,61,113,.4);margin-bottom:4px;">زمن القمة</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#ff3d71;">t_top = 1.44 s</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(65,200,255,.12);border-radius:4px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.32rem;letter-spacing:2px;color:rgba(65,200,255,.4);margin-bottom:4px;">الارتفاع الأقصى</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#41c8ff;">H = 10.2 m</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(0,255,157,.12);border-radius:4px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.32rem;letter-spacing:2px;color:rgba(0,255,157,.4);margin-bottom:4px;">زمن الطيران</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#00ff9d;">T = 2.88 s</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(176,107,255,.12);border-radius:4px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.32rem;letter-spacing:2px;color:rgba(176,107,255,.4);margin-bottom:4px;">المدى الأفقي</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#b06bff;">R ≈ 40.8 m</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lbox g" style="margin-top:24px;">
+      <div class="lbox-label">KEY INSIGHT · الخلاصة المنهجية</div>
+      <p class="lt">
+        في كل مسألة مقذوف، الترتيب ثابت لا يتغير:
+        <strong>① حلّل المركبتين ← ② اعمل على المحور الرأسي (القمة والزمن والارتفاع) ← ③ اعمل على المحور الأفقي (المدى) ← ④ ادمج.</strong>
+        هذا الترتيب يضمن ألا تخلط بين $v_0$ و$v_{0y}$ أو $v_{0x}$ — كل معادلة تعمل داخل محورها.
+      </p>
+    </div>
+
+  </div><!-- /s5b -->
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 7 — محاكاة تفاعلية
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s6">
+    <div class="ls-head">
+      <div class="ls-num">06</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">SIMULATION · المحاكاة</div>
+        <div class="ls-title">محاكاة تفاعلية للحركة المقذوفة</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      حرّك شريطَي التحكم لتغيير السرعة الابتدائية وزاوية الإطلاق.
+      راقب كيف يتغير المسار، الارتفاع الأقصى، والمدى الأفقي في الوقت الحقيقي.
+    </p>
+
+    <div class="sim-block">
+      <div class="sim-header">
+        <div class="sim-dot"></div>
+        INTERACTIVE · محاكاة الحركة المقذوفة
+      </div>
+      <div class="sim-body">
+        <div class="sim-canvas-wrap">
+          <canvas id="projCv" width="820" height="280" style="width:100%;max-width:820px;"></canvas>
+        </div>
+        <div class="sim-controls">
+          <div class="sim-ctrl">
+            <label>
+              <span>السرعة الابتدائية v₀</span>
+              <span id="v0lbl">20 m/s</span>
+            </label>
+            <input type="range" id="v0sl" min="5" max="50" value="20" step="1" oninput="updateProj()">
+          </div>
+          <div class="sim-ctrl">
+            <label>
+              <span>زاوية الإطلاق θ</span>
+              <span id="angLbl">45°</span>
+            </label>
+            <input type="range" id="angsl" min="5" max="85" value="45" step="1" oninput="updateProj()">
+          </div>
+        </div>
+        <div class="sim-output">
+          <div class="sim-val">
+            <span class="sim-val-label">v₀ · السرعة</span>
+            <span class="sim-val-num" id="sv0">20 m/s</span>
+          </div>
+          <div class="sim-val">
+            <span class="sim-val-label">θ · الزاوية</span>
+            <span class="sim-val-num" id="sang">45°</span>
+          </div>
+          <div class="sim-val">
+            <span class="sim-val-label">H · الارتفاع الأقصى</span>
+            <span class="sim-val-num blue" id="sH">—</span>
+          </div>
+          <div class="sim-val">
+            <span class="sim-val-label">R · المدى الأفقي</span>
+            <span class="sim-val-num grn" id="sR">—</span>
+          </div>
+          <div class="sim-val">
+            <span class="sim-val-label">T · زمن الطيران</span>
+            <span class="sim-val-num red" id="sT">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 7 — مسائل محلولة
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="s7">
+    <div class="ls-head">
+      <div class="ls-num">07</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">WORKED EXAMPLES · مسائل محلولة</div>
+        <div class="ls-title">تطبيق المنهجية خطوة بخطوة</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      المنهجية في كل مسألة: ① حلّل السرعة الابتدائية ② حدد التسارع على كل محور ③ حل كل محور مستقلاً ④ اربط المحورين بالزمن ⑤ تحقق فيزيائياً.
+    </p>
+
+    <!-- Example 1 -->
+    <div class="example-block">
+      <div class="ex-header">
+        <span class="ex-badge">EXAMPLE · 01 · مقذوف أفقي من ارتفاع</span>
+        <span class="ex-diff easy">LEVEL 1</span>
+      </div>
+      <div class="ex-body">
+        <div class="ex-q">
+          رُميت كرة أفقياً (θ = 0°) من حافة جرف ارتفاعه $h = 80$ m بسرعة $v_0 = 15$ m/s.
+          أوجد: (أ) الزمن حتى تصل الأرض، (ب) المدى الأفقي، (ج) سرعتها عند الاصطدام.
+          (استخدم $g = 10$ m/s²)
+        </div>
+        <div class="ex-sol-title">SOLUTION · الحل</div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">①</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>تحليل المعطيات على كل محور:</strong></div>
+            <div style="direction:ltr; font-family:'IBM Plex Mono',monospace; font-size:.42rem; color:var(--blue); padding:8px 12px; background:rgba(65,200,255,.05); border-radius:3px; margin-top:4px; letter-spacing:1px;">
+              X: v₀ₓ = 15 m/s · aₓ = 0
+            </div>
+            <div style="direction:ltr; font-family:'IBM Plex Mono',monospace; font-size:.42rem; color:var(--red); padding:8px 12px; background:rgba(255,61,113,.05); border-radius:3px; margin-top:4px; letter-spacing:1px;">
+              Y: v₀ᵧ = 0 (أفقي) · aᵧ = −10 m/s² · y₀ = 80 m · y_f = 0
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">②</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(أ) الزمن</strong> — من المحور الرأسي ($v_{0y} = 0$):</div>
+            <div style="direction:ltr; margin-top:6px;">$$y = y_0 + v_{0y}t - \tfrac{1}{2}gt^2$$</div>
+            <div style="direction:ltr; margin-top:6px;">$$0 = 80 + 0 - \tfrac{1}{2}(10)t^2 \quad\Longrightarrow\quad t^2 = 16 \quad\Longrightarrow\quad t = 4\;\text{s}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">③</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ب) المدى الأفقي</strong> — من المحور الأفقي:</div>
+            <div style="direction:ltr; margin-top:6px;">$$x = v_{0x}\cdot t = 15 \times 4 = 60\;\text{m}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">④</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ج) السرعة عند الاصطدام</strong> — نحسب كل مركبة عند $t=4$ s:</div>
+            <div style="direction:ltr; margin-top:6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+              <span>$$v_x = 15\;\text{m/s}$$</span>
+              <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:rgba(65,200,255,.6);direction:rtl;">(لم تتغير)</span>
+            </div>
+            <div style="direction:ltr; margin-top:6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+              <span>$$v_y = 0 - (10)(4) = -40\;\text{m/s}$$</span>
+              <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:rgba(255,61,113,.6);direction:rtl;">(نحو الأسفل)</span>
+            </div>
+            <div style="direction:ltr; margin-top:6px;">$$|\vec{v}| = \sqrt{15^2 + 40^2} = \sqrt{225+1600} = \sqrt{1825} \approx 42.7\;\text{m/s}$$</div>
+            <div style="direction:ltr; margin-top:6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+              <span>$$\phi = \arctan\!\left(\frac{40}{15}\right) \approx 69.4°$$</span>
+              <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:var(--fog);direction:rtl;">أسفل الأفق</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-answer">t = 4 s &nbsp;·&nbsp; R = 60 m &nbsp;·&nbsp; |v| ≈ 42.7 m/s @ 69.4° أسفل الأفق</div>
+      </div>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="example-block">
+      <div class="ex-header">
+        <span class="ex-badge">EXAMPLE · 02 · مقذوف بزاوية — إيجاد الارتفاع والمدى</span>
+        <span class="ex-diff med">LEVEL 2</span>
+      </div>
+      <div class="ex-body">
+        <div class="ex-q">
+          رُميت كرة بسرعة ابتدائية $v_0 = 30$ m/s بزاوية $\theta = 60°$ فوق الأفق من مستوى الأرض.
+          أوجد: (أ) الارتفاع الأقصى، (ب) زمن الطيران الكلي، (ج) المدى الأفقي.
+          ($g = 10$ m/s²، $\sin 60° = \tfrac{\sqrt{3}}{2}$، $\cos 60° = \tfrac{1}{2}$)
+        </div>
+        <div class="ex-sol-title">SOLUTION · الحل</div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">①</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>تحليل السرعة الابتدائية:</strong></div>
+            <div style="direction:ltr; margin-top:6px;">$$v_{0x} = 30\cos60° = 30 \times \tfrac{1}{2} = 15\;\text{m/s}$$</div>
+            <div style="direction:ltr; margin-top:6px;">$$v_{0y} = 30\sin60° = 30 \times \tfrac{\sqrt{3}}{2} = 15\sqrt{3} \approx 25.98\;\text{m/s}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">②</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(أ) الارتفاع الأقصى</strong> — عند $v_y = 0$:</div>
+            <div style="direction:ltr; margin-top:6px;">$$H = \frac{v_{0y}^2}{2g} = \frac{(15\sqrt{3})^2}{2(10)} = \frac{675}{20} = \mathbf{33.75\;\text{m}}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">③</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ب) زمن الطيران</strong>:</div>
+            <div style="direction:ltr; margin-top:6px;">$$T = \frac{2v_{0y}}{g} = \frac{2\times 15\sqrt{3}}{10} = 3\sqrt{3} \approx \mathbf{5.2\;\text{s}}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">④</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ج) المدى الأفقي</strong>:</div>
+            <div style="direction:ltr; margin-top:6px;">$$R = v_{0x}\cdot T = 15 \times 3\sqrt{3} = 45\sqrt{3} \approx \mathbf{77.9\;\text{m}}$$</div>
+            <div style="direction:ltr; margin-top:6px; font-size:.8em; color:var(--fog);">تحقق بالصيغة المباشرة: $R = v_0^2\sin2\theta/g = 900\times\sin120°/10 = 90\times(\sqrt3/2) = 45\sqrt{3}$ ✓</div>
+          </div>
+        </div>
+
+        <div class="ex-answer">H = 33.75 m &nbsp;·&nbsp; T ≈ 5.2 s &nbsp;·&nbsp; R = 45√3 ≈ 77.9 m</div>
+      </div>
+    </div>
+
+    <!-- Example 3 — Hard: projectile off a cliff -->
+    <div class="example-block">
+      <div class="ex-header">
+        <span class="ex-badge">EXAMPLE · 03 · مقذوف من ارتفاع بزاوية</span>
+        <span class="ex-diff hard">LEVEL 3</span>
+      </div>
+      <div class="ex-body">
+        <div class="ex-q">
+          رُميت كرة من فوق جرف ارتفاعه $y_0 = 45$ m بسرعة $v_0 = 20$ m/s بزاوية $\theta = 30°$
+          فوق الأفق. أوجد: (أ) الزمن حتى تصل سطح الأرض ($y = 0$)،
+          (ب) المدى الأفقي الكلي، (ج) أقصى ارتفاع تبلغه عن الأرض.
+          ($g = 10$ m/s²، $\sin30° = 0.5$، $\cos30° \approx 0.866$)
+        </div>
+        <div class="ex-sol-title">SOLUTION · الحل</div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">①</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>تحليل السرعة الابتدائية:</strong></div>
+            <div style="direction:ltr; font-family:'IBM Plex Mono',monospace; font-size:.42rem; color:var(--m); padding:8px 12px; background:var(--m-dark); border-radius:3px; margin-top:4px; letter-spacing:1px;">
+              v₀ₓ = 20×0.866 = 17.32 m/s &nbsp;·&nbsp; v₀ᵧ = 20×0.5 = 10 m/s &nbsp;·&nbsp; y₀ = 45 m
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">②</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(أ) الزمن</strong> — نضع $y = 0$ في معادلة الموضع الرأسي:</div>
+            <div style="direction:ltr; margin-top:6px;">$$0 = 45 + 10t - \tfrac{1}{2}(10)t^2$$</div>
+            <div style="direction:ltr; margin-top:6px;">$$5t^2 - 10t - 45 = 0 \quad\Longrightarrow\quad t^2 - 2t - 9 = 0$$</div>
+            <div style="direction:ltr; margin-top:6px;">$$t = \frac{2 \pm \sqrt{4+36}}{2} = \frac{2 \pm \sqrt{40}}{2} = 1 \pm \sqrt{10}$$</div>
+            <div style="direction:ltr; margin-top:6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+              <span>$$t = 1 + \sqrt{10} \approx 1 + 3.162 = \mathbf{4.16\;\text{s}}$$</span>
+              <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:rgba(0,255,157,.6);direction:rtl;">(نأخذ الحل الموجب)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">③</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ب) المدى الأفقي الكلي:</strong></div>
+            <div style="direction:ltr; margin-top:6px;">$$R = v_{0x}\cdot t = 17.32 \times 4.16 \approx \mathbf{72.1\;\text{m}}$$</div>
+          </div>
+        </div>
+
+        <div class="ex-step">
+          <div class="ex-step-n">④</div>
+          <div class="ex-step-body">
+            <div class="ex-step-text"><strong>(ج) الارتفاع الأقصى عن الأرض</strong> — زمن القمة أولاً:</div>
+            <div style="direction:ltr; margin-top:6px;">$$t_{\text{top}} = \frac{v_{0y}}{g} = \frac{10}{10} = 1\;\text{s}$$</div>
+            <div style="direction:ltr; margin-top:6px;">$$y_{\text{max}} = 45 + 10(1) - \tfrac{1}{2}(10)(1)^2 = 45 + 10 - 5 = \mathbf{50\;\text{m}}$$</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="padding:8px 14px;background:rgba(65,200,255,.06);border:1px solid rgba(65,200,255,.15);border-radius:3px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:2px;color:rgba(65,200,255,.6);">تحقق فيزيائي</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:var(--fog);margin-top:3px;">$t_{\text{top}}=1\text{s} &lt; t_{\text{land}}=4.16\text{s}$ ✓ القمة قبل السقوط</div>
+          </div>
+          <div style="padding:8px 14px;background:rgba(255,61,113,.06);border:1px solid rgba(255,61,113,.15);border-radius:3px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:2px;color:rgba(255,61,113,.6);">تحقق</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.85rem;color:var(--fog);margin-top:3px;">$y_{\text{max}}=50\text{ m} > y_0=45\text{ m}$ ✓ يرتفع ثم يهبط</div>
+          </div>
+        </div>
+
+        <div class="ex-answer">t ≈ 4.16 s &nbsp;·&nbsp; R ≈ 72.1 m &nbsp;·&nbsp; y_max = 50 m عن سطح الأرض</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       QUIZ
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="sq">
+    <div class="ls-head">
+      <div class="ls-num">★</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">SELF TEST · اختبر نفسك</div>
+        <div class="ls-title">أسئلة مفاهيمية وحسابية</div>
+      </div>
+    </div>
+
+    <p class="lt">اضغط على كل سؤال لإظهار الإجابة.</p>
+
+    <div class="quiz-wrap">
+
+      <div class="quiz-item" onclick="this.classList.toggle('open')">
+        <div class="quiz-q">
+          <span>مقذوفان أُطلقا بنفس السرعة الابتدائية: الأول بزاوية 30° والثاني بزاوية 60°. أيهما يصل أبعد؟</span>
+          <span class="quiz-icon">▶</span>
+        </div>
+        <div class="quiz-ans">
+          <strong>كلاهما يصل نفس المدى.</strong>
+          المدى $R = v_0^2\sin2\theta/g$.
+          <span class="qg">$\sin(2\times30°) = \sin60°$</span> و <span class="qg">$\sin(2\times60°) = \sin120° = \sin60°$</span>.
+          الزاويتان متكاملتان (مجموعهما 90°) فيعطيان دائماً نفس المدى. الفرق: 60° يعطي <span class="qg">ارتفاعاً أكبر</span> وزمن طيران أطول.
+        </div>
+      </div>
+
+      <div class="quiz-item" onclick="this.classList.toggle('open')">
+        <div class="quiz-q">
+          <span>عند نقطة القمة لمقذوف: ما قيمة السرعة الرأسية؟ وما قيمة التسارع؟</span>
+          <span class="quiz-icon">▶</span>
+        </div>
+        <div class="quiz-ans">
+          عند القمة: <span class="qg">$v_y = 0$</span> (الجسم لا يتحرك رأسياً للحظة).
+          لكن التسارع <span class="qr">$a = g = 9.8$ m/s² نحو الأسفل</span> — لم يتغير ولن يتغير طوال الرحلة.
+          الخطأ الشائع هو الاعتقاد أن التسارع يصفر عند القمة. السرعة تصفر، التسارع لا.
+        </div>
+      </div>
+
+      <div class="quiz-item" onclick="this.classList.toggle('open')">
+        <div class="quiz-q">
+          <span>مقذوف أُطلق بسرعة $v_0 = 40$ m/s بزاوية 45°. ما أقصى ارتفاع يبلغه؟ ($g=10$ m/s²)</span>
+          <span class="quiz-icon">▶</span>
+        </div>
+        <div class="quiz-ans">
+          $v_{0y} = 40\sin45° = 40/\sqrt{2} = 20\sqrt{2}$ m/s.
+          $$H = \frac{v_{0y}^2}{2g} = \frac{(20\sqrt{2})^2}{20} = \frac{800}{20} = \mathbf{40\;\text{m}}$$
+          <span class="qg">الإجابة: H = 40 m</span>
+        </div>
+      </div>
+
+      <div class="quiz-item" onclick="this.classList.toggle('open')">
+        <div class="quiz-q">
+          <span>لماذا يكون المسار قطعاً مكافئاً (Parabola) وليس دائرة أو مستقيماً؟</span>
+          <span class="quiz-icon">▶</span>
+        </div>
+        <div class="quiz-ans">
+          لأن $x \propto t$ (خطي) بينما $y \propto t^2$ (تربيعي).
+          حين نحذف $t$ بين المعادلتين، نحصل على $y \propto x^2$ — وهذا بالضبط تعريف القطع المكافئ.
+          لو كانت الحركة الأفقية أيضاً متسارعة، لحصلنا على مسار مختلف.
+        </div>
+      </div>
+
+      <div class="quiz-item" onclick="this.classList.toggle('open')">
+        <div class="quiz-q">
+          <span>مقذوف أُطلق أفقياً من ارتفاع $h$. إذا ضاعفنا السرعة الابتدائية، ماذا يحدث للمدى الأفقي؟</span>
+          <span class="quiz-icon">▶</span>
+        </div>
+        <div class="quiz-ans">
+          عند الإطلاق الأفقي: $t = \sqrt{2h/g}$ (لا يعتمد على $v_0$)، إذن $R = v_0 \cdot t = v_0\sqrt{2h/g}$.
+          المدى <span class="qg">يتضاعف</span> حين تتضاعف $v_0$. العلاقة خطية بين $R$ و$v_0$ (وليست تربيعية) لأن $t$ ثابت عند الإطلاق الأفقي من نفس الارتفاع.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sdiv"></div>
+
+  <!-- ══════════════════════════════════════════
+       FINAL SUMMARY — COMPLETE CLOSING
+  ══════════════════════════════════════════ -->
+  <div class="ls" id="sfinal">
+    <div class="ls-head">
+      <div class="ls-num">📌</div>
+      <div class="ls-title-wrap">
+        <div class="ls-label">REFERENCE · المرجع الختامي</div>
+        <div class="ls-title">ملخص القوانين · المنهجية · تمرين ختامي</div>
+      </div>
+    </div>
+
+    <p class="lt">
+      هذه الصفحة هي مرجعك الدائم لكل ما تحتاجه لحل أي مسألة مقذوف.
+      احفظها أو راجعها قبل كل تمرين حتى تترسّخ المنهجية.
+    </p>
+
+    <!-- ─── I. FORMULA SHEET ─── -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,190,61,.5);margin:0 0 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--m));"></div>
+      I · ملخص القوانين الكاملة
+    </div>
+
+    <!-- تحليل السرعة -->
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:3px;color:rgba(255,190,61,.4);margin-bottom:8px;">① تحليل السرعة الابتدائية — الخطوة الصفر</div>
+      <div class="eq4-grid">
+        <div class="eq4-item xdir" style="padding:14px 18px;">
+          <div class="eq4-num">X · المركبة الأفقية</div>
+          $$v_{0x} = v_0 \cos\theta$$
+          <div class="eq4-name" style="font-size:.78rem;">ثابتة طوال الرحلة — لا تسارع أفقي</div>
+        </div>
+        <div class="eq4-item ydir" style="padding:14px 18px;">
+          <div class="eq4-num">Y · المركبة الرأسية</div>
+          $$v_{0y} = v_0 \sin\theta$$
+          <div class="eq4-name" style="font-size:.78rem;">تتناقص بفعل الجاذبية حتى تصفر عند القمة</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المحور الرأسي -->
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:3px;color:rgba(255,61,113,.4);margin-bottom:8px;">② المحور الرأسي — محور الجاذبية</div>
+      <div class="eq4-grid">
+        <div class="eq4-item ydir" style="padding:14px 18px;">
+          <div class="eq4-num">زمن القمة</div>
+          $$t_{\text{top}} = \frac{v_{0y}}{g}$$
+          <div class="eq4-name" style="font-size:.78rem;">عند $v_y = 0$ — نهاية الصعود</div>
+        </div>
+        <div class="eq4-item ydir" style="padding:14px 18px;">
+          <div class="eq4-num">الارتفاع الأقصى</div>
+          $$H = \frac{v_{0y}^2}{2g}$$
+          <div class="eq4-name" style="font-size:.78rem;">يعتمد فقط على المركبة الرأسية</div>
+        </div>
+        <div class="eq4-item ydir" style="padding:14px 18px;">
+          <div class="eq4-num">السرعة الرأسية اللحظية</div>
+          $$v_y = v_{0y} - g\,t$$
+          <div class="eq4-name" style="font-size:.78rem;">موجبة صعوداً، سالبة هبوطاً</div>
+        </div>
+        <div class="eq4-item ydir" style="padding:14px 18px;">
+          <div class="eq4-num">الموضع الرأسي</div>
+          $$y = y_0 + v_{0y}\,t - \tfrac{1}{2}g\,t^2$$
+          <div class="eq4-name" style="font-size:.78rem;">المعادلة العامة — تعمل في كل الحالات</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المحور الأفقي والمدى -->
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:3px;color:rgba(65,200,255,.4);margin-bottom:8px;">③ المحور الأفقي والزمن الكلي</div>
+      <div class="eq4-grid">
+        <div class="eq4-item xdir" style="padding:14px 18px;">
+          <div class="eq4-num">زمن الطيران الكلي</div>
+          $$T = \frac{2\,v_{0y}}{g} = 2\,t_{\text{top}}$$
+          <div class="eq4-name" style="font-size:.78rem;">فقط حين $y_0 = y_f$ — إلا استخدم المعادلة العامة</div>
+        </div>
+        <div class="eq4-item xdir" style="padding:14px 18px;">
+          <div class="eq4-num">المدى الأفقي</div>
+          $$R = v_0^2\,\frac{\sin 2\theta}{g}$$
+          <div class="eq4-name" style="font-size:.78rem;">أقصاه عند $\theta = 45°$</div>
+        </div>
+        <div class="eq4-item xdir" style="padding:14px 18px;">
+          <div class="eq4-num">الموضع الأفقي</div>
+          $$x = v_{0x}\cdot t$$
+          <div class="eq4-name" style="font-size:.78rem;">حركة منتظمة — بسيطة دائماً</div>
+        </div>
+        <div class="eq4-item" style="padding:14px 18px;border-color:rgba(0,255,157,.12);">
+          <div class="eq4-num" style="color:rgba(0,255,157,.4);">السرعة اللحظية الكاملة</div>
+          $$|\vec{v}| = \sqrt{v_x^2 + v_y^2}$$
+          <div class="eq4-name" style="font-size:.78rem;">ادمج المركبتين بفيثاغورس في أي لحظة</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv" style="margin:40px 0;"></div>
+
+    <!-- ─── II. METHODOLOGY ─── -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,190,61,.5);margin:0 0 20px;display:flex;align-items:center;gap:12px;">
+      <div style="width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--m));"></div>
+      II · المنهجية الكاملة — كيف تحل أي مسألة مقذوف
+    </div>
+
+    <p class="lt">
+      هذه الخطوات ليست اقتراحاً — هي <strong>بروتوكول ثابت</strong> يعمل على كل مسألة مقذوف
+      بصرف النظر عن معطياتها. الطالب الذي يتبعه لا يقع في أخطاء الخلط بين المركبات.
+    </p>
+
+    <!-- الخطوات المرقمة -->
+    <div style="display:flex;flex-direction:column;gap:0;margin:24px 0;">
+
+      <div style="display:flex;gap:0;align-items:stretch;">
+        <div style="display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,190,61,.12);border:1.5px solid rgba(255,190,61,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--m);font-weight:700;">①</div>
+          <div style="width:1.5px;flex:1;background:linear-gradient(to bottom,rgba(255,190,61,.3),rgba(255,190,61,.05));min-height:40px;"></div>
+        </div>
+        <div style="padding:4px 0 32px 18px;flex:1;">
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--white);margin-bottom:8px;">اقرأ المسألة وحدد المعطيات</div>
+          <p class="lt" style="margin:0;font-size:.9rem;">
+            اكتب خمسة أسطر قبل أي حساب: $v_0 = ?$ ، $\theta = ?$ ، $y_0 = ?$ ، $y_f = ?$ ، والمطلوب.
+            هذا وحده يمنع 80% من الأخطاء. إذا لم يُذكر ارتفاع ابتدائي فهو صفر. إذا لم تُذكر الزاوية وكان الإطلاق أفقياً فـ $\theta = 0$ أي $v_{0y} = 0$.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;align-items:stretch;">
+        <div style="display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,190,61,.12);border:1.5px solid rgba(255,190,61,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--m);font-weight:700;">②</div>
+          <div style="width:1.5px;flex:1;background:linear-gradient(to bottom,rgba(255,190,61,.3),rgba(255,190,61,.05));min-height:40px;"></div>
+        </div>
+        <div style="padding:4px 0 32px 18px;flex:1;">
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--blue);margin-bottom:8px;">حلّل السرعة الابتدائية إلى مركبتين</div>
+          <p class="lt" style="margin:0;font-size:.9rem;">
+            هذه دائماً الخطوة الأولى الفعلية بعد قراءة المعطيات:
+            $$v_{0x} = v_0\cos\theta \qquad v_{0y} = v_0\sin\theta$$
+            اكتب القيمتين صراحةً ولا تتركهما في رأسك. من هنا فصاعداً، كل ما يخص المحور الرأسي يستخدم $v_{0y}$، وكل ما يخص الأفقي يستخدم $v_{0x}$.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;align-items:stretch;">
+        <div style="display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,61,113,.1);border:1.5px solid rgba(255,61,113,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--red);font-weight:700;">③</div>
+          <div style="width:1.5px;flex:1;background:linear-gradient(to bottom,rgba(255,61,113,.3),rgba(255,61,113,.05));min-height:40px;"></div>
+        </div>
+        <div style="padding:4px 0 32px 18px;flex:1;">
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--red);margin-bottom:8px;">حل المحور الرأسي أولاً</div>
+          <p class="lt" style="margin:0;font-size:.9rem;">
+            ابدأ دائماً بالمحور الرأسي — هو الأكثر معلومات وعليه تعتمد الإجابات الأهم.
+            إذا طُلب زمن القمة: $t_{\text{top}} = v_{0y}/g$.
+            إذا طُلب الارتفاع الأقصى: $H = v_{0y}^2/(2g)$.
+            إذا طُلب وقت وصول الأرض أو كان هناك ارتفاع ابتدائي: ضع $y = y_f$ في المعادلة العامة وحل المعادلة التربيعية في $t$.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;align-items:stretch;">
+        <div style="display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(65,200,255,.1);border:1.5px solid rgba(65,200,255,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--blue);font-weight:700;">④</div>
+          <div style="width:1.5px;flex:1;background:linear-gradient(to bottom,rgba(65,200,255,.3),rgba(65,200,255,.05));min-height:40px;"></div>
+        </div>
+        <div style="padding:4px 0 32px 18px;flex:1;">
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--blue);margin-bottom:8px;">اربط المحورين بالزمن ثم حل الأفقي</div>
+          <p class="lt" style="margin:0;font-size:.9rem;">
+            الزمن هو الجسر. بعد أن تعرف $T$ أو $t$ من المحور الرأسي، انتقل للأفقي:
+            $$x = v_{0x}\cdot t \qquad R = v_{0x}\cdot T$$
+            إذا لم يكن هناك ارتفاع مبدئي: $T = 2\,t_{\text{top}}$ مباشرة. إذا كان هناك ارتفاع: استخدم $T$ الذي حسبته من المعادلة العامة.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;align-items:stretch;">
+        <div style="display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,255,157,.1);border:1.5px solid rgba(0,255,157,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--green);font-weight:700;">⑤</div>
+        </div>
+        <div style="padding:4px 0 0 18px;flex:1;">
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--green);margin-bottom:8px;">تحقق فيزيائياً من كل نتيجة</div>
+          <p class="lt" style="margin:0;font-size:.9rem;">
+            قبل أن تكتب الإجابة النهائية، اسأل نفسك: هل الزمن موجب؟ هل الارتفاع الأقصى أكبر من الارتفاع الابتدائي؟ هل المدى معقول لهذه السرعة؟
+            إذا طُلبت السرعة عند لحظة معينة: احسب $v_x$ و$v_y$ ثم ادمجهما: $|\vec{v}| = \sqrt{v_x^2+v_y^2}$.
+            الوحدات يجب أن تتطابق في كل خطوة — هذا أسهل طريقة لاكتشاف الأخطاء.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+
+    <!-- جدول متى تستخدم كل معادلة -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:3px;color:rgba(255,190,61,.4);margin:32px 0 12px;">QUICK REFERENCE · متى تستخدم أي قانون؟</div>
+    <table class="lt-table">
+      <tr>
+        <th>الموقف</th>
+        <th>القانون المناسب</th>
+        <th>تنبيه</th>
+      </tr>
+      <tr>
+        <td class="cw">تحليل السرعة الابتدائية</td>
+        <td class="cm" style="direction:ltr;">v₀ₓ = v₀cosθ &nbsp;·&nbsp; v₀ᵧ = v₀sinθ</td>
+        <td style="color:var(--fog);">دائماً الخطوة الأولى إذا كان لديك زاوية</td>
+      </tr>
+      <tr>
+        <td class="cw">زمن القمة</td>
+        <td class="cm" style="direction:ltr;">t_top = v₀ᵧ / g</td>
+        <td style="color:var(--fog);">استخدم v₀ᵧ — ليس v₀</td>
+      </tr>
+      <tr>
+        <td class="cw">الارتفاع الأقصى</td>
+        <td class="cm" style="direction:ltr;">H = v₀ᵧ² / (2g)</td>
+        <td style="color:var(--fog);">استخدم v₀ᵧ — ليس v₀</td>
+      </tr>
+      <tr>
+        <td class="cw">زمن الطيران (بدون ارتفاع)</td>
+        <td class="cm" style="direction:ltr;">T = 2 × t_top</td>
+        <td style="color:var(--red);">فقط إذا y₀ = y_f = 0</td>
+      </tr>
+      <tr>
+        <td class="cw">زمن الطيران (مع ارتفاع)</td>
+        <td class="cm" style="direction:ltr;">0 = y₀ + v₀ᵧ·T − ½gT²</td>
+        <td style="color:var(--fog);">حل معادلة تربيعية في T</td>
+      </tr>
+      <tr>
+        <td class="cw">المدى الأفقي</td>
+        <td class="cm" style="direction:ltr;">R = v₀ₓ × T</td>
+        <td style="color:var(--fog);">أو R = v₀²·sin2θ / g (بدون ارتفاع)</td>
+      </tr>
+      <tr>
+        <td class="cw">السرعة في لحظة معينة</td>
+        <td class="cm" style="direction:ltr;">|v| = √(vₓ²+vᵧ²)</td>
+        <td style="color:var(--fog);">vₓ ثابت، vᵧ = v₀ᵧ − g·t</td>
+      </tr>
+    </table>
+
+    <div class="sdiv" style="margin:40px 0;"></div>
+
+    <!-- ─── III. PRACTICE PROBLEM ─── -->
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.38rem;letter-spacing:3px;color:rgba(255,190,61,.5);margin:0 0 20px;display:flex;align-items:center;gap:12px;">
+      <div style="width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--m));"></div>
+      III · تمرين ختامي — حلّه بنفسك
+    </div>
+
+    <p class="lt">
+      طبّق المنهجية الخمسية على هذه المسألة بشكل مستقل.
+      لا تنظر للإجابة قبل أن تحاول — المحاولة الجادة حتى مع الخطأ تُرسّخ الفهم أكثر من القراءة الصحيحة.
+    </p>
+
+    <!-- نص المسألة -->
+    <div style="background:rgba(0,0,0,.4);border:1px solid rgba(255,190,61,.2);border-right:3px solid var(--m);border-radius:6px;overflow:hidden;margin:20px 0;">
+      <div style="background:rgba(255,190,61,.07);border-bottom:1px solid rgba(255,190,61,.12);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.36rem;letter-spacing:3px;color:rgba(255,190,61,.6);">PRACTICE · تمرين ختامي</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.34rem;letter-spacing:2px;padding:3px 10px;border-radius:2px;background:rgba(255,190,61,.08);border:1px solid rgba(255,190,61,.2);color:rgba(255,190,61,.7);">جرّب بنفسك</span>
+      </div>
+      <div style="padding:24px;">
+        <p class="lt" style="color:var(--white);font-size:1rem;line-height:2.1;">
+          رُميت كرة من مستوى الأرض بسرعة ابتدائية $v_0 = 15$ m/s بزاوية $\theta = 30°$ فوق الأفق.
+          ($g = 9.8$ m/s²، $\sin30° = 0.5$، $\cos30° \approx 0.866$)
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px;">
+          <div style="padding:10px 14px;background:rgba(255,61,113,.05);border:1px solid rgba(255,61,113,.15);border-radius:4px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(255,61,113,.5);margin-bottom:4px;">أ · المحور الرأسي</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);">أوجد زمن الوصول إلى أقصى ارتفاع</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(255,61,113,.05);border:1px solid rgba(255,61,113,.15);border-radius:4px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(255,61,113,.5);margin-bottom:4px;">ب · الارتفاع</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);">أوجد أقصى ارتفاع تبلغه الكرة</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(65,200,255,.05);border:1px solid rgba(65,200,255,.15);border-radius:4px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(65,200,255,.5);margin-bottom:4px;">ج · الزمن الكلي</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);">أوجد زمن الطيران الكلي</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(65,200,255,.05);border:1px solid rgba(65,200,255,.15);border-radius:4px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(65,200,255,.5);margin-bottom:4px;">د · المدى الأفقي</div>
+            <div style="font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);">أوجد المسافة الأفقية الكلية عند السقوط</div>
+          </div>
+        </div>
+
+        <!-- accordion hint -->
+        <div style="margin-top:20px;">
+          <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.querySelector('.hint-icon').textContent = this.nextElementSibling.style.display==='none'?'▶':'▼';"
+               style="cursor:pointer;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:4px;display:flex;justify-content:space-between;align-items:center;transition:.2s;"
+               onmouseover="this.style.borderColor='rgba(255,190,61,.25)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+            <span style="font-family:'Tajawal',sans-serif;font-size:.9rem;color:var(--ghost);">💡 تلميح — خطوات البداية فقط (لا تنظر إلا عند الحاجة)</span>
+            <span class="hint-icon" style="font-family:'IBM Plex Mono',monospace;font-size:.5rem;color:rgba(255,190,61,.35);">▶</span>
+          </div>
+          <div style="display:none;padding:16px 18px;background:rgba(255,190,61,.04);border:1px solid rgba(255,190,61,.1);border-top:none;border-radius:0 0 4px 4px;">
+            <p style="font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);line-height:2;margin:0;">
+              <strong style="color:var(--white);">الخطوة ① ابدأ بتحليل السرعة:</strong><br>
+              $v_{0x} = 15 \times \cos30° = 15 \times 0.866 = \mathbf{12.99}$ m/s<br>
+              $v_{0y} = 15 \times \sin30° = 15 \times 0.5 = \mathbf{7.5}$ m/s<br><br>
+              <strong style="color:var(--white);">الخطوة ② انتقل للمحور الرأسي:</strong><br>
+              استخدم $v_{0y} = 7.5$ m/s في جميع حسابات المحور الرأسي — ليس 15.
+            </p>
+          </div>
+        </div>
+
+        <!-- accordion answer -->
+        <div style="margin-top:10px;">
+          <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.querySelector('.ans-icon').textContent = this.nextElementSibling.style.display==='none'?'▶':'▼';"
+               style="cursor:pointer;padding:12px 16px;background:rgba(0,255,157,.03);border:1px solid rgba(0,255,157,.12);border-radius:4px;display:flex;justify-content:space-between;align-items:center;transition:.2s;"
+               onmouseover="this.style.borderColor='rgba(0,255,157,.3)'" onmouseout="this.style.borderColor='rgba(0,255,157,.12)'">
+            <span style="font-family:'Tajawal',sans-serif;font-size:.9rem;color:var(--ghost);">✅ الإجابات الكاملة — افتح فقط بعد المحاولة</span>
+            <span class="ans-icon" style="font-family:'IBM Plex Mono',monospace;font-size:.5rem;color:rgba(0,255,157,.35);">▶</span>
+          </div>
+          <div style="display:none;padding:20px 22px;background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.12);border-top:none;border-radius:0 0 4px 4px;">
+
+            <div style="display:flex;flex-direction:column;gap:14px;">
+
+              <div style="padding:12px 16px;background:rgba(0,0,0,.25);border-radius:4px;border-right:2px solid rgba(255,61,113,.4);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(255,61,113,.55);margin-bottom:6px;">① التحليل</div>
+                <div style="direction:ltr;font-family:'Tajawal',sans-serif;font-size:.88rem;color:var(--fog);line-height:1.9;">
+                  $v_{0x} = 15\cos30° = 12.99\;\text{m/s}$<br>
+                  $v_{0y} = 15\sin30° = 7.5\;\text{m/s}$
+                </div>
+              </div>
+
+              <div style="padding:12px 16px;background:rgba(0,0,0,.25);border-radius:4px;border-right:2px solid rgba(255,61,113,.4);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(255,61,113,.55);margin-bottom:6px;">أ · زمن القمة</div>
+                <div style="direction:ltr;margin-top:4px;">$$t_{\text{top}} = \frac{v_{0y}}{g} = \frac{7.5}{9.8} \approx 0.77\;\text{s}$$</div>
+              </div>
+
+              <div style="padding:12px 16px;background:rgba(0,0,0,.25);border-radius:4px;border-right:2px solid rgba(255,61,113,.4);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(255,61,113,.55);margin-bottom:6px;">ب · الارتفاع الأقصى</div>
+                <div style="direction:ltr;margin-top:4px;">$$H = \frac{v_{0y}^2}{2g} = \frac{(7.5)^2}{2\times9.8} = \frac{56.25}{19.6} \approx 2.87\;\text{m}$$</div>
+              </div>
+
+              <div style="padding:12px 16px;background:rgba(0,0,0,.25);border-radius:4px;border-right:2px solid rgba(65,200,255,.4);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(65,200,255,.55);margin-bottom:6px;">ج · زمن الطيران</div>
+                <div style="direction:ltr;margin-top:4px;">$$T = 2\,t_{\text{top}} = 2\times0.77 = 1.53\;\text{s}$$</div>
+                <div style="font-family:'Tajawal',sans-serif;font-size:.82rem;color:rgba(180,215,255,.35);margin-top:6px;">يجوز لأن y₀ = y_f = 0</div>
+              </div>
+
+              <div style="padding:12px 16px;background:rgba(0,0,0,.25);border-radius:4px;border-right:2px solid rgba(65,200,255,.4);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.33rem;letter-spacing:2px;color:rgba(65,200,255,.55);margin-bottom:6px;">د · المدى الأفقي</div>
+                <div style="direction:ltr;margin-top:4px;">$$R = v_{0x}\cdot T = 12.99\times1.53 \approx 19.88\;\text{m}$$</div>
+                <div style="direction:ltr;font-size:.8em;color:var(--fog);margin-top:6px;">تحقق: $R = \frac{15^2\sin60°}{9.8} = \frac{225\times0.866}{9.8} \approx 19.87\;\text{m}$ ✓</div>
+              </div>
+
+            </div>
+
+            <div style="margin-top:16px;direction:ltr;font-family:'IBM Plex Mono',monospace;font-size:.4rem;color:var(--green);background:rgba(0,255,157,.05);border:1px solid rgba(0,255,157,.15);border-radius:4px;padding:12px 16px;line-height:2;letter-spacing:.5px;">
+              FINAL · t_top ≈ 0.77 s &nbsp;·&nbsp; H ≈ 2.87 m &nbsp;·&nbsp; T ≈ 1.53 s &nbsp;·&nbsp; R ≈ 19.9 m
+            </div>
+          </div>
+        </div><!-- /answer accordion -->
+
+      </div>
+    </div><!-- /practice problem card -->
+
+    <div class="sdiv" style="margin:40px 0;"></div>
+
+    <!-- ─── IV. WHAT'S NEXT ─── -->
+    <div class="lbox g">
+      <div class="lbox-label">WHAT'S NEXT · ماذا بعد؟</div>
+      <p class="lt">
+        في <strong>CLS·03</strong> سننتقل من وصف الحركة إلى السؤال عن <em>سببها</em>:
+        لماذا يتسارع الجسم؟ ما الذي يجعل $a = g$ بالضبط وليس ضعفه أو نصفه؟
+        قوانين نيوتن الثلاثة ستُجيب — وستجد أن التسارع الذي حسبناه هنا
+        سيصبح الجسر إلى عالم الديناميكا الكاملة.
+      </p>
+    </div>
+
+  </div><!-- /sfinal -->
+
+  <!-- NAVIGATION -->
+  <div class="nav-row">
+    <a class="nav-btn prev" href="CLS-01.html">
+      <div class="nb-arrow">→</div>
+      <div>
+        <div class="nb-label">الدرس السابق · CLS·01</div>
+        <div class="nb-title">الحركة الخطية</div>
+      </div>
+    </a>
+    <a class="nav-btn next" href="CLS-03.html">
+      <div>
+        <div class="nb-label">الدرس التالي · CLS·03</div>
+        <div class="nb-title">قوانين نيوتن</div>
+      </div>
+      <div class="nb-arrow">←</div>
+    </a>
+  </div>
+
+</div><!-- /page -->
+
+<!-- STATUS BAR -->
+<div class="sbar">
+  <div class="sbi"><div class="sbd m"></div>CLS·02 · ONLINE</div>
+  <div class="sbi">2D KINEMATICS · 9 SECTIONS · 4 EXAMPLES · PROJECTILE MOTION</div>
+  <div class="sbi"><div class="sbd a"></div>PHYS·CLS · CLASSICAL</div>
+</div>
+
+<script>
+/* ══ CANVAS NEBULA ══ */
+const cv=document.getElementById('cv'), cx=cv.getContext('2d');
+let W,H,orbs;
+function initCv(){
+  W=cv.width=innerWidth; H=cv.height=innerHeight;
+  orbs=[
+    {x:W*.94, y:H*.18, r:400, c:'rgba(255,190,61,',   s:.00017, p:0},
+    {x:W*.06, y:H*.72, r:350, c:'rgba(220,130,30,',   s:.00020, p:2.1},
+    {x:W*.52, y:H*.95, r:280, c:'rgba(255,100,50,',   s:.00018, p:4.5},
+    {x:W*.18, y:H*.06, r:260, c:'rgba(255,190,61,',   s:.00015, p:1.8},
+  ];
+}
+function drawCv(){
+  cx.clearRect(0,0,W,H);
+  for(const o of orbs){
+    o.p+=o.s;
+    const ox=o.x+Math.sin(o.p)*80, oy=o.y+Math.cos(o.p*.75)*62;
+    const g=cx.createRadialGradient(ox,oy,0,ox,oy,o.r);
+    g.addColorStop(0,o.c+'0.07)');
+    g.addColorStop(.5,o.c+'0.02)');
+    g.addColorStop(1,o.c+'0)');
+    cx.fillStyle=g; cx.beginPath(); cx.arc(ox,oy,o.r,0,Math.PI*2); cx.fill();
+  }
+  requestAnimationFrame(drawCv);
+}
+addEventListener('resize',initCv); initCv(); requestAnimationFrame(drawCv);
+
+/* ══ SCROLL PROGRESS ══ */
+addEventListener('scroll',()=>{
+  const p=scrollY/(document.documentElement.scrollHeight-innerHeight)*100;
+  document.getElementById('spb').style.width=Math.min(p,100)+'%';
+});
+
+/* ══ SCROLL REVEAL ══ */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('in'),i*60);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.04});
+document.querySelectorAll('.ls').forEach(s=>io.observe(s));
+
+/* ══ TOC ══ */
+function goTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ══ PROJECTILE SIMULATION ══ */
+const projCv  = document.getElementById('projCv');
+const pctx    = projCv.getContext('2d');
+const PW = 820, PH = 280;
+const G = 9.8;
+const PAD_L = 50, PAD_B = 40, PAD_T = 20, PAD_R = 20;
+const PLOT_W = PW - PAD_L - PAD_R;
+const PLOT_H = PH - PAD_B - PAD_T;
+
+let animId = null, animT = 0, animRunning = false;
+let simParams = { v0: 20, theta: 45 };
+
+function calcProj(v0, thetaDeg){
+  const th  = thetaDeg * Math.PI / 180;
+  const v0x = v0 * Math.cos(th);
+  const v0y = v0 * Math.sin(th);
+  const T   = 2 * v0y / G;
+  const H   = v0y * v0y / (2 * G);
+  const R   = v0 * v0 * Math.sin(2 * th) / G;
+  return { v0x, v0y, T, H, R, th };
+}
+
+function updateProj(){
+  const v0  = parseFloat(document.getElementById('v0sl').value);
+  const ang = parseFloat(document.getElementById('angsl').value);
+  document.getElementById('v0lbl').textContent  = v0 + ' m/s';
+  document.getElementById('angLbl').textContent = ang + '°';
+  document.getElementById('sv0').textContent    = v0 + ' m/s';
+  document.getElementById('sang').textContent   = ang + '°';
+
+  const p = calcProj(v0, ang);
+  document.getElementById('sH').textContent = p.H.toFixed(1) + ' m';
+  document.getElementById('sR').textContent = p.R.toFixed(1) + ' m';
+  document.getElementById('sT').textContent = p.T.toFixed(2) + ' s';
+
+  simParams = { v0, theta: ang };
+  animT = 0;
+  drawProjStatic(v0, ang);
+}
+
+function drawProjStatic(v0, thetaDeg){
+  const p = calcProj(v0, thetaDeg);
+  pctx.clearRect(0,0,PW,PH);
+
+  // background
+  pctx.fillStyle = 'rgba(3,7,15,.97)';
+  pctx.fillRect(0,0,PW,PH);
+
+  // ground
+  pctx.strokeStyle = 'rgba(255,255,255,.12)';
+  pctx.lineWidth = 1.5;
+  pctx.beginPath();
+  pctx.moveTo(PAD_L, PH - PAD_B);
+  pctx.lineTo(PW - PAD_R, PH - PAD_B);
+  pctx.stroke();
+
+  // y-axis
+  pctx.strokeStyle = 'rgba(255,255,255,.07)';
+  pctx.lineWidth = 1;
+  pctx.beginPath();
+  pctx.moveTo(PAD_L, PAD_T);
+  pctx.lineTo(PAD_L, PH - PAD_B);
+  pctx.stroke();
+
+  // scale factors
+  const scaleX = PLOT_W / (p.R * 1.1 || 1);
+  const scaleY = (PLOT_H * 0.9) / (p.H * 1.2 || 1);
+
+  function toCanvas(x, y){
+    return {
+      cx: PAD_L + x * scaleX,
+      cy: PH - PAD_B - y * scaleY
+    };
+  }
+
+  // grid lines (light)
+  pctx.strokeStyle = 'rgba(255,255,255,.03)';
+  pctx.lineWidth = 1;
+  for(let i=1;i<=4;i++){
+    const gy = (PLOT_H*0.9/4)*i;
+    pctx.beginPath();
+    pctx.moveTo(PAD_L, PH-PAD_B-gy);
+    pctx.lineTo(PW-PAD_R, PH-PAD_B-gy);
+    pctx.stroke();
+  }
+
+  // trajectory path
+  const steps = 120;
+  pctx.beginPath();
+  pctx.strokeStyle = 'rgba(255,190,61,.6)';
+  pctx.lineWidth = 1.5;
+  pctx.setLineDash([6,4]);
+  for(let i=0;i<=steps;i++){
+    const t  = (p.T / steps) * i;
+    const x  = p.v0x * t;
+    const y  = p.v0y * t - 0.5 * G * t * t;
+    if(y < 0) break;
+    const c  = toCanvas(x, y);
+    i === 0 ? pctx.moveTo(c.cx, c.cy) : pctx.lineTo(c.cx, c.cy);
+  }
+  pctx.stroke();
+  pctx.setLineDash([]);
+
+  // H dashed line
+  const peak = toCanvas(p.v0x * p.T / 2, p.H);
+  pctx.strokeStyle = 'rgba(65,200,255,.2)';
+  pctx.lineWidth = 1;
+  pctx.setLineDash([4,3]);
+  pctx.beginPath();
+  pctx.moveTo(PAD_L, peak.cy);
+  pctx.lineTo(peak.cx, peak.cy);
+  pctx.stroke();
+  pctx.setLineDash([]);
+
+  // H label
+  pctx.fillStyle = 'rgba(65,200,255,.5)';
+  pctx.font = '9px IBM Plex Mono';
+  pctx.fillText('H='+p.H.toFixed(1)+'m', PAD_L+3, peak.cy-4);
+
+  // R label
+  const land = toCanvas(p.R, 0);
+  pctx.fillStyle = 'rgba(0,255,157,.5)';
+  pctx.font = '9px IBM Plex Mono';
+  pctx.fillText('R='+p.R.toFixed(1)+'m', PAD_L + PLOT_W*0.4, PH-PAD_B+16);
+
+  // initial velocity vector
+  const vArrowLen = 45;
+  const vx = Math.cos(p.th) * vArrowLen;
+  const vy = Math.sin(p.th) * vArrowLen;
+  const o = toCanvas(0, 0);
+  pctx.strokeStyle = '#ffbe3d';
+  pctx.lineWidth = 2;
+  pctx.beginPath();
+  pctx.moveTo(o.cx, o.cy);
+  pctx.lineTo(o.cx + vx, o.cy - vy);
+  pctx.stroke();
+  // arrowhead
+  const ax = o.cx + vx, ay = o.cy - vy;
+  pctx.fillStyle = '#ffbe3d';
+  pctx.beginPath();
+  pctx.moveTo(ax, ay);
+  pctx.lineTo(ax - Math.cos(p.th+0.4)*10, ay + Math.sin(p.th+0.4)*10);
+  pctx.lineTo(ax - Math.cos(p.th-0.4)*10, ay + Math.sin(p.th-0.4)*10);
+  pctx.closePath();
+  pctx.fill();
+  pctx.fillStyle='rgba(255,190,61,.7)';
+  pctx.font='9px IBM Plex Mono';
+  pctx.fillText('v₀='+v0+'m/s', o.cx+6, o.cy-30);
+
+  // draw animated ball
+  const bt = Math.min(animT, p.T);
+  const bx = p.v0x * bt;
+  const by = p.v0y * bt - 0.5 * G * bt * bt;
+  if(by >= 0){
+    const bc = toCanvas(bx, by);
+    const bgrd = pctx.createRadialGradient(bc.cx,bc.cy,2,bc.cx,bc.cy,10);
+    bgrd.addColorStop(0,'rgba(255,190,61,.95)');
+    bgrd.addColorStop(1,'rgba(255,190,61,.1)');
+    pctx.fillStyle = bgrd;
+    pctx.beginPath();
+    pctx.arc(bc.cx, bc.cy, 8, 0, Math.PI*2);
+    pctx.fill();
+
+    // velocity components at ball
+    const cvx = p.v0x;
+    const cvy = p.v0y - G * bt;
+    const vscale = 2;
+    // vx arrow
+    pctx.strokeStyle = '#41c8ff';
+    pctx.lineWidth = 1.5;
+    pctx.beginPath();
+    pctx.moveTo(bc.cx, bc.cy);
+    pctx.lineTo(bc.cx + cvx*vscale, bc.cy);
+    pctx.stroke();
+    // vy arrow
+    pctx.strokeStyle = cvy >= 0 ? '#00ff9d' : '#ff3d71';
+    pctx.lineWidth = 1.5;
+    pctx.beginPath();
+    pctx.moveTo(bc.cx, bc.cy);
+    pctx.lineTo(bc.cx, bc.cy - cvy*vscale);
+    pctx.stroke();
+
+    // velocity label
+    const spd = Math.sqrt(cvx*cvx + cvy*cvy).toFixed(1);
+    pctx.fillStyle='rgba(255,255,255,.45)';
+    pctx.font='9px IBM Plex Mono';
+    pctx.fillText('|v|='+spd, bc.cx+12, bc.cy-4);
+  }
+
+  // axes labels
+  pctx.fillStyle = 'rgba(180,215,255,.2)';
+  pctx.font = '9px IBM Plex Mono';
+  pctx.fillText('x (m)', PW-PAD_R-30, PH-PAD_B+16);
+  pctx.fillText('y (m)', PAD_L-32, PAD_T+10);
+}
+
+function animateProj(){
+  const p = calcProj(simParams.v0, simParams.theta);
+  animT += 0.03;
+  if(animT > p.T + 0.5) animT = 0;
+  drawProjStatic(simParams.v0, simParams.theta);
+  animId = requestAnimationFrame(animateProj);
+}
+
+updateProj();
+animateProj();
+</script>
+</body>
+</html>
